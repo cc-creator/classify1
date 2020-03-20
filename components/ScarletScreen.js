@@ -5,10 +5,14 @@ import {
     View,
     TouchableOpacity
 } from 'react-native';
+
+import ToastExample from '../nativeComponents/ToastExample';
+
 export default class ScarletScreen extends Component{
 
     recognizeImage() {
         console.log("---------")
+        ToastExample.show("Awesome", ToastExample.SHORT);
     }
 
     render(){
