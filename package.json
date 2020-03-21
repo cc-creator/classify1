@@ -13,12 +13,13 @@
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-gesture-handler": "^1.6.0",
-    "react-native-reanimated": "^1.7.0",
     "react-native-image-crop-picker": "^0.28.0",
     "react-native-image-zoom-viewer": "^2.2.27",
+    "react-native-reanimated": "^1.7.0",
     "react-native-router-flux": "^4.2.0",
     "react-native-screens": "^2.3.0",
-    "react-native-vector-icons": "^6.6.0"
+    "react-native-vector-icons": "^6.6.0",
+    "tflite-react-native": "^0.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",

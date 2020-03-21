@@ -6,9 +6,10 @@ import {
 /*第三方组件*/
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import Tflite from 'tflite-react-native';
 /*自定义组件*/
-import Header from './Header';
-import CellList from './CellList'
+import CellList from './CellList';
+import ToastExample from '../nativeComponents/ToastExample';
 
 const dimension = Dimensions.get('window')
 const styles = StyleSheet.create({
@@ -39,6 +40,7 @@ const styles = StyleSheet.create({
 
 let imageUrls = [];
 let index = 0;
+let tflite = new Tflite();
 export default class App extends Component {
 
     constructor() {
@@ -47,6 +49,17 @@ export default class App extends Component {
             images: null,
             isImageShow: false
         };
+        tflite.loadModel({
+                model: 'mobilenet_v1_1.0_224.tflite',// 模型文件，必填
+                labels: 'labels.txt',  // 标签文件，必填
+                numThreads: 1,                              // 线程数，默认为 1
+            },
+            (err, res) => {
+                if(err)
+                    console.log(err);
+                else
+                    console.log(res);
+            });
     }
 
     pickMultiple() {
@@ -55,6 +68,8 @@ export default class App extends Component {
             multiple: true,
             waitAnimationEnd: false,
             includeExif: true,
+            mediaType: 'photo',
+
         }).then(images => {
             this.setState({
                 images: images.map(i => {
@@ -85,6 +100,22 @@ export default class App extends Component {
         });
     }
 
+    clissifyImage(uri){
+        tflite.runModelOnImage({
+                path: uri,  // 图像文件地址，必填
+                imageMean: 128.0, // mean，默认为 127.5
+                imageStd: 128.0,  // std，默认为 127.5
+                numResults: 3,    // 返回结果数，默认为 5
+                threshold: 0.05   // 可信度阈值，默认为 0.1
+            },
+            (err, res) => {
+                if(err)
+                    console.log(err);
+                else
+                    ToastExample.show(res[0].label,ToastExample.SHORT);
+            });
+    }
+
     render() {
         return (<View>
             <View style={styles.buttonView}>
@@ -104,6 +135,7 @@ export default class App extends Component {
                     renderItem={(item) => <CellList
                         removeImg={this.removeImg.bind(this)}
                         findIndex={this.findIndex.bind(this)}
+                        clissifyImage={this.clissifyImage.bind(this)}
                         prop={item}/>
                     }
                 >
@@ -124,8 +156,7 @@ export default class App extends Component {
                                      });
                                  }}
                                  index={index}/>
-                </Modal>
-                : null}
+                </Modal> : null}
         </View>);
     }
 }

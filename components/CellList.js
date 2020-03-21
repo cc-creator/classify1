@@ -8,10 +8,13 @@ import {
 } from 'react-native';
 
 const dimension = Dimensions.get('window')
-const CellList = ({prop,removeImg,findIndex}) => {
+const CellList = ({prop,removeImg,findIndex,clissifyImage}) => {
     return (
         <View style={styles.cellContainer}>
             <TouchableOpacity
+                onLongPress={() => {
+                    clissifyImage(prop.item.image.uri)
+                }}
                 onPress={() => {
                     findIndex(prop.item.image.uri)
                 }}
