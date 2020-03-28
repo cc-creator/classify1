@@ -14,12 +14,21 @@ import { Badge } from 'react-native-elements';
 const DetailCell = ({prop}) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>{prop.item.label}</Text>
+            <View style={{flex: 1,flexDirection: 'row'}}>
+                <Text style={styles.text}>{prop.item.label}</Text>
+                <Badge badgeStyle={{top: 5,left: 5}} value={prop.item.sum} status="success" />
+            </View>
             <View style={styles.imageView}>
-                <TouchableOpacity onPress={() => {Actions.cellDetail({images:prop.item.group})}}>
-                    <Image style={styles.image} source={{uri: prop.item.group[0].url}}></Image>
-                    <Badge badgeStyle={{top: -10,left: -5}} value={prop.item.sum} status="primary" />
-                </TouchableOpacity>
+                <FlatList
+                    data={prop.item.group}
+                    horizontal={true}
+                    keyExtractor={(item, index)=> ''+index}
+                    renderItem={(item) => <TouchableOpacity onPress={() => {Actions.cellDetail({images:item.item.group})}}>
+                        <Image style={styles.image} source={{uri: item.item.group[0].url}}></Image>
+                        <Badge badgeStyle={{top: -10,left: -5}} value={item.item.sum} status="primary" />
+                        <Text style={{top: -20}}>{item.item.label2}</Text>
+                    </TouchableOpacity>}
+                ></FlatList>
             </View>
         </View>
     );
@@ -35,19 +44,19 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 20,
-        marginTop: 10,
+        height: 25
     },
     imageView: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        marginBottom: 5
+        // flex: 1,
+        // flexDirection: 'row',
+        // justifyContent: 'flex-start'
     },
     image: {
         width: (width-50)/4,
         height: (width-50)/4,
         borderRadius: 10.0,
-        marginRight: 15
+        marginRight: 15,
+        marginTop: 30
     }
 });
 

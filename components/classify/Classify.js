@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
     View, StyleSheet, FlatList,
-    Dimensions, Modal, InteractionManager
+    Dimensions, Modal,
 } from 'react-native';
 /*第三方组件*/
 import ImagePicker from 'react-native-image-crop-picker';
@@ -47,8 +47,8 @@ export default class App extends Component {
             isImageShow: false,
         };
         tflite.loadModel({
-                model: 'my_model1.tflite',
-                labels: 'my_lables1.txt',
+                model: 'my_model2.tflite',
+                labels: 'my_lables2.txt',
                 numThreads: 1,
             });
     }
@@ -63,9 +63,10 @@ export default class App extends Component {
             mediaType: 'photo',
             includeBase64: true
         }).then(imgs => {
+            console.log(imgs)
             for(let i in imgs){
                 imageUrls.push({url:imgs[i].path});
-                images.push({url:imgs[i].path,label:"other"});
+                images.push({url:imgs[i].path,label1:"other",label2:""});
             }
             this.setState({
                 imagePaths: imgs.map(i => {
@@ -120,13 +121,16 @@ export default class App extends Component {
                     imageMean: 128.0, // mean，默认为 127.5
                     imageStd: 128.0,  // std，默认为 127.5
                     numResults: 1,    // 返回结果数，默认为 5
-                    threshold: 0.5   // 可信度阈值，默认为 0.1
+                    threshold: 0.1   // 可信度阈值，默认为 0.1
                 },(err,res) => {
                     if(res.length > 0){
-                        images[i].label = res[0].label;
+                        let temp_lables = res[0].label.split('-');
+                        images[i].label1 = temp_lables[0];
+                        images[i].label2 = temp_lables[1];
                     }
                     if(i == images.length-1){
                         ToastExample.show("完成分类",ToastExample.SHORT);
+                        console.log(images)
                         Actions.detail({'images': images})
                     }
                 });
