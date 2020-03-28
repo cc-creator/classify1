@@ -8,21 +8,28 @@ import {
     FlatList
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { Button,Card } from 'react-native-elements'
+import { Button,Card,Overlay,Input } from 'react-native-elements';
+import RNFS from 'react-native-fs';
 
 import DetailCell from "./DetailCell";
 
 let groups = [];
+let images = [];
+const rnfsPath = RNFS.DocumentDirectoryPath;
+const jilu_path = rnfsPath + '/jilu.text';
 export default class Detail extends Component{
     constructor(props){
         super(props);
+        this.state = {
+            isVisible: false,
+            title: '',
+            remark: ''
+        }
     }
 
     partition(){
         groups = [];
-        const images = this.props.images;
-        console.log("images")
-        console.log(images)
+        images = this.props.images;
         const images_animal_anphibious = [];
         const images_animal_bird = [];
         const images_animal_fish = [];
@@ -78,6 +85,7 @@ export default class Detail extends Component{
                 sum_animal++;
             }else if(images[i].label2 == 'insect'){
                 images_animal_insect.push(images[i]);
+                sum_animal++;
             }else if(images[i].label2 == 'mammal'){
                 images_animal_mammal.push(images[i]);
                 sum_animal++;
@@ -210,10 +218,10 @@ export default class Detail extends Component{
             images_plant.push({group: images_plant_tree,label1: '植物',label2: '树木',sum: images_plant_tree.length})
         }
         if(images_thing_dianqi.length > 0){
-            images_thing.push({group: images_thing_dianqi,label1: '物品',lanel2: '电器',sum: images_thing_dianqi.length})
+            images_thing.push({group: images_thing_dianqi,label1: '物品',label2: '电器',sum: images_thing_dianqi.length})
         }
         if(images_thing_furniture.length > 0){
-            images_thing.push({group: images_thing_furniture,label1: '物品',lanel2: '家具',sum: images_thing_furniture.length})
+            images_thing.push({group: images_thing_furniture,label1: '物品',label2: '家具',sum: images_thing_furniture.length})
         }
         if(images_other_other.length > 0){
             images_other.push({group: images_other_other,label1: '其他',label2: '',sum: images_other_other.length});
@@ -246,12 +254,19 @@ export default class Detail extends Component{
         if(images_other.length > 0){
             groups.push({group:images_other,label:"其他",sum: sum_other});
         }
-        console.log("-----------groups[0]-----------")
-        console.log(groups[0])
-        console.log("-----------groups[0].group-----------")
-        console.log(groups[0].group)
-        console.log("-----------groups[0].group[0].group-----------")
-        console.log(groups[0].group[0].group)
+    }
+
+    local_store() {
+        const temp_path = rnfsPath + '/test_' +this.state.title + '.txt';
+        let temp_str = this.state.title + "@" + this.state.remark + "@";
+        RNFS.writeFile(temp_path,temp_str + JSON.stringify(images),'utf8')
+            .then((success) => {
+                RNFS.appendFile(jilu_path,"@"+temp_path,'utf8')
+                    .then((success) => {console.log("导入本地成功")})
+                    .catch((err) => {})
+            })
+            .catch((err) => {});
+        this.setState({isVisible: false})
     }
 
     _keyExtractor=(item, index)=> ''+index;
@@ -260,18 +275,18 @@ export default class Detail extends Component{
         this.partition();
         return (
             <View style={styles.container}>
-                    <View style={styles.describe}>
-                        <Card
-                            title='名称'
-                            titleStyle={styles.titleStyle}
-                            containerStyle={{width: 380}}
-                            image={{uri: groups[0].group[0].group[0].url}}
-                        imageProps={{resizeMode: 'cover'}}>
-                            <Text>
-                                The idea with React Native Elements is more about component structure than actual design.
-                            </Text>
-                        </Card>
-                    </View>
+                    {/*<View style={styles.describe}>*/}
+                    {/*    <Card*/}
+                    {/*        title='名称'*/}
+                    {/*        titleStyle={styles.titleStyle}*/}
+                    {/*        containerStyle={{width: 380}}*/}
+                    {/*        image={{uri: groups[0].group[0].group[0].url}}*/}
+                    {/*    imageProps={{resizeMode: 'cover'}}>*/}
+                    {/*        <Text>*/}
+                    {/*            The idea with React Native Elements is more about component structure than actual design.*/}
+                    {/*        </Text>*/}
+                    {/*    </Card>*/}
+                    {/*</View>*/}
                     <FlatList
                         data={groups}
                         keyExtractor={this._keyExtractor}
@@ -283,6 +298,7 @@ export default class Detail extends Component{
                     <Button
                         buttonStyle={styles.buttonStyle}
                         titleStyle={styles.titleStyle}
+                        onPress={() => {this.setState({isVisible: true})}}
                         title='导入本地'
                     />
                     <Button
@@ -291,6 +307,31 @@ export default class Detail extends Component{
                         title='上传云端'
                     />
                 </View>
+                {/*<Overlay isVisible={this.state.isVisible}*/}
+                {/*         onBackdropPress={() => this.setState({ isVisible: false })}*/}
+                {/*         height={height/3.9}>*/}
+                {/*    <Input placeholder='标题' value={this.state.title}*/}
+                {/*           maxLength={10}*/}
+                {/*           onChangeText={(text) => {this.setState({title: text})}}/>*/}
+                {/*    <Input placeholder='备注' value={this.state.remark}*/}
+                {/*           maxLength={35}*/}
+                {/*           multiline={true}*/}
+                {/*           onChangeText={(text) => {this.setState({remark: text})}}/>*/}
+                {/*    <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: 30}}>*/}
+                {/*        <Button*/}
+                {/*            buttonStyle={styles.buttonStyle}*/}
+                {/*            titleStyle={styles.titleStyle}*/}
+                {/*            onPress={this.local_store.bind(this)}*/}
+                {/*            title='确定'*/}
+                {/*        />*/}
+                {/*        <Button*/}
+                {/*            buttonStyle={styles.buttonStyle}*/}
+                {/*            titleStyle={styles.titleStyle}*/}
+                {/*            onPress={() => this.setState({ isVisible: false })}*/}
+                {/*            title='取消'*/}
+                {/*        />*/}
+                {/*    </View>*/}
+                {/*</Overlay>*/}
             </View>
         );
     }
@@ -313,15 +354,15 @@ const styles = StyleSheet.create({
         marginBottom: 110
     },
     buttonView: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginTop: 10,
-        marginBottom: 60
+        position: 'absolute',
+        left: width*0.7,
+        top: height*0.7
     },
     buttonStyle: {
         height:50,
-        width:120
+        width:120,
+        borderRadius: 25,
+        marginBottom: 5
     },
     titleStyle: {
         fontSize:20

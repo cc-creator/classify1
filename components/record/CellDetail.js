@@ -67,6 +67,7 @@ export default class CellDetail extends Component {
 
 const dimension = Dimensions.get('window')
 let width = dimension.width
+let height = dimension.height
 const styles = StyleSheet.create({
     cellImage: {
         width: (width-50)/4,

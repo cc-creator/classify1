@@ -18,7 +18,7 @@ const DetailCell = ({prop}) => {
                 <Text style={styles.text}>{prop.item.label}</Text>
                 <Badge badgeStyle={{top: 5,left: 5}} value={prop.item.sum} status="success" />
             </View>
-            <View style={styles.imageView}>
+            <View>
                 <FlatList
                     data={prop.item.group}
                     horizontal={true}
@@ -45,11 +45,6 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 20,
         height: 25
-    },
-    imageView: {
-        // flex: 1,
-        // flexDirection: 'row',
-        // justifyContent: 'flex-start'
     },
     image: {
         width: (width-50)/4,

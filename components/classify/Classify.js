@@ -63,10 +63,10 @@ export default class App extends Component {
             mediaType: 'photo',
             includeBase64: true
         }).then(imgs => {
-            console.log(imgs)
             for(let i in imgs){
+                console.log(imgs[i].exif)
                 imageUrls.push({url:imgs[i].path});
-                images.push({url:imgs[i].path,label1:"other",label2:""});
+                images.push({url:imgs[i].path,label1:"other",label2:"",dateTime: imgs[i].exif.DateTime});
             }
             this.setState({
                 imagePaths: imgs.map(i => {
