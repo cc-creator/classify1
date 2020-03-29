@@ -131,7 +131,7 @@ export default class App extends Component {
                     if(i == images.length-1){
                         ToastExample.show("完成分类",ToastExample.SHORT);
                         console.log(images)
-                        Actions.detail({'images': images})
+                        Actions.detail({images: images,source: 'temp'})
                     }
                 });
             }

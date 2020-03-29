@@ -13,11 +13,12 @@ const RecordCell = ({prop}) =>{
     return (
         <View style={styles.container}>
             <View style={styles.describe}>
-                <TouchableOpacity onPress={Actions.detail({group: prop.item.group})}>
+                {/*source: 代表来源，包括未存储temp,本地loacl_remark，远端remote_remark*/}
+                <TouchableOpacity onPress={ () => Actions.detail({images: prop.item.group,source: 'local_remark',title: prop.item.title,remark: prop.item.remark})}>
                     <Card
                         title={prop.item.title}
                         titleStyle={styles.titleStyle}
-                        containerStyle={{width: 380}}
+                        containerStyle={{width: width*0.8}}
                         image={{uri: prop.item.group[0].url}}
                         imageProps={{resizeMode: 'cover'}}>
                             <Text>{prop.item.remark}</Text>

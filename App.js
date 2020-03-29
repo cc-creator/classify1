@@ -27,7 +27,7 @@ const App = () => {
             {/* Tab and it's scenes */}
             <Scene key="record" title="记录" icon={TabIcon}>
               <Scene
-                  key="tftest"
+                  key="record"
                   component={Record}
                   title="分类记录"
               />

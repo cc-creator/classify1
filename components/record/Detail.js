@@ -12,6 +12,7 @@ import { Button,Card,Overlay,Input } from 'react-native-elements';
 import RNFS from 'react-native-fs';
 
 import DetailCell from "./DetailCell";
+import ToastExample from "../../nativeComponents/ToastExample";
 
 let groups = [];
 let images = [];
@@ -262,7 +263,10 @@ export default class Detail extends Component{
         RNFS.writeFile(temp_path,temp_str + JSON.stringify(images),'utf8')
             .then((success) => {
                 RNFS.appendFile(jilu_path,"@"+temp_path,'utf8')
-                    .then((success) => {console.log("导入本地成功")})
+                    .then((success) => {
+                        ToastExample.show("导入本地成功",ToastExample.SHORT);
+                        Actions.record();
+                    })
                     .catch((err) => {})
             })
             .catch((err) => {});
@@ -275,18 +279,17 @@ export default class Detail extends Component{
         this.partition();
         return (
             <View style={styles.container}>
-                    {/*<View style={styles.describe}>*/}
-                    {/*    <Card*/}
-                    {/*        title='名称'*/}
-                    {/*        titleStyle={styles.titleStyle}*/}
-                    {/*        containerStyle={{width: 380}}*/}
-                    {/*        image={{uri: groups[0].group[0].group[0].url}}*/}
-                    {/*    imageProps={{resizeMode: 'cover'}}>*/}
-                    {/*        <Text>*/}
-                    {/*            The idea with React Native Elements is more about component structure than actual design.*/}
-                    {/*        </Text>*/}
-                    {/*    </Card>*/}
-                    {/*</View>*/}
+                { this.props.source !== 'temp' ?
+                    <View style={styles.describe}>
+                        <Card
+                            title={this.props.title}
+                            titleStyle={styles.titleStyle}
+                            containerStyle={{width: width*0.8}}
+                            image={{uri: groups[0].group[0].group[0].url}}
+                        imageProps={{resizeMode: 'cover'}}>
+                            <Text>{this.props.remark}</Text>
+                        </Card>
+                    </View> : null}
                     <FlatList
                         data={groups}
                         keyExtractor={this._keyExtractor}
@@ -299,39 +302,41 @@ export default class Detail extends Component{
                         buttonStyle={styles.buttonStyle}
                         titleStyle={styles.titleStyle}
                         onPress={() => {this.setState({isVisible: true})}}
+                        disabled={this.props.source === 'local_remark'}
                         title='导入本地'
                     />
                     <Button
                         buttonStyle={styles.buttonStyle}
                         titleStyle={styles.titleStyle}
+                        disabled={this.props.source === 'remote_remark'}
                         title='上传云端'
                     />
                 </View>
-                {/*<Overlay isVisible={this.state.isVisible}*/}
-                {/*         onBackdropPress={() => this.setState({ isVisible: false })}*/}
-                {/*         height={height/3.9}>*/}
-                {/*    <Input placeholder='标题' value={this.state.title}*/}
-                {/*           maxLength={10}*/}
-                {/*           onChangeText={(text) => {this.setState({title: text})}}/>*/}
-                {/*    <Input placeholder='备注' value={this.state.remark}*/}
-                {/*           maxLength={35}*/}
-                {/*           multiline={true}*/}
-                {/*           onChangeText={(text) => {this.setState({remark: text})}}/>*/}
-                {/*    <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: 30}}>*/}
-                {/*        <Button*/}
-                {/*            buttonStyle={styles.buttonStyle}*/}
-                {/*            titleStyle={styles.titleStyle}*/}
-                {/*            onPress={this.local_store.bind(this)}*/}
-                {/*            title='确定'*/}
-                {/*        />*/}
-                {/*        <Button*/}
-                {/*            buttonStyle={styles.buttonStyle}*/}
-                {/*            titleStyle={styles.titleStyle}*/}
-                {/*            onPress={() => this.setState({ isVisible: false })}*/}
-                {/*            title='取消'*/}
-                {/*        />*/}
-                {/*    </View>*/}
-                {/*</Overlay>*/}
+                <Overlay isVisible={this.state.isVisible}
+                         onBackdropPress={() => this.setState({ isVisible: false })}
+                         height={height/3.9}>
+                    <Input placeholder='标题' value={this.state.title}
+                           maxLength={10}
+                           onChangeText={(text) => {this.setState({title: text})}}/>
+                    <Input placeholder='备注' value={this.state.remark}
+                           maxLength={35}
+                           multiline={true}
+                           onChangeText={(text) => {this.setState({remark: text})}}/>
+                    <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: 30}}>
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            titleStyle={styles.titleStyle}
+                            onPress={this.local_store.bind(this)}
+                            title='确定'
+                        />
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            titleStyle={styles.titleStyle}
+                            onPress={() => this.setState({ isVisible: false })}
+                            title='取消'
+                        />
+                    </View>
+                </Overlay>
             </View>
         );
     }
@@ -362,7 +367,8 @@ const styles = StyleSheet.create({
         height:50,
         width:120,
         borderRadius: 25,
-        marginBottom: 5
+        marginBottom: 5,
+        opacity: 0.8
     },
     titleStyle: {
         fontSize:20
