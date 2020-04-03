@@ -16,6 +16,7 @@ import ToastExample from "../../nativeComponents/ToastExample";
 
 let groups = [];
 let images = [];
+let flag = true;//true:本地 false:远端
 const rnfsPath = RNFS.DocumentDirectoryPath;
 const jilu_path = rnfsPath + '/jilu.text';
 export default class Detail extends Component{
@@ -259,7 +260,7 @@ export default class Detail extends Component{
 
     local_store() {
         const temp_path = rnfsPath + '/test_' +this.state.title + '.txt';
-        let temp_str = this.state.title + "@" + this.state.remark + "@";
+        let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@";
         RNFS.writeFile(temp_path,temp_str + JSON.stringify(images),'utf8')
             .then((success) => {
                 RNFS.appendFile(jilu_path,"@"+temp_path,'utf8')
@@ -271,6 +272,61 @@ export default class Detail extends Component{
             })
             .catch((err) => {});
         this.setState({isVisible: false})
+    }
+
+    remote_store() {
+        if(!global.variables.userToken){
+            console.log("转去登录");
+            Actions.login();
+        }else {
+            this.setState({isVisible: true})
+        }
+    }
+
+    uploadImages() {
+        console.log("上传图片")
+        let formdata = new FormData();
+        for(let i=0;i<images.length;i++){
+            formdata.append('images',{uri: images[i].url,type: 'multipart/form-data',name: this.getImageName(images[i].url)});
+            formdata.append('dateTimes',images[i].dateTime);
+            formdata.append('label1s',images[i].label1);
+            formdata.append('label2s',images[i].label2);
+        }
+        formdata.append('userId', global.variables.userId);
+        formdata.append('title', this.state.title);
+        formdata.append('remark', this.state.remark);
+        formdata.append('dateTime', this.getDateTime());
+        fetch('http://192.168.195.1:8080/images/uploadImages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formdata})
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({isVisible: false})
+                ToastExample.show("上传成功",ToastExample.SHORT);
+                Actions.record();
+            })
+            .catch(err => console.log(err))
+    }
+
+    getDateTime() {
+        let dateTime = new Date();
+        let _year = dateTime.getFullYear().toString();
+        let _month = (dateTime.getMonth()+1).toString();
+        let _day = dateTime.getDay().toString();
+        let _hour = dateTime.getHours().toString();
+        let _minute = dateTime.getMinutes().toString();
+        let _second = dateTime.getSeconds().toString();
+        let _time = _year + "-" + _month + "-" + _day + " " + _hour + ":" + _minute + ":" + _second;
+        return _time;
+    }
+
+    getImageName(url){
+        let index = url.lastIndexOf('/') + 1;
+        let length = url.length - index;
+        return url.substr(index,length);
     }
 
     _keyExtractor=(item, index)=> ''+index;
@@ -285,7 +341,7 @@ export default class Detail extends Component{
                             title={this.props.title}
                             titleStyle={styles.titleStyle}
                             containerStyle={{width: width*0.8}}
-                            image={{uri: groups[0].group[0].group[0].url}}
+                            image={{uri: this.props.cover}}
                         imageProps={{resizeMode: 'cover'}}>
                             <Text>{this.props.remark}</Text>
                         </Card>
@@ -301,13 +357,20 @@ export default class Detail extends Component{
                     <Button
                         buttonStyle={styles.buttonStyle}
                         titleStyle={styles.titleStyle}
-                        onPress={() => {this.setState({isVisible: true})}}
+                        onPress={() => {
+                            flag = true;
+                            this.setState({isVisible: true})
+                        }}
                         disabled={this.props.source === 'local_remark'}
                         title='导入本地'
                     />
                     <Button
                         buttonStyle={styles.buttonStyle}
                         titleStyle={styles.titleStyle}
+                        onPress={() => {
+                            flag = false;
+                            this.remote_store();
+                        }}
                         disabled={this.props.source === 'remote_remark'}
                         title='上传云端'
                     />
@@ -326,7 +389,13 @@ export default class Detail extends Component{
                         <Button
                             buttonStyle={styles.buttonStyle}
                             titleStyle={styles.titleStyle}
-                            onPress={this.local_store.bind(this)}
+                            onPress={() => {
+                                if(flag){
+                                    this.local_store();
+                                }else {
+                                    this.uploadImages();
+                                }
+                            }}
                             title='确定'
                         />
                         <Button

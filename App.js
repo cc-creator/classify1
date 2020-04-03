@@ -6,8 +6,10 @@ import Classify from './components/classify/Classify';
 import Record from './components/record/Record';
 import Detail from './components/record/Detail';
 import CellDetail from "./components/record/CellDetail";
-import BlueScreen from './components/mine/BlueScreen';
-import BlackScreen from './components/mine/BlackScreen';
+import Login from './components/global/Login';
+import MyInfo from './components/mine/MyInfo';
+import Regist from './components/global/Regist';
+import './components/global/Global';
 
 const TabIcon = ({ focused, title }) => {
 
@@ -55,17 +57,11 @@ const App = () => {
             {/* Tab and it's scenes */}
             <Scene key="my" title="我" icon={TabIcon}>
               <Scene
-                  key="blue"
-                  component={BlueScreen}
-                  title="blue"
-              />
-              <Scene
-                  key="black"
-                  component={BlackScreen}
-                  title="black"
+                  key="myInfo"
+                  component={MyInfo}
+                  title="我的"
               />
             </Scene>
-
           </Tabs>
         </Scene>
       </Router>

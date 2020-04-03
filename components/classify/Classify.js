@@ -64,7 +64,6 @@ export default class App extends Component {
             includeBase64: true
         }).then(imgs => {
             for(let i in imgs){
-                console.log(imgs[i].exif)
                 imageUrls.push({url:imgs[i].path});
                 images.push({url:imgs[i].path,label1:"other",label2:"",dateTime: imgs[i].exif.DateTime});
             }
@@ -151,6 +150,7 @@ export default class App extends Component {
                     buttonStyle={styles.buttonStyle}
                     titleStyle={styles.titleStyle}
                     onPress={this.clissifyImages.bind(this)}
+                    // onPress={this.uploadImages.bind(this)}
                     title='开始分类'
                 />
             </View>
