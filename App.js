@@ -61,7 +61,18 @@ const App = () => {
                   component={MyInfo}
                   title="我的"
               />
+              <Scene
+                key="login"
+                component={Login}
+                title="登录"
+              />
+              <Scene
+                  key="regist"
+                  component={Regist}
+                  title="注册"
+              />
             </Scene>
+
           </Tabs>
         </Scene>
       </Router>
