@@ -4,7 +4,6 @@ import {
     StyleSheet,
     View,
     Text,
-    Image,
     FlatList
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
@@ -277,7 +276,7 @@ export default class Detail extends Component{
     remote_store() {
         if(!global.variables.userToken){
             console.log("转去登录");
-            Actions.login();
+            Actions.logreg();
         }else {
             this.setState({isVisible: true})
         }
@@ -293,7 +292,7 @@ export default class Detail extends Component{
             formdata.append('label2s',images[i].label2);
         }
         formdata.append('userId', global.variables.userId);
-        formdata.append('title', this.state.title);
+        formdata.append('ctitle', this.state.title);
         formdata.append('remark', this.state.remark);
         formdata.append('dateTime', this.getDateTime());
         fetch('http://192.168.195.1:8080/images/uploadImages', {
@@ -338,7 +337,7 @@ export default class Detail extends Component{
                 { this.props.source !== 'temp' ?
                     <View style={styles.describe}>
                         <Card
-                            title={this.props.title}
+                            title={this.props.ctitle}
                             titleStyle={styles.titleStyle}
                             containerStyle={{width: width*0.8}}
                             image={{uri: this.props.cover}}

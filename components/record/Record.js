@@ -33,7 +33,7 @@ export default class Record extends Component{
         });
         if(!global.variables.userToken){
             console.log("转去登录");
-            Actions.login();
+            Actions.logreg();
         }else {
             console.log(global.variables.userId)
             let userId = {"userId": global.variables.userId};
@@ -48,6 +48,7 @@ export default class Record extends Component{
                 .then((response) => response.json())
                 .then((responseJson) => {
                     let temp_groups = responseJson;
+                    console.log(responseJson)
                     this.setState({
                         remote_groups: temp_groups.map(group => {
                             return group;
@@ -71,7 +72,7 @@ export default class Record extends Component{
                     RNFS.readFile(paths[i])
                         .then((result) => {
                             let temp = result.split('@');
-                            temp_groups.push({title: temp[0],remark: temp[1],cover: temp[2],group: JSON.parse(temp[3])})
+                            temp_groups.push({ctitle: temp[0],remark: temp[1],cover: temp[2],group: JSON.parse(temp[3])})
                             if(i == paths.length-1){
                                 this.setState({
                                     local_groups: temp_groups.map(group => {

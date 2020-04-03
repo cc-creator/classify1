@@ -6,9 +6,8 @@ import Classify from './components/classify/Classify';
 import Record from './components/record/Record';
 import Detail from './components/record/Detail';
 import CellDetail from "./components/record/CellDetail";
-import Login from './components/global/Login';
+import LogReg from './components/global/Log&Reg';
 import MyInfo from './components/mine/MyInfo';
-import Regist from './components/global/Regist';
 import './components/global/Global';
 
 const TabIcon = ({ focused, title }) => {
@@ -21,7 +20,6 @@ const App = () => {
   return (
       <Router>
         <Scene key="root">
-          {/* Tab Container */}
           <Tabs
               hideNavBar
               showLabel={false}
@@ -32,6 +30,7 @@ const App = () => {
                   key="record"
                   component={Record}
                   title="分类记录"
+                  titleStyle={{flex:1,textAlign:'center'}}
               />
               <Scene
                   key="detail"
@@ -50,7 +49,7 @@ const App = () => {
                   key="scarlet"
                   component={Classify}
                   title="图片分类"
-                  initial
+                  titleStyle={{flex:1,textAlign:'center'}}
               />
             </Scene>
 
@@ -60,20 +59,16 @@ const App = () => {
                   key="myInfo"
                   component={MyInfo}
                   title="我的"
-              />
-              <Scene
-                key="login"
-                component={Login}
-                title="登录"
-              />
-              <Scene
-                  key="regist"
-                  component={Regist}
-                  title="注册"
+                  titleStyle={{flex:1,textAlign:'center'}}
               />
             </Scene>
-
           </Tabs>
+          <Scene
+              key="logreg"
+              component={LogReg}
+              title={"登录"}
+              hideNavBar
+          />
         </Scene>
       </Router>
   );

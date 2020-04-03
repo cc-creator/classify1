@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
     StyleSheet,
     Text,
@@ -8,9 +8,8 @@ import {
 } from 'react-native';
 import { Card } from "react-native-elements";
 import { Actions } from 'react-native-router-flux';
-import {get} from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
-function getImages(cId,title,remark,cover) {
+function getImages(cId,ctitle,remark,cover) {
     let categoryId = {"categoryId": cId};
     fetch('http://192.168.195.1:8080/images/getImages', {
         method: 'POST',
@@ -22,7 +21,7 @@ function getImages(cId,title,remark,cover) {
     })
         .then((response) => response.json())
         .then((responseJson) => {
-            Actions.detail({images: responseJson,source: 'remote_remark',title: title,remark: remark,cover: cover})
+            Actions.detail({images: responseJson,source: 'remote_remark',ctitle: ctitle,remark: remark,cover: cover})
         })
         .catch(err => console.log(err))
 }
@@ -34,13 +33,13 @@ const RecordCell = ({prop,getFlag}) =>{
                 {/*source: 代表来源，包括未存储temp,本地loacl_remark，远端remote_remark*/}
                 <TouchableOpacity onPress={ () => {
                     if(getFlag()){
-                        Actions.detail({images: prop.item.group,source: 'local_remark',title: prop.item.title,remark: prop.item.remark,cover: prop.item.cover})
+                        Actions.detail({images: prop.item.group,source: 'local_remark',ctitle: prop.item.ctitle,remark: prop.item.remark,cover: prop.item.cover})
                     }else{
-                        getImages(prop.item.categoryId,prop.item.title,prop.item.remark,prop.item.cover);
+                        getImages(prop.item.categoryId,prop.item.ctitle,prop.item.remark,prop.item.cover);
                     }
                 }}>
                     <Card
-                        title={prop.item.title}
+                        title={prop.item.ctitle}
                         titleStyle={styles.titleStyle}
                         containerStyle={{width: width*0.8}}
                         image={{uri: prop.item.cover}}
