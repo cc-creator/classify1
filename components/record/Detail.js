@@ -264,7 +264,7 @@ export default class Detail extends Component{
             .then((success) => {
                 RNFS.appendFile(jilu_path,"@"+temp_path,'utf8')
                     .then((success) => {
-                        ToastExample.show("导入本地成功",ToastExample.SHORT);
+                        ToastExample.show("导出本地成功",ToastExample.SHORT);
                         Actions.record();
                     })
                     .catch((err) => {})
@@ -361,7 +361,7 @@ export default class Detail extends Component{
                             this.setState({isVisible: true})
                         }}
                         disabled={this.props.source === 'local_remark'}
-                        title='导入本地'
+                        title='导出本地'
                     />
                     <Button
                         buttonStyle={styles.buttonStyle}

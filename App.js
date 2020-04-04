@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {Text} from 'react-native';
+import {Text,Dimensions} from 'react-native';
 import { Router, Scene, Tabs } from 'react-native-router-flux';
 
 import Classify from './components/classify/Classify';
@@ -10,6 +10,8 @@ import LogReg from './components/global/Log&Reg';
 import MyInfo from './components/mine/MyInfo';
 import './components/global/Global';
 
+const dimension = Dimensions.get('window')
+const width = dimension.width;
 const TabIcon = ({ focused, title }) => {
 
   return (
@@ -30,7 +32,7 @@ const App = () => {
                   key="record"
                   component={Record}
                   title="分类记录"
-                  titleStyle={{flex:1,textAlign:'center'}}
+                  titleStyle={{left: width/2.65}}
               />
               <Scene
                   key="detail"

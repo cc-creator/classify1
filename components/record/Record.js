@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     FlatList,
-    View,
+    View, Dimensions,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import RNFS from "react-native-fs";
@@ -49,11 +49,15 @@ export default class Record extends Component{
                 .then((responseJson) => {
                     let temp_groups = responseJson;
                     console.log(responseJson)
-                    this.setState({
-                        remote_groups: temp_groups.map(group => {
-                            return group;
+                    if(temp_groups.length == 0){
+                        ToastExample.show("暂无记录",ToastExample.SHORT);
+                    }else{
+                        this.setState({
+                            remote_groups: temp_groups.map(group => {
+                                return group;
+                            })
                         })
-                    })
+                    }
                 })
                 .catch(err => console.log(err))
         }
@@ -68,21 +72,60 @@ export default class Record extends Component{
             .then((result) => {
                 let paths = result.split('@');
                 paths.splice(0,1);
-                for(let i=0;i<paths.length;i++){
-                    RNFS.readFile(paths[i])
-                        .then((result) => {
-                            let temp = result.split('@');
-                            temp_groups.push({ctitle: temp[0],remark: temp[1],cover: temp[2],group: JSON.parse(temp[3])})
-                            if(i == paths.length-1){
-                                this.setState({
-                                    local_groups: temp_groups.map(group => {
-                                        return group;
+                if(paths.length == 0){
+                    ToastExample.show("暂无记录",ToastExample.SHORT);
+                }else{
+                    for(let i=0;i<paths.length;i++){
+                        RNFS.readFile(paths[i])
+                            .then((result) => {
+                                let temp = result.split('@');
+                                temp_groups.push({ctitle: temp[0],remark: temp[1],cover: temp[2],group: JSON.parse(temp[3])})
+                                if(i == paths.length-1){
+                                    this.setState({
+                                        local_groups: temp_groups.map(group => {
+                                            return group;
+                                        })
                                     })
-                                })
-                            }
-                        })
-                        .catch((err) => {})
+                                }
+                            })
+                            .catch((err) => {})
+                    }
                 }
+            })
+            .catch((err) => {})
+    }
+
+    deleteRecord(index) {
+        RNFS.readFile(jilu_path)
+            .then((result) => {
+                let paths = result.split('@');
+                paths.splice(0,1);
+                //得到要删除记录的文件路径
+                let delpath = paths[index];
+                //删除
+                RNFS.unlink(delpath)
+                    .then(()=>{
+                        //原有的记录文件一并删除
+                        RNFS.unlink(jilu_path)
+                            .then(()=>{
+                                //写入新的记录文件
+                                paths.splice(index,1)
+                                for(let i=0;i<paths.length;i++){
+                                    RNFS.appendFile(jilu_path,"@"+paths[i],'utf8')
+                                        .then((success) => {
+                                            if(i == paths.length-1){
+                                                ToastExample.show("删除记录成功",ToastExample.SHORT);
+                                                this.local_get();
+                                            }
+                                        })
+                                        .catch((err) => {})
+                                }
+                            }).catch((err)=>{
+                            console.log(err.message);
+                        })
+                    }).catch((err)=>{
+                    console.log(err.message);
+                })
             })
             .catch((err) => {})
     }
@@ -92,13 +135,13 @@ export default class Record extends Component{
             <View style={styles.container}>
                 <View style={styles.buttonView}>
                     <Button
-                        buttonStyle={styles.buttonStyle}
+                        buttonStyle={this.state.flag ? styles.buttonStyle1 : styles.buttonStyle2}
                         titleStyle={styles.titleStyle}
                         onPress={this.local_get.bind(this)}
                         title='本地记录'
                     />
                     <Button
-                        buttonStyle={styles.buttonStyle}
+                        buttonStyle={this.state.flag ? styles.buttonStyle2 : styles.buttonStyle1}
                         titleStyle={styles.titleStyle}
                         onPress={this.remote_get.bind(this)}
                         title='远端记录'
@@ -112,6 +155,7 @@ export default class Record extends Component{
                         renderItem={(item) => <RecordCell
                             prop={item}
                             getFlag={() => {return this.state.flag}}
+                            deleteRecord={this.deleteRecord.bind(this)}
                         />}/> :
                         <FlatList
                             data={this.state.remote_groups}
@@ -119,6 +163,7 @@ export default class Record extends Component{
                             renderItem={(item) => <RecordCell
                                 prop={item}
                                 getFlag={() => {return this.state.flag}}
+                                deleteRecord={this.deleteRecord.bind(this)}
                             />}/>}
                 </View>
             </View>
@@ -133,9 +178,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         marginTop: 10
     },
-    buttonStyle: {
+    buttonStyle1: {
         height:50,
         width:120
+    },
+    buttonStyle2: {
+        height:50,
+        width:120,
+        opacity: 0.7
     },
     titleStyle: {
         fontSize:20

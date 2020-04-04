@@ -26,7 +26,7 @@ function getImages(cId,ctitle,remark,cover) {
         .catch(err => console.log(err))
 }
 
-const RecordCell = ({prop,getFlag}) =>{
+const RecordCell = ({prop,getFlag,deleteRecord}) =>{
     return (
         <View style={styles.container}>
             <View style={styles.describe}>
@@ -48,6 +48,9 @@ const RecordCell = ({prop,getFlag}) =>{
                     </Card>
                 </TouchableOpacity>
             </View>
+            <TouchableOpacity style={{width: 40,height: 40,backgroundColor: '#2089DC',borderRadius: 20,top: -155,left: -215}}
+                              onPress={() => {deleteRecord(prop.index)}}>
+            </TouchableOpacity>
         </View>
     );
 }

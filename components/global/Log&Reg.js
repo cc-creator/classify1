@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: 'white',
         fontWeight: 'bold',
-        opacity: 0.8
+        opacity: 0.7
     },
     textBelow: {
         backgroundColor:'white',
