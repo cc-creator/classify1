@@ -96,38 +96,64 @@ export default class Record extends Component{
     }
 
     deleteRecord(index) {
-        RNFS.readFile(jilu_path)
-            .then((result) => {
-                let paths = result.split('@');
-                paths.splice(0,1);
-                //得到要删除记录的文件路径
-                let delpath = paths[index];
-                //删除
-                RNFS.unlink(delpath)
-                    .then(()=>{
-                        //原有的记录文件一并删除
-                        RNFS.unlink(jilu_path)
-                            .then(()=>{
-                                //写入新的记录文件
-                                paths.splice(index,1)
-                                for(let i=0;i<paths.length;i++){
-                                    RNFS.appendFile(jilu_path,"@"+paths[i],'utf8')
-                                        .then((success) => {
-                                            if(i == paths.length-1){
-                                                ToastExample.show("删除记录成功",ToastExample.SHORT);
-                                                this.local_get();
-                                            }
-                                        })
-                                        .catch((err) => {})
-                                }
-                            }).catch((err)=>{
-                            console.log(err.message);
-                        })
-                    }).catch((err)=>{
-                    console.log(err.message);
+        if(this.state.flag){
+            RNFS.readFile(jilu_path)
+                .then((result) => {
+                    let paths = result.split('@');
+                    paths.splice(0,1);
+                    //得到要删除记录的文件路径
+                    let delpath = paths[index];
+                    //删除
+                    RNFS.unlink(delpath)
+                        .then(()=>{
+                            //原有的记录文件一并删除
+                            RNFS.unlink(jilu_path)
+                                .then(()=>{
+                                    //写入新的记录文件
+                                    paths.splice(index,1)
+                                    for(let i=0;i<paths.length;i++){
+                                        RNFS.appendFile(jilu_path,"@"+paths[i],'utf8')
+                                            .then((success) => {
+                                                if(i == paths.length-1){
+                                                    ToastExample.show("删除记录成功",ToastExample.SHORT);
+                                                    this.local_get();
+                                                }
+                                            })
+                                            .catch((err) => {})
+                                    }
+                                }).catch((err)=>{
+                                console.log(err.message);
+                            })
+                        }).catch((err)=>{
+                        console.log(err.message);
+                    })
                 })
+                .catch((err) => {})
+        }else {
+            let cId = {"cId": this.state.remote_groups[index].categoryId};
+            fetch('http://192.168.195.1:8080/category/logDelCategory', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cId)
             })
-            .catch((err) => {})
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(index)
+                    let temp_groups = this.state.remote_groups;
+                    temp_groups.splice(index,1);
+                    this.setState({
+                        remote_groups: temp_groups.map(group => {
+                            return group
+                        })
+                    })
+                    ToastExample.show("删除记录成功",ToastExample.SHORT);
+                })
+                .catch(err => console.log(err))
+        }
+
     }
 
     render(){
