@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     Text,
+    Image,
     View,
     ImageBackground,
     Dimensions,
     TouchableOpacity
 } from 'react-native';
 import {Button, Input} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import ToastExample from "../../nativeComponents/ToastExample";
+import Icon from "react-native-vector-icons/AntDesign"
 
 export default class LogReg extends Component {
 
@@ -74,7 +75,7 @@ export default class LogReg extends Component {
     render() {
         return (
             <View>
-                <ImageBackground style={{width: width,height: height}} source={require('../../bg2.jpg')}>
+                <ImageBackground style={{width: width,height: height}} source={require('../../imgs/bg2.jpg')}>
                     <View style={this.state.below_flag ? styles.textView_login : styles.textView_regist}>
                         <TouchableOpacity onPress={() => this.setState({below_flag: true})}>
                             <Text style={this.state.below_flag ? styles.textStyle1 : styles.textStyle2}>登录</Text>
@@ -87,16 +88,24 @@ export default class LogReg extends Component {
                     </View>
                     {this.state.below_flag ?
                         <View style={styles.container_login}>
-                            <Text style={styles.text}>账号</Text>
-                            <Input value={this.state.account}
-                                   onChangeText={(text) => this.setState({account: text})}
-                                placeholder='INPUT WITH CUSTOM ICON'
-                            />
-                            <Text style={styles.text}>密码</Text>
-                            <Input value={this.state.passwd}
-                                   onChangeText={(text) => this.setState({passwd: text})}
-                                placeholder='INPUT WITH CUSTOM ICON'
-                            />
+                            <View style={styles.inputView}>
+                                <Input value={this.state.account}
+                                       containerStyle={{width: width*0.6}}
+                                       onChangeText={(text) => this.setState({account: text})}
+                                       label={'账号'}/*
+                                       leftIcon={<Icon name={'user'} size={40} color={'gray'}/>}
+                                       leftIconContainerStyle={{left: -15}}*/
+                                       placeholder='请输入账号'
+                                />
+                            </View>
+                            <View style={styles.inputView}>
+                                <Input value={this.state.passwd}
+                                       containerStyle={{width: width*0.6}}
+                                       onChangeText={(text) => this.setState({passwd: text})}
+                                       label={'密码'}
+                                       placeholder='请输入密码'
+                                />
+                            </View>
                             <Button
                                 buttonStyle={styles.buttonStyle}
                                 titleStyle={styles.titleStyle}
@@ -105,21 +114,27 @@ export default class LogReg extends Component {
                             />
                     </View> :
                     <View style={styles.container_regist}>
-                        <Text style={styles.text}>账号</Text>
-                        <Input value={this.state.account}
-                               onChangeText={(text) => this.setState({account: text})}
-                               placeholder='INPUT WITH CUSTOM ICON'
-                        />
-                        <Text style={styles.text}>密码</Text>
-                        <Input value={this.state.passwd1}
-                               onChangeText={(text) => this.setState({passwd1: text})}
-                               placeholder='INPUT WITH CUSTOM ICON'
-                        />
-                        <Text style={styles.text}>确认密码</Text>
-                        <Input value={this.state.passwd2}
-                               onChangeText={(text) => this.setState({passwd2: text})}
-                               placeholder='INPUT WITH CUSTOM ICON'
-                        />
+                        <View style={styles.inputView}>
+                            <Input value={this.state.account}
+                                   containerStyle={{width: width*0.6}}
+                                   onChangeText={(text) => this.setState({account: text})}
+                                   label={'账号'}
+                                   placeholder='请输入账号'/>
+                        </View>
+                        <View style={styles.inputView}>
+                            <Input value={this.state.passwd1}
+                                   containerStyle={{width: width*0.6}}
+                                   onChangeText={(text) => this.setState({passwd1: text})}
+                                   label={'密码'}
+                                   placeholder='请输入密码'/>
+                        </View>
+                        <View style={styles.inputView}>
+                            <Input value={this.state.passwd2}
+                                   containerStyle={{width: width*0.6}}
+                                   onChangeText={(text) => this.setState({passwd2: text})}
+                                   label={'确认密码'}
+                                   placeholder='请再次输入密码'/>
+                        </View>
                         <Button
                             buttonStyle={styles.buttonStyle}
                             titleStyle={styles.titleStyle}
@@ -139,7 +154,7 @@ let width = dimension.width
 const styles = StyleSheet.create({
     container_login:{
         width: width/1.5,
-        height: height/3,
+        height: height/3.3,
         backgroundColor: 'white',
         top: height/4.2,
         left: width/5.5,
@@ -150,7 +165,7 @@ const styles = StyleSheet.create({
     },
     container_regist: {
         width: width/1.5,
-        height: height/2.35,
+        height: height/2.5,
         backgroundColor: 'white',
         top: height/5.2,
         left: width/5.5,
@@ -167,8 +182,9 @@ const styles = StyleSheet.create({
         height:50,
         width:120,
         borderRadius: 5,
-        marginLeft: width/5.1,
-        marginTop: height/24
+        top: -25,
+        left: 90,
+        marginTop: 40
     },
     titleStyle: {
         fontSize:20
@@ -205,6 +221,15 @@ const styles = StyleSheet.create({
         width:50,
         height:50,
         borderRadius:25,
+    },
+    imageStyle: {
+        width: 38,
+        height: 38,
+        marginTop: 10
+    },
+    inputView: {
+        flex: 1,
+        flexDirection: 'row'
     }
 });
 

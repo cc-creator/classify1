@@ -36,12 +36,13 @@ const styles = StyleSheet.create({
 
 let imageUrls = [];
 let images = [];
+let again = false;//是否为再次分类
 let index = 0;
 let tflite = new Tflite();
-export default class App extends Component {
+export default class Classify extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             imagePaths: null,
             isImageShow: false,
@@ -108,14 +109,15 @@ export default class App extends Component {
             });
     }
 
-    clissifyImages(){
+    async clissifyImages(){
         if(images.length == 0)
             ToastExample.show("请选择图片",ToastExample.SHORT);
         else{
             ToastExample.show("开始分类",ToastExample.SHORT);
+            let dateBegin = new Date();
             console.log("-----------分类结果-----------")
             for(let i=0;i<images.length;i++){
-                tflite.runModelOnImage({
+                await tflite.runModelOnImage({
                     path: images[i].url,  // 图像文件地址，必填
                     imageMean: 128.0, // mean，默认为 127.5
                     imageStd: 128.0,  // std，默认为 127.5
@@ -129,12 +131,63 @@ export default class App extends Component {
                     }
                     if(i == images.length-1){
                         ToastExample.show("完成分类",ToastExample.SHORT);
-                        console.log(images)
-                        Actions.detail({images: images,source: 'temp'})
+                        let dateEnd = new Date();
+                        /*继续分类将已经分好类的图片加进images中*/
+                        if(this.props.again){
+                            for(let j=0;j<this.props.images.length;j++){
+                                images.push(this.props.images[j]);
+                            }
+                        }
+                        let time = (this.changeTwoDecimal_f((dateEnd-dateBegin)/1000) + (typeof(this.props.time) === 'undefined' ? 0 : this.props.time)).toString();
+                        let source = typeof(this.props.source) === 'undefined' ? 'temp' : this.props.source;
+                        Actions.detail({
+                            images: images,
+                            source: source,
+                            time: time,
+                            dateTime: this.getDateTime(dateBegin),
+                            again: this.props.again,
+                            ctitle: this.props.ctitle,
+                            remark: this.props.remark,
+                            pdfUri: this.props.pdfUri,
+                            path: this.props.path,
+                            categoryId: this.props.categoryId,
+                            cover: this.props.cover});
                     }
                 });
             }
         }
+    }
+
+    changeTwoDecimal_f(x) {
+        var f_x = parseFloat(x);
+        if (isNaN(f_x))
+        {
+            return 0;
+        }
+        var f_x = Math.round(x*100)/100;
+        var s_x = f_x.toString();
+        var pos_decimal = s_x.indexOf('.');
+        if (pos_decimal < 0)
+        {
+            pos_decimal = s_x.length;
+            s_x += '.';
+        }
+        while (s_x.length <= pos_decimal + 2)
+        {
+            s_x += '0';
+        }
+        return s_x;
+    }
+
+    getDateTime(dateTime) {
+        let _year = dateTime.getFullYear().toString();
+        let _month = (dateTime.getMonth()+1).toString();
+        let _day = dateTime.getDay().toString();
+        let _hour = dateTime.getHours().toString();
+        let _minute = dateTime.getMinutes().toString();
+        let _second = dateTime.getSeconds().toString();
+        let _time = _year + "-" + _month + "-" + _day + " " + _hour + ":" + _minute + ":" + _second;
+        return _time;
     }
 
     render() {

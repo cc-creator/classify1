@@ -1,6 +1,6 @@
-import React,{Component} from 'react';
-import {Text,Dimensions} from 'react-native';
-import { Router, Scene, Tabs } from 'react-native-router-flux';
+import React from 'react';
+import {Text} from 'react-native';
+import {Modal, Router, Scene, Tabs} from 'react-native-router-flux';
 
 import Classify from './components/classify/Classify';
 import Record from './components/record/Record';
@@ -10,10 +10,7 @@ import LogReg from './components/global/Log&Reg';
 import MyInfo from './components/mine/MyInfo';
 import './components/global/Global';
 
-const dimension = Dimensions.get('window')
-const width = dimension.width;
 const TabIcon = ({ focused, title }) => {
-
   return (
       <Text style={{color: focused ? '#2089DC' : 'black'}}>{title}</Text>
   );
@@ -32,7 +29,6 @@ const App = () => {
                   key="record"
                   component={Record}
                   title="分类记录"
-                  titleStyle={{left: width/2.65}}
               />
               <Scene
                   key="detail"
@@ -48,16 +44,15 @@ const App = () => {
             {/* Tab and it's scenes */}
             <Scene key="classify" title="分类" icon={TabIcon}>
               <Scene
-                  key="scarlet"
+                  key="classify"
                   component={Classify}
                   title="图片分类"
-                  titleStyle={{flex:1,textAlign:'center'}}
               />
             </Scene>
 
             {/* Tab and it's scenes */}
             <Scene key="my" title="我" icon={TabIcon}>
-              <Scene
+              <Modal
                   key="myInfo"
                   component={MyInfo}
                   title="我的"

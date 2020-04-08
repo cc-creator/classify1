@@ -79,23 +79,24 @@ export default class Record extends Component{
                         RNFS.readFile(paths[i])
                             .then((result) => {
                                 let temp = result.split('@');
-                                temp_groups.push({ctitle: temp[0],remark: temp[1],cover: temp[2],group: JSON.parse(temp[3])})
+                                temp_groups.push({path: paths[i],ctitle: temp[0],remark: temp[1],cover: temp[2],time: temp[3],dateTime: temp[4],group: JSON.parse(temp[5]),pdfUri: temp[6]})
                                 if(i == paths.length-1){
                                     this.setState({
                                         local_groups: temp_groups.map(group => {
                                             return group;
                                         })
                                     })
+                                    console.log(this.state.local_groups)
                                 }
                             })
                             .catch((err) => {})
                     }
                 }
             })
-            .catch((err) => {})
+            .catch((err) => {console.log(err)})
     }
 
-    deleteRecord(index) {
+    deleteRecord(index,pdfUri) {
         if(this.state.flag){
             RNFS.readFile(jilu_path)
                 .then((result) => {
@@ -111,19 +112,28 @@ export default class Record extends Component{
                                 .then(()=>{
                                     //写入新的记录文件
                                     paths.splice(index,1)
-                                    for(let i=0;i<paths.length;i++){
-                                        RNFS.appendFile(jilu_path,"@"+paths[i],'utf8')
-                                            .then((success) => {
-                                                if(i == paths.length-1){
-                                                    ToastExample.show("删除记录成功",ToastExample.SHORT);
-                                                    this.local_get();
-                                                }
-                                            })
-                                            .catch((err) => {})
+                                    if(paths.length == 0){
+                                        this.setState({local_groups: []})
+                                        ToastExample.show("删除记录成功",ToastExample.SHORT);
+                                    }else{
+                                        for(let i=0;i<paths.length;i++){
+                                            RNFS.appendFile(jilu_path,"@"+paths[i],'utf8')
+                                                .then((success) => {
+                                                    if(i == paths.length-1){
+                                                        ToastExample.show("删除记录成功",ToastExample.SHORT);
+                                                        this.local_get();
+                                                    }
+                                                })
+                                                .catch((err) => {})
+                                        }
                                     }
                                 }).catch((err)=>{
                                 console.log(err.message);
                             })
+                            //对应的PDF删除
+                            RNFS.unlink(pdfUri)
+                                .then(()=>{})
+                                .catch(()=>{})
                         }).catch((err)=>{
                         console.log(err.message);
                     })
@@ -170,7 +180,7 @@ export default class Record extends Component{
                         buttonStyle={this.state.flag ? styles.buttonStyle2 : styles.buttonStyle1}
                         titleStyle={styles.titleStyle}
                         onPress={this.remote_get.bind(this)}
-                        title='远端记录'
+                        title='云端记录'
                     />
                 </View>
                 <View style={styles.listView}>
@@ -196,7 +206,8 @@ export default class Record extends Component{
         );
     }
 }
-
+let dimensions = Dimensions.get("window")
+let height = dimensions.height
 const styles = StyleSheet.create({
     buttonView: {
         flex: 1,
@@ -217,6 +228,7 @@ const styles = StyleSheet.create({
         fontSize:20
     },
     listView: {
-        marginTop: 50
+        marginTop: 60,
+        height: height*0.75
     }
 });

@@ -4,7 +4,7 @@ import {
     StyleSheet,
     View,
     Text,
-    FlatList
+    FlatList, Modal
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Button,Card,Overlay,Input } from 'react-native-elements';
@@ -12,68 +12,151 @@ import RNFS from 'react-native-fs';
 
 import DetailCell from "./DetailCell";
 import ToastExample from "../../nativeComponents/ToastExample";
+import RNHTMLtoPDF from "react-native-html-to-pdf";
+import Pdf from "react-native-pdf";
 
 let groups = [];
+let again = false;
+let path = '';
+let categoryId = '';
+let source = '';
 let images = [];
+let ctitle = '';
+let remark = '';
+let cover = '';
+let time = '';
+let dateTime = '';
 let flag = true;//true:本地 false:远端
 const rnfsPath = RNFS.DocumentDirectoryPath;
 const jilu_path = rnfsPath + '/jilu.text';
+let images_animal_anphibious = [];
+let images_animal_bird = [];
+let images_animal_fish = [];
+let images_animal_insect = [];
+let images_animal_mammal = [];
+let images_clothing_clothing = [];
+let images_clothing_hat = [];
+let images_clothing_shoes = [];
+let images_document_erweima = [];
+let images_document_passport = [];
+let images_food_dessert = [];
+let images_food_drink = [];
+let images_food_meal = [];
+let images_person_dubbo = [];
+let images_person_multi = [];
+let images_person_passport = [];
+let images_person_single = [];
+let images_plant_flower = [];
+let images_plant_grass = [];
+let images_plant_tree = [];
+let images_scenery_night = [];
+let images_scenery_outside = [];
+let images_thing_dianqi = [];
+let images_thing_furniture = [];
+let images_other_other = [];
+let images_person = [];
+let images_animal = [];
+let images_food = [];
+let images_scenery = [];
+let images_plant = [];
+let images_thing = [];
+let images_clothing = [];
+let images_document = [];
+let images_other = [];
+let sum_person = 0;
+let sum_animal = 0;
+let sum_food = 0;
+let sum_plant = 0;
+let sum_clothing = 0;
+let sum_thing = 0;
+let sum_document = 0;
+let sum_scenery = 0;
+let sum_other = 0;
 export default class Detail extends Component{
     constructor(props){
         super(props);
         this.state = {
             isVisible: false,
-            title: '',
-            remark: ''
+            title: this.props.ctitle,
+            remark: this.props.remark,
+            isPdf: false,
+            visible: false,
+            source: ''
         }
+        if(this.props.pdfUri != null && !this.props.again){
+            RNFS.exists(this.props.pdfUri)
+                .then((res) => {
+                    this.setState({
+                        isPdf: res,
+                        source: {uri: this.props.pdfUri}
+                    })
+                })
+        }
+        path = this.props.path;
+        categoryId = this.props.categoryId;
+        again = this.props.again;
+        ctitle = this.props.ctitle;
+        remark = this.props.remark;
+        cover = this.props.cover;
+        time = this.props.time;
+        dateTime = this.props.dateTime;
+        images = this.props.images;
+        source = this.props.source;
+        console.log("this.props.pdfUri")
+        console.log(this.props.pdfUri)
+        console.log("path");
+        console.log(path)
+        console.log("again");
+        console.log(again)
+        console.log("source");
+        console.log(source)
     }
 
     partition(){
         groups = [];
-        images = this.props.images;
-        const images_animal_anphibious = [];
-        const images_animal_bird = [];
-        const images_animal_fish = [];
-        const images_animal_insect = [];
-        const images_animal_mammal = [];
-        const images_clothing_clothing = [];
-        const images_clothing_hat = [];
-        const images_clothing_shoes = [];
-        const images_document_erweima = [];
-        const images_document_passport = [];
-        const images_food_dessert = [];
-        const images_food_drink = [];
-        const images_food_meal = [];
-        const images_person_dubbo = [];
-        const images_person_multi = [];
-        const images_person_passport = [];
-        const images_person_single = [];
-        const images_plant_flower = [];
-        const images_plant_grass = [];
-        const images_plant_tree = [];
-        const images_scenery_night = [];
-        const images_scenery_outside = [];
-        const images_thing_dianqi = [];
-        const images_thing_furniture = [];
-        const images_other_other = [];
-        const images_person = [];
-        const images_animal = [];
-        const images_food = [];
-        const images_scenery = [];
-        const images_plant = [];
-        const images_thing = [];
-        const images_clothing = [];
-        const images_document = [];
-        const images_other = [];
-        let sum_person = 0;
-        let sum_animal = 0;
-        let sum_food = 0;
-        let sum_plant = 0;
-        let sum_clothing = 0;
-        let sum_thing = 0;
-        let sum_document = 0;
-        let sum_scenery = 0;
-        let sum_other = 0;
+        images_animal_anphibious = [];
+        images_animal_bird = [];
+        images_animal_fish = [];
+        images_animal_insect = [];
+        images_animal_mammal = [];
+        images_clothing_clothing = [];
+        images_clothing_hat = [];
+        images_clothing_shoes = [];
+        images_document_erweima = [];
+        images_document_passport = [];
+        images_food_dessert = [];
+        images_food_drink = [];
+        images_food_meal = [];
+        images_person_dubbo = [];
+        images_person_multi = [];
+        images_person_passport = [];
+        images_person_single = [];
+        images_plant_flower = [];
+        images_plant_grass = [];
+        images_plant_tree = [];
+        images_scenery_night = [];
+        images_scenery_outside = [];
+        images_thing_dianqi = [];
+        images_thing_furniture = [];
+        images_other_other = [];
+        images_person = [];
+        images_animal = [];
+        images_food = [];
+        images_scenery = [];
+        images_plant = [];
+        images_thing = [];
+        images_clothing = [];
+        images_document = [];
+        images_other = [];
+        sum_person = 0;
+        sum_animal = 0;
+        sum_food = 0;
+        sum_plant = 0;
+        sum_clothing = 0;
+        sum_thing = 0;
+        sum_document = 0;
+        sum_scenery = 0;
+        sum_other = 0;
         for(let i=0;i<images.length;i++){
             if(images[i].label2 == 'anphibious'){
                 images_animal_anphibious.push(images[i]);
@@ -213,7 +296,7 @@ export default class Detail extends Component{
             images_plant.push({group: images_plant_grass,label1: '植物',label2: '小草',sum: images_plant_grass.length})
         }
         if(images_plant_flower.length > 0){
-            images_plant.push({group: images_plant_flower,label1: '植物',label2: '花朵',sum: images_plant_flower.length})
+            images_plant.push({group: images_plant_flower,label1: '植物',label2: '鲜花',sum: images_plant_flower.length})
         }
         if(images_plant_tree.length > 0){
             images_plant.push({group: images_plant_tree,label1: '植物',label2: '树木',sum: images_plant_tree.length})
@@ -258,19 +341,43 @@ export default class Detail extends Component{
     }
 
     local_store() {
-        const temp_path = rnfsPath + '/test_' +this.state.title + '.txt';
-        let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@";
-        RNFS.writeFile(temp_path,temp_str + JSON.stringify(images),'utf8')
-            .then((success) => {
-                RNFS.appendFile(jilu_path,"@"+temp_path,'utf8')
-                    .then((success) => {
-                        ToastExample.show("导出本地成功",ToastExample.SHORT);
-                        Actions.record();
-                    })
-                    .catch((err) => {})
-            })
-            .catch((err) => {});
-        this.setState({isVisible: false})
+        if(!again){
+            console.log("首次分类")
+            let local_path = rnfsPath + '/test_' +this.state.title + '.txt';
+            let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@" + time + "@" + dateTime + "@" + JSON.stringify(images) + "@";
+            temp_str += this.state.source === '' ? '' : this.state.source.uri;
+            console.log(temp_str);
+            RNFS.writeFile(local_path,temp_str,'utf8')
+                .then((success) => {
+                    RNFS.appendFile(jilu_path,"@"+local_path,'utf8')
+                        .then((success) => {
+                            ToastExample.show("导出本地成功",ToastExample.SHORT);
+                            Actions.record();
+                        })
+                        .catch((err) => {})
+                })
+                .catch((err) => {});
+            this.setState({isVisible: false})
+        }else {
+            console.log("继续分类")
+            RNFS.unlink(this.props.pdfUri)
+                .then(()=>{})
+                .catch(() => {})
+            let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@" + time + "@" + dateTime + "@" + JSON.stringify(images) + "@";
+            temp_str += this.state.source === '' ? '' : this.state.source.uri;
+            RNFS.unlink(path)
+                .then(()=>{
+                    RNFS.writeFile(path,temp_str,'utf8')
+                        .then((success) => {
+                            ToastExample.show("导出本地成功",ToastExample.SHORT);
+                            Actions.record();
+                        })
+                        .catch((err) => {});
+                })
+                .catch(err => {})
+            this.setState({isVisible: false})
+        }
+
     }
 
     remote_store() {
@@ -294,7 +401,9 @@ export default class Detail extends Component{
         formdata.append('userId', global.variables.userId);
         formdata.append('ctitle', this.state.title);
         formdata.append('remark', this.state.remark);
-        formdata.append('dateTime', this.getDateTime());
+        formdata.append('time',time);
+        formdata.append('pdfUri',this.state.source === '' ? '' : this.state.source.uri);
+        formdata.append('dateTime', dateTime);
         fetch('http://192.168.195.1:8080/images/uploadImages', {
             method: 'POST',
             headers: {
@@ -330,6 +439,70 @@ export default class Detail extends Component{
 
     _keyExtractor=(item, index)=> ''+index;
 
+    makeHtmlString(ctitle,remark,length,time,dateTime) {
+        let result = '';
+        result += typeof(ctitle) === 'undefined' ? '' : '<h1 style="color: red">'+ ctitle +'</h1><br/>';
+        result += typeof(remark) == 'undefined' ? '' : '<h1>'+ remark +'</h1><br/>';
+        result += '<h1>总共:' + length + '张图片</h1><br/>' +
+            '<h1>分类共用时:' + time + '秒</h1><br/>' +
+            '<h1>分类时间:' + dateTime + '</h1>';
+        result += sum_person == 0 ? '' : '<h1>人像:' + sum_person + '张</h1>';
+        result += images_person_single.length == 0 ? '' : '<h2>单人照:' + images_person_single.length + '张</h2>';
+        result += images_person_dubbo.length == 0 ? '' : '<h2>双人照:' + images_person_dubbo.length + '张</h2>';
+        result += images_person_multi.length == 0 ? '' : '<h2>集体照:' + images_person_dubbo.length + '张</h2>';
+        result += images_person_passport.length == 0 ? '' : '<h2>证件照:' + images_person_passport.length + '张</h2>';
+        result += sum_animal == 0 ? '' : '<h1>动物:' + sum_animal + '张</h1>'
+        result += images_animal_mammal.length == 0 ? '' : '<h2>哺乳类:' + images_animal_mammal.length + '张</h2>';
+        result += images_animal_bird.length == 0 ? '' : '<h2>鸟类:' + images_animal_bird.length + '张</h2>';
+        result += images_animal_fish.length == 0 ? '' : '<h2>鱼类:' + images_animal_fish.length + '张</h2>';
+        result += images_animal_insect.length == 0 ? '' : '<h2>昆虫:' + images_animal_insect.length + '张</h2>';
+        result += images_animal_anphibious.length == 0 ? '' : '<h2>两栖类:' + images_animal_anphibious.length + '张</h2>';
+        result += sum_food == 0 ? '' : '<h1>美食:' + sum_food + '张</h1>';
+        result += images_food_meal.length == 0 ? '' : '<h2>食物:' + images_food_meal.length + '张</h2>';
+        result += images_food_drink.length == 0 ? '' : '<h2>饮料:' + images_food_drink.length + '张</h2>';
+        result += images_food_dessert.length == 0 ? '' : '<h2>甜点:' + images_food_dessert.length + '张</h2>';
+        result += sum_plant == 0 ? '' : '<h1>植物:' + sum_plant + '张</h1>';
+        result += images_plant_flower.length == 0 ? '' : '<h2>鲜花:' + images_plant_flower.length + '张</h2>';
+        result += images_plant_grass.length == 0 ? '' : '<h2>小草:' + images_plant_grass.length + '张</h2>';
+        result += images_plant_tree.length == 0 ? '' : '<h2>树木:' + images_plant_tree.length + '张</h2>';
+        result += sum_clothing == 0 ? '' : '<h1>服装:' + sum_clothing + '张</h1>';
+        result += images_clothing_clothing.length == 0 ? '' : '<h2>衣服:' + images_clothing_clothing.length + '张</h2>';
+        result += images_clothing_hat.length == 0 ? '' : '<h2>帽子:' + images_clothing_hat.length + '张</h2>';
+        result += images_clothing_shoes.length == 0 ? '' : '<h2>鞋子:' + images_clothing_shoes.length + '张</h2>';
+        result += sum_thing == 0 ? '' : '<h1>物品:' + sum_thing + '张</h1>';
+        result += images_thing_furniture.length == 0 ? '' : '<h2>家具:' + images_thing_furniture.length + '张</h2>';
+        result += images_thing_dianqi.length == 0 ? '' : '<h2>电器:' + images_thing_dianqi.length + '张</h2>';
+        result += sum_document == 0 ? '' : '<h1>文档:' + sum_document + '张</h1>';
+        result += images_document_erweima.length == 0 ? '' : '<h2>二维码:' + images_document_erweima.length + '张</h2>';
+        result += images_document_passport.length == 0 ? '' : '<h2>证件:' + images_document_passport.length + '张</h2>';
+        result += sum_scenery == 0 ? '' : '<h1>风景:' + sum_scenery + '张</h1>';
+        result += images_scenery_outside.length == 0 ? '' : '<h2>室外:' + images_scenery_outside.length + '张</h2>';
+        result += images_scenery_night.length == 0 ? '' : '<h2>夜景:' + images_scenery_night.length + '张</h2>';
+        result += sum_other == 0 ? '' : '<h1>其他:' + sum_other + '张</h1>';
+        return  result;
+    }
+
+    async createPDF() {
+        let options = {
+            html: this.makeHtmlString(ctitle,remark,images.length,time,dateTime),
+            fileName: typeof(ctitle) === 'undefined' ? new Date().getTime().toString() : ctitle.toString(),
+            directory: 'Documents',
+        };
+
+        console.log("生成PDF")
+        let file = await RNHTMLtoPDF.convert(options)
+        this.setState({source: {uri: 'file://'+file.filePath}})
+        console.log('file://'+file.filePath)
+        /*从总览页面进入详情后生成PDF*/
+        if(typeof(path) !== 'undefined'){
+            RNFS.appendFile(path,'file://'+file.filePath,'utf8')
+                .then((success) => {
+                    ToastExample.show("生成PDF成功",ToastExample.SHORT);
+                })
+                .catch((err) => {})
+        }
+    }
+
     render()  {
         this.partition();
         return (
@@ -337,12 +510,12 @@ export default class Detail extends Component{
                 { this.props.source !== 'temp' ?
                     <View style={styles.describe}>
                         <Card
-                            title={this.props.ctitle}
+                            title={ctitle}
                             titleStyle={styles.titleStyle}
                             containerStyle={{width: width*0.8}}
-                            image={{uri: this.props.cover}}
+                            image={{uri: cover}}
                         imageProps={{resizeMode: 'cover'}}>
-                            <Text>{this.props.remark}</Text>
+                            <Text>{remark}</Text>
                         </Card>
                     </View> : null}
                     <FlatList
@@ -360,7 +533,7 @@ export default class Detail extends Component{
                             flag = true;
                             this.setState({isVisible: true})
                         }}
-                        disabled={this.props.source === 'local_remark'}
+                        disabled={typeof(again) === 'undefined' ? this.props.source === 'local' : !again}
                         title='导出本地'
                     />
                     <Button
@@ -370,9 +543,25 @@ export default class Detail extends Component{
                             flag = false;
                             this.remote_store();
                         }}
-                        disabled={this.props.source === 'remote_remark'}
+                        disabled={this.props.source === 'remote'}
                         title='上传云端'
                     />
+                    {this.state.isPdf ?
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            titleStyle={styles.titleStyle}
+                            onPress={() => {
+                                this.setState({visible: true})
+                            }}
+                            title='预览PDF'/> :
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            titleStyle={styles.titleStyle}
+                            onPress={() => {
+                                this.createPDF();
+                                this.setState({isPdf: true})
+                            }}
+                            title='生成PDF'/>}
                 </View>
                 <Overlay isVisible={this.state.isVisible}
                          onBackdropPress={() => this.setState({ isVisible: false })}
@@ -405,6 +594,24 @@ export default class Detail extends Component{
                         />
                     </View>
                 </Overlay>
+                <Modal visible={this.state.visible} onRequestClose={() => {this.setState({visible: false})}}>
+                    { this.state.source == '' ? null :
+                        <Pdf
+                            source={this.state.source}
+                            onLoadComplete={(numberOfPages,filePath)=>{
+                                console.log(`number of pages: ${numberOfPages}`);
+                            }}
+                            onPageChanged={(page,numberOfPages)=>{
+                                console.log(`current page: ${page}`);
+                            }}
+                            onError={(error)=>{
+                                console.log(error);
+                            }}
+                            onPressLink={(uri)=>{
+                                console.log(`Link presse: ${uri}`)
+                            }}
+                            style={styles.pdf}/>}
+                </Modal>
             </View>
         );
     }
@@ -429,7 +636,7 @@ const styles = StyleSheet.create({
     buttonView: {
         position: 'absolute',
         left: width*0.7,
-        top: height*0.7
+        top: height*0.65
     },
     buttonStyle: {
         height:50,
@@ -441,5 +648,10 @@ const styles = StyleSheet.create({
     titleStyle: {
         fontSize:20
     },
+    pdf: {
+        flex:1,
+        width:width,
+        height:height,
+    }
 });
 

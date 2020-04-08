@@ -1,58 +1,172 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
     StyleSheet,
     Text,
+    Image,
     View,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity, Modal
 } from 'react-native';
 import { Card } from "react-native-elements";
 import { Actions } from 'react-native-router-flux';
+import Pdf from "react-native-pdf";
+import RNFS from "react-native-fs";
 
-function getImages(cId,ctitle,remark,cover) {
-    let categoryId = {"categoryId": cId};
-    fetch('http://192.168.195.1:8080/images/getImages', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(categoryId)
-    })
-        .then((response) => response.json())
-        .then((responseJson) => {
-            Actions.detail({images: responseJson,source: 'remote_remark',ctitle: ctitle,remark: remark,cover: cover})
+export default class RecordCell extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            isVisable: false,
+            isPdf: false,
+            visible: false,
+            source: ''
+        }
+        console.log("this.props.prop.item.pdfUri")
+        console.log(this.props.prop.item.pdfUri)
+        if(this.props.prop.item.pdfUri != ''){
+            RNFS.exists(this.props.prop.item.pdfUri)
+                .then((res) => {
+                    console.log(res)
+                    this.setState({
+                        isPdf: res,
+                        source: {uri: this.props.prop.item.pdfUri}
+                    })
+                })
+        }
+    }
+
+    getImages(cId,ctitle,remark,time,dateTime,pdfUri,cover) {
+        let categoryId = {"categoryId": cId};
+        fetch('http://192.168.195.1:8080/images/getImages', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(categoryId)
         })
-        .catch(err => console.log(err))
-}
+            .then((response) => response.json())
+            .then((responseJson) => {
+                Actions.detail({images: responseJson,source: 'remote',ctitle: ctitle,remark: remark,time: time,dateTime: dateTime,pdfUri: pdfUri,cover: cover})
+            })
+            .catch(err => console.log(err))
+    }
 
-const RecordCell = ({prop,getFlag,deleteRecord}) =>{
-    return (
-        <View style={styles.container}>
-            <View style={styles.describe}>
-                {/*source: 代表来源，包括未存储temp,本地loacl_remark，远端remote_remark*/}
-                <TouchableOpacity onPress={ () => {
-                    if(getFlag()){
-                        Actions.detail({images: prop.item.group,source: 'local_remark',ctitle: prop.item.ctitle,remark: prop.item.remark,cover: prop.item.cover})
-                    }else{
-                        getImages(prop.item.categoryId,prop.item.ctitle,prop.item.remark,prop.item.cover);
-                    }
-                }}>
-                    <Card
-                        title={prop.item.ctitle}
-                        titleStyle={styles.titleStyle}
-                        containerStyle={{width: width*0.8}}
-                        image={{uri: prop.item.cover}}
-                        imageProps={{resizeMode: 'cover'}}>
-                            <Text>{prop.item.remark}</Text>
-                    </Card>
-                </TouchableOpacity>
+    goto_detail() {
+        let item = this.props.prop.item;
+        if (this.props.getFlag()) {
+            Actions.detail({
+                path: item.path,
+                images: item.group,
+                ctitle: item.ctitle,
+                remark: item.remark,
+                time: item.time,
+                dateTime: item.dateTime,
+                pdfUri: item.pdfUri,
+                cover: item.cover,
+                source: 'local'
+            })
+        } else {
+            this.getImages(item.categoryId, item.ctitle, item.remark, item.time,item.dateTime,item.pdfUri,item.cover);
+        }
+    }
+
+    goto_classify() {
+        let item = this.props.prop.item;
+        if (this.props.getFlag()) {//本地记录
+            Actions.classify({
+                path: item.path,
+                images: item.group,
+                source: 'local',
+                ctitle: item.ctitle,
+                remark: item.remark,
+                time: item.time,
+                dateTime: item.dateTime,
+                pdfUri: item.pdfUri,
+                cover: item.cover,
+                again: true
+            })
+        } else {//云端记录
+            Actions.classify({
+                categoryId: item.categoryId,
+                source: 'remote',
+                ctitle: item.ctitle,
+                remark: item.remark,
+                time: item.time,
+                dateTime: item.dateTime,
+                pdfUri: item.pdfUri,
+                cover: item.cover,
+                again: true
+            });
+        }
+    }
+
+    render() {
+        let item = this.props.prop.item;
+        return (
+            <View style={styles.container}>
+                <View style={styles.describe}>
+                    {/*source: 代表来源，包括未存储temp,本地loacl_remark，远端remote_remark*/}
+                    <TouchableOpacity
+                        onPress={this.goto_detail.bind(this)}
+                        onLongPress={() => {this.setState({isVisable: true})}}
+                    >
+                        <Card
+                            title={item.ctitle}
+                            titleStyle={styles.titleStyle}
+                            containerStyle={{width: width * 0.8}}
+                            image={{uri: item.cover}}
+                            imageProps={{resizeMode: 'cover'}}>
+                            <Text>{item.remark}</Text>
+                        </Card>
+                    </TouchableOpacity>
+                    {this.state.isVisable ?
+                        <View style={styles.delView}>
+                            <TouchableOpacity
+                                onPress={this.goto_classify.bind(this)}>
+                                <Image source={require('../../imgs/goon.png')} style={styles.delStyle}></Image>
+                            </TouchableOpacity>
+                            {this.state.isPdf ?
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        this.setState({visible: true})
+                                    }}>
+                                    <Image source={require('../../imgs/readPdf.png')} style={styles.delStyle}></Image>
+                                </TouchableOpacity> : null
+                            }
+                            <TouchableOpacity
+                                              onPress={() => {this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)}}>
+                                <Image source={require('../../imgs/remove.png')} style={styles.delStyle}></Image>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                              onPress={() => {this.setState({isVisable: false})}}>
+                                <Image source={require('../../imgs/cancel.png')} style={styles.delStyle}></Image>
+                            </TouchableOpacity>
+                        </View>
+                        : null}
+                </View>
+                <Modal visible={this.state.visible} onRequestClose={() => {this.setState({visible: false})}}>
+                    { this.state.source == '' ? null :
+                        <Pdf
+                            source={this.state.source}
+                            onLoadComplete={(numberOfPages,filePath)=>{
+                                console.log(`number of pages: ${numberOfPages}`);
+                            }}
+                            onPageChanged={(page,numberOfPages)=>{
+                                console.log(`current page: ${page}`);
+                            }}
+                            onError={(error)=>{
+                                console.log(error);
+                            }}
+                            onPressLink={(uri)=>{
+                                console.log(`Link presse: ${uri}`)
+                            }}
+                            style={styles.pdf}/>}
+                </Modal>
             </View>
-            <TouchableOpacity style={{width: 40,height: 40,backgroundColor: '#2089DC',borderRadius: 20,top: -155,left: -215}}
-                              onPress={() => {deleteRecord(prop.index)}}>
-            </TouchableOpacity>
-        </View>
-    );
+        );
+    }
 }
 
 const dimension = Dimensions.get('window')
@@ -63,17 +177,36 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 10,
+        marginBottom: 15
     },
     describe: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
         alignItems: 'center',
         height: height/10,
-        justifyContent: 'center',
-        marginTop: 90,
-        marginBottom: 110
+        marginTop: 70,
+        marginBottom: 80
     },
     titleStyle: {
         fontSize:20
     },
+    delView: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-evenly',
+        height: height/4.5,
+        marginTop: 20
+    },
+    delStyle: {
+        width: 40,
+        height: 40,
+    },
+    pdf: {
+        flex:1,
+        width:width,
+        height:height,
+    }
 });
 
-export default RecordCell;

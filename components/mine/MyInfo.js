@@ -1,36 +1,70 @@
 import React, { Component } from 'react';
 import {
     StyleSheet,
-    Text,
-    View
+    View,
+    Dimensions, Modal
 } from 'react-native';
-import {Button} from "react-native-elements";
-import { Actions } from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import Pdf from 'react-native-pdf';
+import RNFS from "react-native-fs";
 
+const cc = '郭聪';
+const rnfsPath = RNFS.DocumentDirectoryPath;
 export default class MyInfo extends Component{
 
-     putImages(){
-        console.log("==========")
-        fetch('http://192.168.195.1:8080/test/testLink', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: 'yourValue',
-                password: 'yourOtherValue',
-            }),
-        }).catch(res => console.log(res));
+    constructor() {
+        super();
+        this.state = {
+            source: '',
+            visible: false
+        }
+    }
+
+    async createPDF() {
+        let options = {
+            html: '<h1 style="color: red">郭聪</h1><br/>'+'<h1>郭聪</h1><br/>'+'<h1>郭聪</h1><br/>'+'<h1>郭聪</h1><br/>'+'<h1>郭聪</h1><br/>'+'<h1>郭聪</h1><br/>'+'<h1>郭聪</h1><br/>'+'<h1>郭聪</h1><br/>'+'<h1>郭聪</h1><br/>'+'<h1>郭聪</h1><br/>',
+            fileName: 'test',
+            directory: 'Documents',
+        };
+
+        console.log("生成PDF")
+
+        let file = await RNHTMLtoPDF.convert(options)
+        this.setState({
+            source: {uri: 'file://'+file.filePath},
+            visible: true
+        })
+        console.log(file.filePath);
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Button
-                    title={'dianji'}
-                    onPress={this.putImages.bind(this)}
-                ></Button>
+                <Icon.Button
+                    name="facebook"
+                    backgroundColor="#3b5998"
+                    onPress={this.createPDF.bind(this)}
+                >
+                    生成PDF
+                </Icon.Button>
+                    <Modal visible={this.state.visible} onRequestClose={() => {this.setState({visible: false})}}>
+                        <Pdf
+                            source={this.state.source}
+                            onLoadComplete={(numberOfPages,filePath)=>{
+                                console.log(`number of pages: ${numberOfPages}`);
+                            }}
+                            onPageChanged={(page,numberOfPages)=>{
+                                console.log(`current page: ${page}`);
+                            }}
+                            onError={(error)=>{
+                                console.log(error);
+                            }}
+                            onPressLink={(uri)=>{
+                                console.log(`Link presse: ${uri}`)
+                            }}
+                            style={styles.pdf}/>
+                    </Modal>
             </View>
         );
     }
@@ -39,15 +73,14 @@ export default class MyInfo extends Component{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: '#000000',
+        marginTop: 25,
     },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-        color: '#ffffff',
-    },
+    pdf: {
+        flex:1,
+        width:Dimensions.get('window').width,
+        height:Dimensions.get('window').height,
+    }
 });
 
