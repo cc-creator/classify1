@@ -5,34 +5,17 @@ import {
     Image,
     View,
     Dimensions,
-    TouchableOpacity, Modal
+    TouchableOpacity
 } from 'react-native';
 import { Card } from "react-native-elements";
 import { Actions } from 'react-native-router-flux';
-import Pdf from "react-native-pdf";
-import RNFS from "react-native-fs";
 
 export default class RecordCell extends Component {
 
     constructor(props){
         super(props);
         this.state = {
-            isVisable: false,
-            isPdf: false,
-            visible: false,
-            source: ''
-        }
-        console.log("this.props.prop.item.pdfUri")
-        console.log(this.props.prop.item.pdfUri)
-        if(this.props.prop.item.pdfUri != ''){
-            RNFS.exists(this.props.prop.item.pdfUri)
-                .then((res) => {
-                    console.log(res)
-                    this.setState({
-                        isPdf: res,
-                        source: {uri: this.props.prop.item.pdfUri}
-                    })
-                })
+            isVisable: false
         }
     }
 
@@ -70,6 +53,7 @@ export default class RecordCell extends Component {
         } else {
             this.getImages(item.categoryId, item.ctitle, item.remark, item.time,item.dateTime,item.pdfUri,item.cover);
         }
+        this.setState({isVisable: false})
     }
 
     goto_classify() {
@@ -77,7 +61,6 @@ export default class RecordCell extends Component {
         if (this.props.getFlag()) {//本地记录
             Actions.classify({
                 path: item.path,
-                images: item.group,
                 source: 'local',
                 ctitle: item.ctitle,
                 remark: item.remark,
@@ -100,6 +83,7 @@ export default class RecordCell extends Component {
                 again: true
             });
         }
+        this.setState({isVisable: false})
     }
 
     render() {
@@ -127,14 +111,6 @@ export default class RecordCell extends Component {
                                 onPress={this.goto_classify.bind(this)}>
                                 <Image source={require('../../imgs/goon.png')} style={styles.delStyle}></Image>
                             </TouchableOpacity>
-                            {this.state.isPdf ?
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        this.setState({visible: true})
-                                    }}>
-                                    <Image source={require('../../imgs/readPdf.png')} style={styles.delStyle}></Image>
-                                </TouchableOpacity> : null
-                            }
                             <TouchableOpacity
                                               onPress={() => {this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)}}>
                                 <Image source={require('../../imgs/remove.png')} style={styles.delStyle}></Image>
@@ -146,24 +122,6 @@ export default class RecordCell extends Component {
                         </View>
                         : null}
                 </View>
-                <Modal visible={this.state.visible} onRequestClose={() => {this.setState({visible: false})}}>
-                    { this.state.source == '' ? null :
-                        <Pdf
-                            source={this.state.source}
-                            onLoadComplete={(numberOfPages,filePath)=>{
-                                console.log(`number of pages: ${numberOfPages}`);
-                            }}
-                            onPageChanged={(page,numberOfPages)=>{
-                                console.log(`current page: ${page}`);
-                            }}
-                            onError={(error)=>{
-                                console.log(error);
-                            }}
-                            onPressLink={(uri)=>{
-                                console.log(`Link presse: ${uri}`)
-                            }}
-                            style={styles.pdf}/>}
-                </Modal>
             </View>
         );
     }
@@ -202,11 +160,6 @@ const styles = StyleSheet.create({
     delStyle: {
         width: 40,
         height: 40,
-    },
-    pdf: {
-        flex:1,
-        width:width,
-        height:height,
     }
 });
 

@@ -6,7 +6,7 @@ import {
     Text,
     FlatList, Modal
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import { Actions} from 'react-native-router-flux';
 import { Button,Card,Overlay,Input } from 'react-native-elements';
 import RNFS from 'react-native-fs';
 
@@ -14,106 +14,64 @@ import DetailCell from "./DetailCell";
 import ToastExample from "../../nativeComponents/ToastExample";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import Pdf from "react-native-pdf";
+import Header from "../global/Header";
 
-let groups = [];
-let again = false;
-let path = '';
-let categoryId = '';
-let source = '';
-let images = [];
-let ctitle = '';
-let remark = '';
-let cover = '';
-let time = '';
-let dateTime = '';
-let flag = true;//true:本地 false:远端
-const rnfsPath = RNFS.DocumentDirectoryPath;
-const jilu_path = rnfsPath + '/jilu.text';
-let images_animal_anphibious = [];
-let images_animal_bird = [];
-let images_animal_fish = [];
-let images_animal_insect = [];
-let images_animal_mammal = [];
-let images_clothing_clothing = [];
-let images_clothing_hat = [];
-let images_clothing_shoes = [];
-let images_document_erweima = [];
-let images_document_passport = [];
-let images_food_dessert = [];
-let images_food_drink = [];
-let images_food_meal = [];
-let images_person_dubbo = [];
-let images_person_multi = [];
-let images_person_passport = [];
-let images_person_single = [];
-let images_plant_flower = [];
-let images_plant_grass = [];
-let images_plant_tree = [];
-let images_scenery_night = [];
-let images_scenery_outside = [];
-let images_thing_dianqi = [];
-let images_thing_furniture = [];
-let images_other_other = [];
-let images_person = [];
-let images_animal = [];
-let images_food = [];
-let images_scenery = [];
-let images_plant = [];
-let images_thing = [];
-let images_clothing = [];
-let images_document = [];
-let images_other = [];
-let sum_person = 0;
-let sum_animal = 0;
-let sum_food = 0;
-let sum_plant = 0;
-let sum_clothing = 0;
-let sum_thing = 0;
-let sum_document = 0;
-let sum_scenery = 0;
-let sum_other = 0;
+/*images：合并前后均用此数组，ccimages：新选择的图片数组*/
+let images = [];let ccimages = [];
+/*关于分类的属性：标题 备注 封面 分类用时 分类实践*/
+let ctitle = '';let remark = '';let cover = '';let time = '';let dateTime = '';
+/*true:本地 false:远端*/
+let flag = true;
+/*jilu_path：存储所有记录的文件*/
+const rnfsPath = RNFS.DocumentDirectoryPath;const jilu_path = rnfsPath + '/jilu.text';
+/*用于存放分好类的数组*/
+let images_animal_anphibious = [];let images_animal_bird = [];let images_animal_fish = [];let images_animal_insect = [];let images_animal_mammal = [];let images_clothing_clothing = [];let images_clothing_hat = [];let images_clothing_shoes = [];let images_document_erweima = [];let images_document_passport = [];let images_food_dessert = [];let images_food_drink = [];let images_food_meal = [];let images_person_dubbo = [];let images_person_multi = [];let images_person_passport = [];let images_person_single = [];let images_plant_flower = [];let images_plant_grass = [];let images_plant_tree = [];let images_scenery_night = [];let images_scenery_outside = [];let images_thing_dianqi = [];let images_thing_furniture = [];let images_other_other = [];let images_person = [];let images_animal = [];let images_food = [];let images_scenery = [];let images_plant = [];let images_thing = [];let images_clothing = [];let images_document = [];let images_other = [];
+/*一级分类数组的长度*/
+let sum_person = 0;let sum_animal = 0;let sum_food = 0;let sum_plant = 0;let sum_clothing = 0;let sum_thing = 0;let sum_document = 0;let sum_scenery = 0;let sum_other = 0;
+/*表示合并分类前后，true: 合并分类前，false：合并分类后*/
+let before_flag = false;
 export default class Detail extends Component{
     constructor(props){
         super(props);
         this.state = {
-            isVisible: false,
+            groups: [], //存放分好类的image，用FlatList显示
+            isVisible: false, //控制overLay的显示
             title: this.props.ctitle,
             remark: this.props.remark,
-            isPdf: false,
-            visible: false,
-            source: ''
+            isPdf: false, //标识当前页面的PDF是否生成
+            visible: false, //控制Modal的显示
+            source: '', //存放生成PDF的路径
+            flag: typeof(this.props.again) === 'undefined' ? false : true
         }
+        /*检测PDF是否存在*/
         if(this.props.pdfUri != null && !this.props.again){
             RNFS.exists(this.props.pdfUri)
                 .then((res) => {
+                    console.log(res)
                     this.setState({
                         isPdf: res,
                         source: {uri: this.props.pdfUri}
                     })
                 })
         }
-        path = this.props.path;
-        categoryId = this.props.categoryId;
-        again = this.props.again;
-        ctitle = this.props.ctitle;
-        remark = this.props.remark;
-        cover = this.props.cover;
-        time = this.props.time;
-        dateTime = this.props.dateTime;
-        images = this.props.images;
-        source = this.props.source;
-        console.log("this.props.pdfUri")
-        console.log(this.props.pdfUri)
-        console.log("path");
-        console.log(path)
-        console.log("again");
-        console.log(again)
-        console.log("source");
-        console.log(source)
+
+        if(this.props.again){
+            before_flag = true;
+        }
+
+        ctitle = this.props.ctitle;remark = this.props.remark;cover = this.props.cover;time = this.props.time;dateTime = this.props.dateTime;
+        images = this.props.images;ccimages = JSON.parse(JSON.stringify(this.props.images));
     }
 
+    UNSAFE_componentWillMount(): void {
+        this.partition();
+    }
+
+    /*
+    * 用于将images数组分类存放进group
+    * */
     partition(){
-        groups = [];
+        let temp_groups = [];
         images_animal_anphibious = [];
         images_animal_bird = [];
         images_animal_fish = [];
@@ -312,38 +270,43 @@ export default class Detail extends Component{
         }
 
         if(images_person.length > 0){
-            groups.push({group:images_person,label:"人像",sum: sum_person});
+            temp_groups.push({group:images_person,label:"人像",sum: sum_person});
         }
         if(images_animal.length > 0){
-            groups.push({group:images_animal,label:"动物",sum: sum_animal});
+            temp_groups.push({group:images_animal,label:"动物",sum: sum_animal});
         }
         if(images_plant.length > 0){
-            groups.push({group:images_plant,label:"植物",sum: sum_plant});
+            temp_groups.push({group:images_plant,label:"植物",sum: sum_plant});
         }
         if(images_scenery.length > 0){
-            groups.push({group:images_scenery,label:"风景",sum: sum_scenery});
+            temp_groups.push({group:images_scenery,label:"风景",sum: sum_scenery});
         }
         if(images_food.length > 0){
-            groups.push({group:images_food,label:"美食",sum: sum_food});
+            temp_groups.push({group:images_food,label:"美食",sum: sum_food});
         }
         if(images_thing.length > 0){
-            groups.push({group:images_thing,label:"物品",sum: sum_thing});
+            temp_groups.push({group:images_thing,label:"物品",sum: sum_thing});
         }
         if(images_clothing.length > 0){
-            groups.push({group:images_clothing,label:"服装",sum: sum_clothing});
+            temp_groups.push({group:images_clothing,label:"服装",sum: sum_clothing});
         }
         if(images_document.length > 0){
-            groups.push({group:images_document,label:"文档",sum: sum_document});
+            temp_groups.push({group:images_document,label:"文档",sum: sum_document});
         }
         if(images_other.length > 0){
-            groups.push({group:images_other,label:"其他",sum: sum_other});
+            temp_groups.push({group:images_other,label:"其他",sum: sum_other});
         }
+        this.setState({
+            groups: temp_groups.map( group =>{
+                return group
+            })
+        })
     }
 
     local_store() {
-        if(!again){
+        if(!this.props.again){
             console.log("首次分类")
-            let local_path = rnfsPath + '/test_' +this.state.title + '.txt';
+            let local_path = rnfsPath + "/"+this.state.title + '.txt';
             let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@" + time + "@" + dateTime + "@" + JSON.stringify(images) + "@";
             temp_str += this.state.source === '' ? '' : this.state.source.uri;
             console.log(temp_str);
@@ -359,15 +322,16 @@ export default class Detail extends Component{
                 .catch((err) => {});
             this.setState({isVisible: false})
         }else {
-            console.log("继续分类")
+            console.log("继续分类")/*
             RNFS.unlink(this.props.pdfUri)
                 .then(()=>{})
-                .catch(() => {})
-            let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@" + time + "@" + dateTime + "@" + JSON.stringify(images) + "@";
+                .catch(() => {})*/
+            let temp_str = this.state.title + "@" + this.state.remark + "@" + this.props.cover + "@" + time + "@" + dateTime + "@" + JSON.stringify(images) + "@";
             temp_str += this.state.source === '' ? '' : this.state.source.uri;
-            RNFS.unlink(path)
+            console.log("----------"+this.state.source === '' ? '' : this.state.source.uri)
+            RNFS.unlink(this.props.path)
                 .then(()=>{
-                    RNFS.writeFile(path,temp_str,'utf8')
+                    RNFS.writeFile(this.props.path,temp_str,'utf8')
                         .then((success) => {
                             ToastExample.show("导出本地成功",ToastExample.SHORT);
                             Actions.record();
@@ -389,22 +353,23 @@ export default class Detail extends Component{
         }
     }
 
-    uploadImages() {
+    uploadCategory() {
         console.log("上传图片")
         let formdata = new FormData();
-        for(let i=0;i<images.length;i++){
-            formdata.append('images',{uri: images[i].url,type: 'multipart/form-data',name: this.getImageName(images[i].url)});
-            formdata.append('dateTimes',images[i].dateTime);
-            formdata.append('label1s',images[i].label1);
-            formdata.append('label2s',images[i].label2);
-        }
-        formdata.append('userId', global.variables.userId);
-        formdata.append('ctitle', this.state.title);
-        formdata.append('remark', this.state.remark);
-        formdata.append('time',time);
-        formdata.append('pdfUri',this.state.source === '' ? '' : this.state.source.uri);
-        formdata.append('dateTime', dateTime);
-        fetch('http://192.168.195.1:8080/images/uploadImages', {
+        if(!this.props.again){
+            for(let i=0;i<images.length;i++){
+                formdata.append('images',{uri: images[i].url,type: 'multipart/form-data',name: this.getImageName(images[i].url)});
+                formdata.append('dateTimes',images[i].dateTime);
+                formdata.append('label1s',images[i].label1);
+                formdata.append('label2s',images[i].label2);
+            }
+            formdata.append('userId', global.variables.userId);
+            formdata.append('ctitle', this.state.title);
+            formdata.append('remark', this.state.remark);
+            formdata.append('time',time);
+            formdata.append('pdfUri',this.state.source === '' ? '' : this.state.source.uri);
+            formdata.append('dateTime', dateTime);
+        fetch('http://192.168.195.1:8080/images/uploadCategory', {
             method: 'POST',
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -417,13 +382,40 @@ export default class Detail extends Component{
                 Actions.record();
             })
             .catch(err => console.log(err))
+        }else {
+            console.log("云端继续分类")
+            for(let i=0;i<ccimages.length;i++){
+                formdata.append('images',{uri: ccimages[i].url,type: 'multipart/form-data',name: this.getImageName(images[i].url)});
+                formdata.append('dateTimes',ccimages[i].dateTime);
+                formdata.append('label1s',ccimages[i].label1);
+                formdata.append('label2s',ccimages[i].label2);
+            }
+            formdata.append('categoryId',this.props.categoryId);
+            formdata.append('time',time);
+            formdata.append('pdfUri',this.state.source === '' ? '' : this.state.source.uri);
+            formdata.append('dateTime', dateTime);
+            console.log(formdata)
+            fetch('http://192.168.195.1:8080/images/uploadImages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: formdata})
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    this.setState({isVisible: false})
+                    ToastExample.show("上传成功",ToastExample.SHORT);
+                    Actions.record();
+                })
+                .catch(err => console.log(err))
+        }
     }
 
     getDateTime() {
         let dateTime = new Date();
         let _year = dateTime.getFullYear().toString();
         let _month = (dateTime.getMonth()+1).toString();
-        let _day = dateTime.getDay().toString();
+        let _day = dateTime.getDate().toString();
         let _hour = dateTime.getHours().toString();
         let _minute = dateTime.getMinutes().toString();
         let _second = dateTime.getSeconds().toString();
@@ -441,10 +433,10 @@ export default class Detail extends Component{
 
     makeHtmlString(ctitle,remark,length,time,dateTime) {
         let result = '';
-        result += typeof(ctitle) === 'undefined' ? '' : '<h1 style="color: red">'+ ctitle +'</h1><br/>';
+        result += typeof(ctitle) === 'undefined' ? '' : '<h1 style="color: dodgerblue">'+ ctitle +'</h1><br/>';
         result += typeof(remark) == 'undefined' ? '' : '<h1>'+ remark +'</h1><br/>';
         result += '<h1>总共:' + length + '张图片</h1><br/>' +
-            '<h1>分类共用时:' + time + '秒</h1><br/>' +
+            '<h1>分类共用时:' + (before_flag ? this.props.newTime : time) + '秒</h1><br/>' +
             '<h1>分类时间:' + dateTime + '</h1>';
         result += sum_person == 0 ? '' : '<h1>人像:' + sum_person + '张</h1>';
         result += images_person_single.length == 0 ? '' : '<h2>单人照:' + images_person_single.length + '张</h2>';
@@ -485,29 +477,68 @@ export default class Detail extends Component{
     async createPDF() {
         let options = {
             html: this.makeHtmlString(ctitle,remark,images.length,time,dateTime),
-            fileName: typeof(ctitle) === 'undefined' ? new Date().getTime().toString() : ctitle.toString(),
+            fileName: typeof(ctitle) === 'undefined' || before_flag ? new Date().getTime().toString() : ctitle.toString(),
             directory: 'Documents',
         };
-
-        console.log("生成PDF")
         let file = await RNHTMLtoPDF.convert(options)
         this.setState({source: {uri: 'file://'+file.filePath}})
-        console.log('file://'+file.filePath)
         /*从总览页面进入详情后生成PDF*/
-        if(typeof(path) !== 'undefined'){
-            RNFS.appendFile(path,'file://'+file.filePath,'utf8')
+        if(typeof(this.props.path) !== 'undefined' && !before_flag){
+            RNFS.appendFile(this.props.path,'file://'+file.filePath,'utf8')
                 .then((success) => {
-                    ToastExample.show("生成PDF成功",ToastExample.SHORT);
+                    ToastExample.show(file.filePath,ToastExample.LONG);
                 })
                 .catch((err) => {})
+        }else {
+            ToastExample.show(file.filePath,ToastExample.LONG);
         }
     }
 
+    mergeImages() {
+        if(this.props.source === 'local'){
+            let old_images = [];
+            RNFS.readFile(this.props.path)
+                .then((result) => {
+                    let temp = result.split('@');
+                    old_images = JSON.parse(temp[5]);
+                    for(let i=0;i<old_images.length;i++){
+                        images.push(old_images[i])
+                    }
+                    this.partition();
+                    this.setState({flag: false})
+                })
+                .catch((err) => {})
+        }else {
+            console.log("merge")
+            let categoryId = {'categoryId': this.props.categoryId}
+            fetch('http://192.168.195.1:8080/images/getImages', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(categoryId)
+            })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    let old_images = responseJson;
+                    for(let i=0;i<old_images.length;i++){
+                        images.push(old_images[i])
+                    }
+                    this.partition();
+                    this.setState({flag: false})
+                })
+                .catch(err => console.log(err))
+        }
+        before_flag = false;
+        this.setState({isPdf: false})
+    }
+
     render()  {
-        this.partition();
         return (
             <View style={styles.container}>
-                { this.props.source !== 'temp' ?
+                <Header title='分类总览' flag={true}/>
+                {this.props.source !== 'temp' && !this.state.flag ?
                     <View style={styles.describe}>
                         <Card
                             title={ctitle}
@@ -517,43 +548,73 @@ export default class Detail extends Component{
                         imageProps={{resizeMode: 'cover'}}>
                             <Text>{remark}</Text>
                         </Card>
-                    </View> : null}
-                    <FlatList
-                        data={groups}
-                        keyExtractor={this._keyExtractor}
-                        renderItem={(item) => <DetailCell
-                                prop={item}
-                            />}
-                    ></FlatList>
-                <View style={styles.buttonView}>
-                    <Button
-                        buttonStyle={styles.buttonStyle}
-                        titleStyle={styles.titleStyle}
-                        onPress={() => {
-                            flag = true;
-                            this.setState({isVisible: true})
-                        }}
-                        disabled={typeof(again) === 'undefined' ? this.props.source === 'local' : !again}
-                        title='导出本地'
-                    />
-                    <Button
-                        buttonStyle={styles.buttonStyle}
-                        titleStyle={styles.titleStyle}
-                        onPress={() => {
-                            flag = false;
-                            this.remote_store();
-                        }}
-                        disabled={this.props.source === 'remote'}
-                        title='上传云端'
-                    />
+                    </View> : null
+                }
+                <FlatList
+                    data={this.state.groups}
+                    keyExtractor={this._keyExtractor}
+                    renderItem={(item) => <DetailCell
+                        prop={item}
+                    />}
+                ></FlatList>
+                { this.state.flag ?
+                    <View style={styles.buttonView}>
+                        {this.state.isPdf ?
+                            <Button
+                                buttonStyle={styles.buttonStyle}
+                                titleStyle={styles.titleStyle}
+                                onPress={() => {
+                                    this.setState({visible: true})}}
+                                title='浏览PDF'/> :
+                            <Button
+                                buttonStyle={styles.buttonStyle}
+                                titleStyle={styles.titleStyle}
+                                onPress={() => {
+                                    this.createPDF();
+                                    this.setState({isPdf: true})
+                                }}
+                                title='生成PDF'/>}
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            titleStyle={styles.titleStyle}
+                            onPress={() => {this.mergeImages()}}
+                            title='合并'/>
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            titleStyle={styles.titleStyle}
+                            onPress={() => {
+                                Actions.jump('record')
+                            }}
+                            title='放弃'/>
+                    </View> :
+                    <View style={styles.buttonView}>
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            titleStyle={styles.titleStyle}
+                            onPress={() => {
+                                flag = true;
+                                this.setState({isVisible: true})
+                            }}
+                            disabled={typeof(this.props.again) === 'undefined' ? this.props.source === 'local' : !this.props.again}
+                            title='导出本地'
+                        />
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            titleStyle={styles.titleStyle}
+                            onPress={() => {
+                                flag = false;
+                                this.remote_store();
+                            }}
+                            disabled={typeof(this.props.again) === 'undefined' ? this.props.source === 'remote' : !this.props.again}
+                            title='上传云端'
+                        />
                     {this.state.isPdf ?
                         <Button
                             buttonStyle={styles.buttonStyle}
                             titleStyle={styles.titleStyle}
                             onPress={() => {
-                                this.setState({visible: true})
-                            }}
-                            title='预览PDF'/> :
+                            this.setState({visible: true})}}
+                            title='浏览PDF'/> :
                         <Button
                             buttonStyle={styles.buttonStyle}
                             titleStyle={styles.titleStyle}
@@ -562,7 +623,8 @@ export default class Detail extends Component{
                                 this.setState({isPdf: true})
                             }}
                             title='生成PDF'/>}
-                </View>
+                    </View>
+                }
                 <Overlay isVisible={this.state.isVisible}
                          onBackdropPress={() => this.setState({ isVisible: false })}
                          height={height/3.9}>
@@ -581,7 +643,7 @@ export default class Detail extends Component{
                                 if(flag){
                                     this.local_store();
                                 }else {
-                                    this.uploadImages();
+                                    this.uploadCategory();
                                 }
                             }}
                             title='确定'
@@ -635,8 +697,8 @@ const styles = StyleSheet.create({
     },
     buttonView: {
         position: 'absolute',
-        left: width*0.7,
-        top: height*0.65
+        left: width*0.72,
+        top: height*0.72
     },
     buttonStyle: {
         height:50,

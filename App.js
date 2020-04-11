@@ -28,17 +28,17 @@ const App = () => {
               <Scene
                   key="record"
                   component={Record}
-                  title="分类记录"
+                  hideNavBar
               />
               <Scene
                   key="detail"
                   component={Detail}
-                  title="分类总览"
+                  hideNavBar
               />
               <Scene
                   key="cellDetail"
                   component={CellDetail}
-                  title="分类详情"
+                  hideNavBar
               />
             </Scene>
             {/* Tab and it's scenes */}
@@ -46,17 +46,16 @@ const App = () => {
               <Scene
                   key="classify"
                   component={Classify}
-                  title="图片分类"
+                  hideNavBar
               />
             </Scene>
 
             {/* Tab and it's scenes */}
             <Scene key="my" title="我" icon={TabIcon}>
-              <Modal
+              <Scene
                   key="myInfo"
                   component={MyInfo}
-                  title="我的"
-                  titleStyle={{flex:1,textAlign:'center'}}
+                  hideNavBar
               />
             </Scene>
           </Tabs>

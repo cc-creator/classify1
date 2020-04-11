@@ -10,6 +10,7 @@ import Tflite from 'tflite-react-native';
 import { Button } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
 /*自定义组件*/
+import Header from '../global/Header';
 import CellList from './CellList';
 import ToastExample from '../../nativeComponents/ToastExample';
 
@@ -132,17 +133,17 @@ export default class Classify extends Component {
                     if(i == images.length-1){
                         ToastExample.show("完成分类",ToastExample.SHORT);
                         let dateEnd = new Date();
+                        let time = this.changeTwoDecimal_f((dateEnd-dateBegin)/1000);
+                        let newTime = time;
                         /*继续分类将已经分好类的图片加进images中*/
                         if(this.props.again){
-                            for(let j=0;j<this.props.images.length;j++){
-                                images.push(this.props.images[j]);
-                            }
+                            time = this.changeTwoDecimal_f(Number(time) + Number(this.props.time));
                         }
-                        let time = (this.changeTwoDecimal_f((dateEnd-dateBegin)/1000) + (typeof(this.props.time) === 'undefined' ? 0 : this.props.time)).toString();
                         let source = typeof(this.props.source) === 'undefined' ? 'temp' : this.props.source;
                         Actions.detail({
                             images: images,
                             source: source,
+                            newTime: newTime,
                             time: time,
                             dateTime: this.getDateTime(dateBegin),
                             again: this.props.again,
@@ -182,7 +183,7 @@ export default class Classify extends Component {
     getDateTime(dateTime) {
         let _year = dateTime.getFullYear().toString();
         let _month = (dateTime.getMonth()+1).toString();
-        let _day = dateTime.getDay().toString();
+        let _day = dateTime.getDate().toString();
         let _hour = dateTime.getHours().toString();
         let _minute = dateTime.getMinutes().toString();
         let _second = dateTime.getSeconds().toString();
@@ -192,6 +193,7 @@ export default class Classify extends Component {
 
     render() {
         return (<View>
+            {this.props.again ? <Header title='图片分类' flag={true}/> : <Header title='图片分类' flag={false}/>}
             <View style={styles.buttonView}>
                 <Button
                     buttonStyle={styles.buttonStyle}
@@ -204,7 +206,7 @@ export default class Classify extends Component {
                     titleStyle={styles.titleStyle}
                     onPress={this.clissifyImages.bind(this)}
                     // onPress={this.uploadImages.bind(this)}
-                    title='开始分类'
+                    title={this.props.again ? '继续分类' : '开始分类'}
                 />
             </View>
             <View style={styles.list}>

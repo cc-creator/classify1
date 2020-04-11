@@ -9,6 +9,7 @@ import RNFS from "react-native-fs";
 import RecordCell from './RecordCell';
 import {Button} from "react-native-elements";
 import ToastExample from "../../nativeComponents/ToastExample";
+import Header from '../global/Header';
 
 const rnfsPath = RNFS.DocumentDirectoryPath;
 const jilu_path = rnfsPath + '/jilu.text';
@@ -93,7 +94,7 @@ export default class Record extends Component{
                     }
                 }
             })
-            .catch((err) => {console.log(err)})
+            .catch((err) => {ToastExample.show("暂无记录",ToastExample.SHORT);})
     }
 
     deleteRecord(index,pdfUri) {
@@ -169,6 +170,7 @@ export default class Record extends Component{
     render(){
         return (
             <View style={styles.container}>
+                <Header title='分类记录' flag={false}/>
                 <View style={styles.buttonView}>
                     <Button
                         buttonStyle={this.state.flag ? styles.buttonStyle1 : styles.buttonStyle2}

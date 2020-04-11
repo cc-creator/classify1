@@ -9,6 +9,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import ImageViewer from "react-native-image-zoom-viewer";
+import Header from "../global/Header";
 
 let index = 0;
 export default class CellDetail extends Component {
@@ -27,6 +28,7 @@ export default class CellDetail extends Component {
         }
         return (
             <View>
+                <Header title='分类详情' flag={true} />
                 <FlatList
                     data={images}
                     numColumns={4}
