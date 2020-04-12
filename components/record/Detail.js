@@ -4,7 +4,7 @@ import {
     StyleSheet,
     View,
     Text,
-    FlatList, Modal
+    FlatList, Modal, Image, ProgressBarAndroid
 } from 'react-native';
 import { Actions} from 'react-native-router-flux';
 import { Button,Card,Overlay,Input } from 'react-native-elements';
@@ -41,7 +41,8 @@ export default class Detail extends Component{
             isPdf: false, //标识当前页面的PDF是否生成
             visible: false, //控制Modal的显示
             source: '', //存放生成PDF的路径
-            flag: typeof(this.props.again) === 'undefined' ? false : true
+            flag: typeof(this.props.again) === 'undefined' ? false : true,
+            isLoad: false,
         }
         /*检测PDF是否存在*/
         if(this.props.pdfUri != null && !this.props.again){
@@ -315,6 +316,10 @@ export default class Detail extends Component{
                     RNFS.appendFile(jilu_path,"@"+local_path,'utf8')
                         .then((success) => {
                             ToastExample.show("导出本地成功",ToastExample.SHORT);
+                            this.setState({
+                                isLoad: false,
+                                isVisible: false
+                            })
                             Actions.record();
                         })
                         .catch((err) => {})
@@ -334,6 +339,10 @@ export default class Detail extends Component{
                     RNFS.writeFile(this.props.path,temp_str,'utf8')
                         .then((success) => {
                             ToastExample.show("导出本地成功",ToastExample.SHORT);
+                            this.setState({
+                                isLoad: false,
+                                isVisible: false
+                            })
                             Actions.record();
                         })
                         .catch((err) => {});
@@ -349,12 +358,15 @@ export default class Detail extends Component{
             console.log("转去登录");
             Actions.logreg();
         }else {
-            this.setState({isVisible: true})
+            this.setState({
+                isVisible: true
+            })
         }
     }
 
     uploadCategory() {
         console.log("上传图片")
+        this.setState({p_isVisible:true})
         let formdata = new FormData();
         if(!this.props.again){
             for(let i=0;i<images.length;i++){
@@ -377,8 +389,11 @@ export default class Detail extends Component{
             body: formdata})
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({isVisible: false})
                 ToastExample.show("上传成功",ToastExample.SHORT);
+                this.setState({
+                    isLoad: false,
+                    isVisible: false
+                })
                 Actions.record();
             })
             .catch(err => console.log(err))
@@ -405,6 +420,10 @@ export default class Detail extends Component{
                 .then((responseJson) => {
                     this.setState({isVisible: false})
                     ToastExample.show("上传成功",ToastExample.SHORT);
+                    this.setState({
+                        isLoad: false,
+                        isVisible: false
+                    })
                     Actions.record();
                 })
                 .catch(err => console.log(err))
@@ -537,7 +556,7 @@ export default class Detail extends Component{
     render()  {
         return (
             <View style={styles.container}>
-                <Header title='分类总览' flag={true}/>
+                <Header title='分类总览' flag={true} again={this.props.again}/>
                 {this.props.source !== 'temp' && !this.state.flag ?
                     <View style={styles.describe}>
                         <Card
@@ -627,34 +646,45 @@ export default class Detail extends Component{
                 }
                 <Overlay isVisible={this.state.isVisible}
                          onBackdropPress={() => this.setState({ isVisible: false })}
-                         height={height/3.9}>
-                    <Input placeholder='标题' value={this.state.title}
-                           maxLength={10}
-                           onChangeText={(text) => {this.setState({title: text})}}/>
-                    <Input placeholder='备注' value={this.state.remark}
-                           maxLength={35}
-                           multiline={true}
-                           onChangeText={(text) => {this.setState({remark: text})}}/>
-                    <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: 30}}>
-                        <Button
-                            buttonStyle={styles.buttonStyle}
-                            titleStyle={styles.titleStyle}
-                            onPress={() => {
-                                if(flag){
-                                    this.local_store();
-                                }else {
-                                    this.uploadCategory();
-                                }
-                            }}
-                            title='确定'
-                        />
-                        <Button
-                            buttonStyle={styles.buttonStyle}
-                            titleStyle={styles.titleStyle}
-                            onPress={() => this.setState({ isVisible: false })}
-                            title='取消'
-                        />
-                    </View>
+                         overlayStyle={{padding: 0}}
+                         height={height*0.25}>
+                    { !this.state.isLoad ? <View style={{padding: 10}}>
+                        <Input placeholder='标题' value={this.state.title}
+                               maxLength={10}
+                               style={{marginTop: 5}}
+                               onChangeText={(text) => {this.setState({title: text})}}/>
+                        <Input placeholder='备注' value={this.state.remark}
+                               maxLength={35}
+                               multiline={true}
+                               onChangeText={(text) => {this.setState({remark: text})}}/>
+                        <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: 30}}>
+                            <Button
+                                buttonStyle={styles.buttonStyle}
+                                titleStyle={styles.titleStyle}
+                                onPress={() => {
+                                    this.setState({isLoad: true})
+                                    if(flag){
+                                        this.local_store();
+                                    }else {
+                                        this.uploadCategory();
+                                    }
+                                }}
+                                title='确定'
+                            />
+                            <Button
+                                buttonStyle={styles.buttonStyle}
+                                titleStyle={styles.titleStyle}
+                                onPress={() => this.setState({ isVisible: false })}
+                                title='取消'
+                            />
+                        </View>
+                    </View> : <View style={styles.p_container}>
+                            <View style={styles.p_view1}>
+                                <Text style={styles.p_text}>正在上传</Text>
+                            </View>
+                            <View style={styles.p_view2}>
+                                <ProgressBarAndroid styleAttr='Large' color='#2089DC' style={styles.p_progress}/>
+                            </View></View> }
                 </Overlay>
                 <Modal visible={this.state.visible} onRequestClose={() => {this.setState({visible: false})}}>
                     { this.state.source == '' ? null :
@@ -714,6 +744,24 @@ const styles = StyleSheet.create({
         flex:1,
         width:width,
         height:height,
+    },
+    p_container: {
+        padding: 0
+    },
+    p_view1: {
+        backgroundColor: '#2089DC',
+        height: height*0.1,
+        alignItems: 'center'
+    },
+    p_text: {
+        lineHeight: height*0.1,
+        fontSize: 25
+    },
+    p_view2: {
+        height: height*0.2
+    },
+    p_progress: {
+        marginTop: height*0.03
     }
 });
 

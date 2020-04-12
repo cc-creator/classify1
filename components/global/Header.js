@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {Actions} from "react-native-router-flux";
 
-const Header = ({title,flag}) => {
+const Header = ({title,flag,again}) => {
     return(
         <View style={styles.container}>
             <Text style={styles.title}>{title}</Text>

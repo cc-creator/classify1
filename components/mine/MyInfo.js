@@ -4,19 +4,20 @@ import {
     View,
 } from 'react-native';
 import Header from "../global/Header";
-import { Avatar } from 'react-native-elements'
 
 export default class MyInfo extends Component{
 
-    constructor() {
+    constructor(){
         super();
         this.state = {
+            isShow: false,
+            progress: 0
         }
     }
 
     render() {
         return (
-            <View style={styles.container}>
+            <View>
                 <Header title='我的' flag={false}/>
             </View>
         );
@@ -24,7 +25,5 @@ export default class MyInfo extends Component{
 }
 
 const styles = StyleSheet.create({
-    container: {
-    },
 });
 

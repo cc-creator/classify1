@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
     View, StyleSheet, FlatList,
-    Dimensions, Modal, Text
+    Dimensions, Modal,
 } from 'react-native';
 /*第三方组件*/
 import ImagePicker from 'react-native-image-crop-picker';
@@ -46,6 +46,7 @@ export default class Classify extends Component {
         this.state = {
             imagePaths: null,
             isImageShow: false,
+            isLoad: false
         };
         tflite.loadModel({
                 model: 'my_model2.tflite',
@@ -113,7 +114,7 @@ export default class Classify extends Component {
         if(images.length == 0)
             ToastExample.show("请选择图片",ToastExample.SHORT);
         else{
-            ToastExample.show("开始分类",ToastExample.SHORT);
+            ToastExample.show("正在准备",ToastExample.SHORT);
             let dateBegin = new Date();
             console.log("-----------分类结果-----------")
             for(let i=0;i<images.length;i++){
@@ -130,7 +131,8 @@ export default class Classify extends Component {
                         images[i].label2 = temp_lables[1];
                     }
                     if(i == images.length-1){
-                        ToastExample.show("完成分类",ToastExample.SHORT);
+                        //ToastExample.show("完成分类",ToastExample.SHORT);
+                        this.setState({isLoad: false})
                         let dateEnd = new Date();
                         let time = this.changeTwoDecimal_f((dateEnd-dateBegin)/1000);
                         let newTime = time;
@@ -153,7 +155,7 @@ export default class Classify extends Component {
                             categoryId: this.props.categoryId,
                             cover: this.props.cover});
                     }
-                });
+                })
             }
         }
     }
@@ -198,12 +200,17 @@ export default class Classify extends Component {
                     buttonStyle={styles.buttonStyle}
                     onPress={this.pickMultiple.bind(this)}
                     titleStyle={styles.titleStyle}
+                    disabled={this.state.isLoad}
                     title='选择图片'
                 />
                 <Button
                     buttonStyle={styles.buttonStyle}
                     titleStyle={styles.titleStyle}
-                    onPress={() => {this.clissifyImages()}}
+                    onPress={() => {
+                        this.setState({isLoad: true})
+                        this.clissifyImages()
+                    }}
+                    loading={this.state.isLoad}
                     title={this.props.again ? '继续分类' : '开始分类'}
                 />
             </View>
