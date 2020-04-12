@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
     View,
     Text,
@@ -16,6 +16,7 @@ const Header = ({title,flag}) => {
             { flag ? <TouchableOpacity style={styles.touchableOpacity}
                                        onPress={() => {
                                            if(title === '图片分类'){
+                                               Actions.pop();
                                                Actions.jump('record');
                                            }else{
                                                Actions.pop()
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 25,
-        fontWeight: '400',
+        fontWeight: '200',
         lineHeight: height*0.07
     },
     touchableOpacity: {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
     View, StyleSheet, FlatList,
-    Dimensions, Modal,
+    Dimensions, Modal, Text
 } from 'react-native';
 /*第三方组件*/
 import ImagePicker from 'react-native-image-crop-picker';
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
 
 let imageUrls = [];
 let images = [];
-let again = false;//是否为再次分类
 let index = 0;
 let tflite = new Tflite();
 export default class Classify extends Component {
@@ -204,8 +203,7 @@ export default class Classify extends Component {
                 <Button
                     buttonStyle={styles.buttonStyle}
                     titleStyle={styles.titleStyle}
-                    onPress={this.clissifyImages.bind(this)}
-                    // onPress={this.uploadImages.bind(this)}
+                    onPress={() => {this.clissifyImages()}}
                     title={this.props.again ? '继续分类' : '开始分类'}
                 />
             </View>

@@ -4,6 +4,7 @@ import {
     View,
 } from 'react-native';
 import Header from "../global/Header";
+import { Avatar } from 'react-native-elements'
 
 export default class MyInfo extends Component{
 
