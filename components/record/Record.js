@@ -38,7 +38,7 @@ export default class Record extends Component{
         }else {
             console.log(global.variables.userId)
             let userId = {"userId": global.variables.userId};
-            fetch('http://192.168.195.1:8080/category/getCategorys', {
+            fetch(global.variables.ip+'/category/getCategorys', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -60,7 +60,7 @@ export default class Record extends Component{
                         })
                     }
                 })
-                .catch(err => console.log(err))
+                .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
         }
     }
 
@@ -142,7 +142,7 @@ export default class Record extends Component{
                 .catch((err) => {})
         }else {
             let cId = {"cId": this.state.remote_groups[index].categoryId};
-            fetch('http://192.168.195.1:8080/category/logDelCategory', {
+            fetch(global.variables.ip+'/category/logDelCategory', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -162,7 +162,7 @@ export default class Record extends Component{
                     })
                     ToastExample.show("删除记录成功",ToastExample.SHORT);
                 })
-                .catch(err => console.log(err))
+                .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
         }
 
     }
@@ -170,7 +170,7 @@ export default class Record extends Component{
     render(){
         return (
             <View style={styles.container}>
-                <Header title='分类记录' flag={false}/>
+                <Header title='分类记录' left_flag={false} right_flag={false} />
                 <View style={styles.buttonView}>
                     <Button
                         buttonStyle={this.state.flag ? styles.buttonStyle1 : styles.buttonStyle2}
@@ -210,27 +210,28 @@ export default class Record extends Component{
 }
 let dimensions = Dimensions.get("window")
 let height = dimensions.height
+let width = dimensions.width
 const styles = StyleSheet.create({
     buttonView: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginTop: 10
+        marginTop: height*0.02
     },
     buttonStyle1: {
-        height:50,
-        width:120
+        height:width*0.125,
+        width:width*0.25,
     },
     buttonStyle2: {
-        height:50,
-        width:120,
+        height:width*0.125,
+        width:width*0.25,
         opacity: 0.7
     },
     titleStyle: {
-        fontSize:20
+        fontSize:15
     },
     listView: {
-        marginTop: 60,
-        height: height*0.75
+        marginTop: 70,
+        height: height*0.72
     }
 });

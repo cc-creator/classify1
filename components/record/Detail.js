@@ -310,7 +310,6 @@ export default class Detail extends Component{
             let local_path = rnfsPath + "/"+this.state.title + '.txt';
             let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@" + time + "@" + dateTime + "@" + JSON.stringify(images) + "@";
             temp_str += this.state.source === '' ? '' : this.state.source.uri;
-            console.log(temp_str);
             RNFS.writeFile(local_path,temp_str,'utf8')
                 .then((success) => {
                     RNFS.appendFile(jilu_path,"@"+local_path,'utf8')
@@ -381,7 +380,7 @@ export default class Detail extends Component{
             formdata.append('time',time);
             formdata.append('pdfUri',this.state.source === '' ? '' : this.state.source.uri);
             formdata.append('dateTime', dateTime);
-        fetch('http://192.168.195.1:8080/images/uploadCategory', {
+        fetch(global.variables.ip+'/images/uploadCategory', {
             method: 'POST',
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -396,7 +395,7 @@ export default class Detail extends Component{
                 })
                 Actions.record();
             })
-            .catch(err => console.log(err))
+            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
         }else {
             console.log("云端继续分类")
             for(let i=0;i<ccimages.length;i++){
@@ -406,11 +405,13 @@ export default class Detail extends Component{
                 formdata.append('label2s',ccimages[i].label2);
             }
             formdata.append('categoryId',this.props.categoryId);
+            formdata.append('ctitle',this.state.title);
+            formdata.append('remark',this.state.remark);
             formdata.append('time',time);
             formdata.append('pdfUri',this.state.source === '' ? '' : this.state.source.uri);
             formdata.append('dateTime', dateTime);
             console.log(formdata)
-            fetch('http://192.168.195.1:8080/images/uploadImages', {
+            fetch(global.variables.ip+'/images/uploadImages', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -424,9 +425,10 @@ export default class Detail extends Component{
                         isLoad: false,
                         isVisible: false
                     })
+
                     Actions.record();
                 })
-                .catch(err => console.log(err))
+                .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
         }
     }
 
@@ -451,46 +453,130 @@ export default class Detail extends Component{
     _keyExtractor=(item, index)=> ''+index;
 
     makeHtmlString(ctitle,remark,length,time,dateTime) {
+        let table = '<table cellpadding="0px" frame="box" style="width: 100%">\n' +
+            '<thead style="background-color: #2089DC;color: #fff;">\n' +
+            '<tr style="font-size: 38px"><th height="74">一级类别</th>\n' +
+            '<th height="74">二级类别</th>\n' +
+            '<th height="74">数量</th></tr>\n' +
+            '</thead>\n' +
+            '<tbody>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="4" style="text-align: center;border-bottom: 1px solid #666;">人像<span style="color: #2089DC;">( '+ sum_person +' )</span></td>\n' +
+            '<td height="74" style="text-align: center">单人照</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_person_single.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center">双人照</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_person_dubbo.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;">集体照</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_person_multi.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">证件照</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_person_passport.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="5" style="text-align: center;border-bottom: 1px solid #666;">动物<span style="color: #2089DC;">( '+ sum_animal +' )</span></td>\n' +
+            '<td height="74" style="text-align: center">哺乳类</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_animal_mammal.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center">鱼类</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_animal_fish.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center">鸟类</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_animal_bird.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center">昆虫</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_animal_insect.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">两栖类</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_animal_anphibious.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="3" style="text-align: center;border-bottom: 1px solid #666;">植物<span style="color: #2089DC;">( '+ sum_plant +' )</span></td>\n' +
+            '<td height="74" style="text-align: center">花朵</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_plant_flower.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center">小草</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_plant_grass.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">树木</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_plant_tree.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="3" style="text-align: center;border-bottom: 1px solid #666;">美食<span style="color: #2089DC;">( '+ sum_food +' )</span></td>\n' +
+            '<td height="74" style="text-align: center">食物</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_food_meal.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center">饮料</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_food_drink.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">甜点</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_food_dessert.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="2" style="text-align: center;border-bottom: 1px solid #666;">风景<span style="color: #2089DC;">( '+ sum_scenery +' )</span></td>\n' +
+            '<td height="74" style="text-align: center">室外景色</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_scenery_outside.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">夜景</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_scenery_night.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="3" style="text-align: center;border-bottom: 1px solid #666;">服装<span style="color: #2089DC;">( '+ sum_clothing +' )</span></td>\n' +
+            '<td height="74" style="text-align: center">衣服</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_clothing_clothing.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center">鞋子</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_clothing_shoes.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">帽子</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_clothing_hat.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="2" style="text-align: center;border-bottom: 1px solid #666;">物品<span style="color: #2089DC;">( '+ sum_thing +' )</span></td>\n' +
+            '<td height="74" style="text-align: center">电器</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_thing_dianqi.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">家具</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_thing_furniture.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="2" style="text-align: center;border-bottom: 1px solid #666;">文档<span style="color: #2089DC;">( '+ sum_document +' )</span></td>\n' +
+            '<td height="74" style="text-align: center">证件</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ images_document_passport.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">二维码</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_document_erweima.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">' +
+            '<td height="74" colspan="2" style="text-align: center">其他</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ sum_other +'</td>' +
+            '</tr>\n' +
+            '</tbody>\n' +
+            '</table>';
         let result = '';
-        result += typeof(ctitle) === 'undefined' ? '' : '<h1 style="color: dodgerblue">'+ ctitle +'</h1><br/>';
-        result += typeof(remark) == 'undefined' ? '' : '<h1>'+ remark +'</h1><br/>';
-        result += '<h1>总共:' + length + '张图片</h1><br/>' +
-            '<h1>分类共用时:' + (before_flag ? this.props.newTime : time) + '秒</h1><br/>' +
-            '<h1>分类时间:' + dateTime + '</h1>';
-        result += sum_person == 0 ? '' : '<h1>人像:' + sum_person + '张</h1>';
-        result += images_person_single.length == 0 ? '' : '<h2>单人照:' + images_person_single.length + '张</h2>';
-        result += images_person_dubbo.length == 0 ? '' : '<h2>双人照:' + images_person_dubbo.length + '张</h2>';
-        result += images_person_multi.length == 0 ? '' : '<h2>集体照:' + images_person_dubbo.length + '张</h2>';
-        result += images_person_passport.length == 0 ? '' : '<h2>证件照:' + images_person_passport.length + '张</h2>';
-        result += sum_animal == 0 ? '' : '<h1>动物:' + sum_animal + '张</h1>'
-        result += images_animal_mammal.length == 0 ? '' : '<h2>哺乳类:' + images_animal_mammal.length + '张</h2>';
-        result += images_animal_bird.length == 0 ? '' : '<h2>鸟类:' + images_animal_bird.length + '张</h2>';
-        result += images_animal_fish.length == 0 ? '' : '<h2>鱼类:' + images_animal_fish.length + '张</h2>';
-        result += images_animal_insect.length == 0 ? '' : '<h2>昆虫:' + images_animal_insect.length + '张</h2>';
-        result += images_animal_anphibious.length == 0 ? '' : '<h2>两栖类:' + images_animal_anphibious.length + '张</h2>';
-        result += sum_food == 0 ? '' : '<h1>美食:' + sum_food + '张</h1>';
-        result += images_food_meal.length == 0 ? '' : '<h2>食物:' + images_food_meal.length + '张</h2>';
-        result += images_food_drink.length == 0 ? '' : '<h2>饮料:' + images_food_drink.length + '张</h2>';
-        result += images_food_dessert.length == 0 ? '' : '<h2>甜点:' + images_food_dessert.length + '张</h2>';
-        result += sum_plant == 0 ? '' : '<h1>植物:' + sum_plant + '张</h1>';
-        result += images_plant_flower.length == 0 ? '' : '<h2>鲜花:' + images_plant_flower.length + '张</h2>';
-        result += images_plant_grass.length == 0 ? '' : '<h2>小草:' + images_plant_grass.length + '张</h2>';
-        result += images_plant_tree.length == 0 ? '' : '<h2>树木:' + images_plant_tree.length + '张</h2>';
-        result += sum_clothing == 0 ? '' : '<h1>服装:' + sum_clothing + '张</h1>';
-        result += images_clothing_clothing.length == 0 ? '' : '<h2>衣服:' + images_clothing_clothing.length + '张</h2>';
-        result += images_clothing_hat.length == 0 ? '' : '<h2>帽子:' + images_clothing_hat.length + '张</h2>';
-        result += images_clothing_shoes.length == 0 ? '' : '<h2>鞋子:' + images_clothing_shoes.length + '张</h2>';
-        result += sum_thing == 0 ? '' : '<h1>物品:' + sum_thing + '张</h1>';
-        result += images_thing_furniture.length == 0 ? '' : '<h2>家具:' + images_thing_furniture.length + '张</h2>';
-        result += images_thing_dianqi.length == 0 ? '' : '<h2>电器:' + images_thing_dianqi.length + '张</h2>';
-        result += sum_document == 0 ? '' : '<h1>文档:' + sum_document + '张</h1>';
-        result += images_document_erweima.length == 0 ? '' : '<h2>二维码:' + images_document_erweima.length + '张</h2>';
-        result += images_document_passport.length == 0 ? '' : '<h2>证件:' + images_document_passport.length + '张</h2>';
-        result += sum_scenery == 0 ? '' : '<h1>风景:' + sum_scenery + '张</h1>';
-        result += images_scenery_outside.length == 0 ? '' : '<h2>室外:' + images_scenery_outside.length + '张</h2>';
-        result += images_scenery_night.length == 0 ? '' : '<h2>夜景:' + images_scenery_night.length + '张</h2>';
-        result += sum_other == 0 ? '' : '<h1>其他:' + sum_other + '张</h1>';
-        return  result;
+        result += typeof(ctitle) === 'undefined' ? '' : '<h1 style="color: dodgerblue;text-align: center">'+ ctitle +'</h1><br/>';
+        result += typeof(remark) == 'undefined' ? '' : '<span style="font-size: 30px">'+ remark +'</span><br/><br/>';
+        result += '<span style="font-size: 30px">图片总数: </span>' + '<span style="font-size: 30px;color: #2089DC">' + length + '</span>' + '<span style="font-size: 30px"> 张</span><br/><br/>';
+        result += '<span style="font-size: 30px">分类用时: </span>' + '<span style="font-size: 30px;color: #2089DC">' + (before_flag ? this.props.newTime : time) + '</span>' + '<span style="font-size: 30px"> 秒</span><br/><br/>';
+        result += '<span style="font-size: 30px;">分类时间: </span>' + '<span style="font-size: 30px;color: #2089DC">' + dateTime + '</span><br/><br/>';
+        return  result+table;
     }
 
     async createPDF() {
@@ -501,14 +587,34 @@ export default class Detail extends Component{
         };
         let file = await RNHTMLtoPDF.convert(options)
         this.setState({source: {uri: 'file://'+file.filePath}})
+        console.log(file.filePath)
         /*从总览页面进入详情后生成PDF*/
-        if(typeof(this.props.path) !== 'undefined' && !before_flag){
+        if(this.props.source === 'local' && typeof(this.props.path) !== 'undefined' && typeof(this.props.again) === 'undefined'){
+            console.log('生成PDF')
             RNFS.appendFile(this.props.path,'file://'+file.filePath,'utf8')
                 .then((success) => {
                     ToastExample.show(file.filePath,ToastExample.LONG);
                 })
                 .catch((err) => {})
-        }else {
+        }if(this.props.source === 'remote' && typeof(this.props.categoryId) !== 'undefined' && typeof(this.props.again) === 'undefined'){
+            console.log('生成PDF')
+            let body = {
+                'categoryId': this.props.categoryId,
+                'pdfUri': 'file://'+file.filePath
+            }
+            fetch(global.variables.ip+'/category/updateCategory', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)})
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson)
+                })
+                .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
+        } else {
             ToastExample.show(file.filePath,ToastExample.LONG);
         }
     }
@@ -530,7 +636,7 @@ export default class Detail extends Component{
         }else {
             console.log("merge")
             let categoryId = {'categoryId': this.props.categoryId}
-            fetch('http://192.168.195.1:8080/images/getImages', {
+            fetch(global.variables.ip+'/images/getImages', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -547,7 +653,7 @@ export default class Detail extends Component{
                     this.partition();
                     this.setState({flag: false})
                 })
-                .catch(err => console.log(err))
+                .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
         }
         before_flag = false;
         this.setState({isPdf: false})
@@ -556,7 +662,7 @@ export default class Detail extends Component{
     render()  {
         return (
             <View style={styles.container}>
-                <Header title='分类总览' flag={true} again={this.props.again}/>
+                <Header title='分类总览' left_flag={true} right_flag={false} again={this.props.again} last={this.props.last}/>
                 {this.props.source !== 'temp' && !this.state.flag ?
                     <View style={styles.describe}>
                         <Card
@@ -607,26 +713,26 @@ export default class Detail extends Component{
                             title='放弃'/>
                     </View> :
                     <View style={styles.buttonView}>
-                        <Button
-                            buttonStyle={styles.buttonStyle}
-                            titleStyle={styles.titleStyle}
-                            onPress={() => {
-                                flag = true;
-                                this.setState({isVisible: true})
-                            }}
-                            disabled={typeof(this.props.again) === 'undefined' ? this.props.source === 'local' : !this.props.again}
-                            title='导出本地'
-                        />
-                        <Button
-                            buttonStyle={styles.buttonStyle}
-                            titleStyle={styles.titleStyle}
-                            onPress={() => {
-                                flag = false;
-                                this.remote_store();
-                            }}
-                            disabled={typeof(this.props.again) === 'undefined' ? this.props.source === 'remote' : !this.props.again}
-                            title='上传云端'
-                        />
+                        { typeof(this.props.again) !== 'undefined' && this.props.source === 'remote' ? null :
+                            <Button
+                                buttonStyle={styles.buttonStyle}
+                                titleStyle={styles.titleStyle}
+                                onPress={() => {
+                                    flag = true;
+                                    this.setState({isVisible: true})
+                                }}
+                                disabled={typeof(this.props.again) === 'undefined' ? this.props.source === 'local' : !this.props.again}
+                                title='导出本地'/>}
+                        { typeof(this.props.again) !== 'undefined' && this.props.source === 'local' ? null :
+                            <Button
+                                buttonStyle={styles.buttonStyle}
+                                titleStyle={styles.titleStyle}
+                                onPress={() => {
+                                    flag = false;
+                                    this.remote_store();
+                                }}
+                                disabled={typeof(this.props.again) === 'undefined' ? this.props.source === 'remote' : !this.props.again}
+                                title='上传云端'/>}
                     {this.state.isPdf ?
                         <Button
                             buttonStyle={styles.buttonStyle}
@@ -657,7 +763,7 @@ export default class Detail extends Component{
                                maxLength={35}
                                multiline={true}
                                onChangeText={(text) => {this.setState({remark: text})}}/>
-                        <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: 30}}>
+                        <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: height*0.02}}>
                             <Button
                                 buttonStyle={styles.buttonStyle}
                                 titleStyle={styles.titleStyle}
@@ -723,22 +829,22 @@ const styles = StyleSheet.create({
         height: height/10,
         justifyContent: 'center',
         marginTop: 90,
-        marginBottom: 110
+        marginBottom: 110,
     },
     buttonView: {
         position: 'absolute',
-        left: width*0.72,
-        top: height*0.72
+        right: width*0.05,
+        bottom: height*0.02
     },
     buttonStyle: {
-        height:50,
-        width:120,
+        height:width*0.125,
+        width:width*0.25,
         borderRadius: 25,
         marginBottom: 5,
         opacity: 0.8
     },
     titleStyle: {
-        fontSize:20
+        fontSize:15
     },
     pdf: {
         flex:1,

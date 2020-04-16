@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text} from 'react-native';
-import {Modal, Router, Scene, Tabs} from 'react-native-router-flux';
+import {Actions, Router, Scene, Tabs, Modal} from 'react-native-router-flux';
 
 import Classify from './components/classify/Classify';
 import Record from './components/record/Record';
@@ -23,46 +23,47 @@ const App = () => {
               hideNavBar
               showLabel={false}
           >
-            {/* Tab and it's scenes */}
             <Scene key="record" title="记录" icon={TabIcon}>
               <Scene
                   key="record"
+                  title='分类记录'
                   component={Record}
                   hideNavBar
               />
               <Scene
                   key="detail"
+                  title='分类总览'
                   component={Detail}
                   hideNavBar
               />
               <Scene
                   key="cellDetail"
+                  title='分类详情'
                   component={CellDetail}
                   hideNavBar
               />
             </Scene>
-            {/* Tab and it's scenes */}
-            <Scene key="classify" title="分类" icon={TabIcon}>
+            <Scene key="classify" title="分类" icon={TabIcon} tabBarOnPress={() => {Actions.classify()}}>
               <Scene
                   key="classify"
+                  title='图片分类'
                   component={Classify}
                   hideNavBar
               />
             </Scene>
-
-            {/* Tab and it's scenes */}
             <Scene key="my" title="我" icon={TabIcon}>
               <Scene
                   key="myInfo"
+                  title='我的'
                   component={MyInfo}
                   hideNavBar
               />
             </Scene>
           </Tabs>
-          <Scene
+          <Modal
               key="logreg"
               component={LogReg}
-              title={"登录"}
+              title='登录'
               hideNavBar
           />
         </Scene>

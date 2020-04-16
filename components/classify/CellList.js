@@ -28,7 +28,7 @@ const CellList = ({prop,removeImg,findIndex,clissifyImage}) => {
                     removeImg(prop.item.image.uri)
                 }}
             >
-                <Image style={{width: 24,height: 24}} source={require("../../android/app/src/main/assets/remove.png")} />
+                <Image style={{width: width*0.05,height: width*0.05}} source={require("../../android/app/src/main/assets/remove.png")} />
             </TouchableOpacity>
         </View>
     );
@@ -48,11 +48,11 @@ const styles = StyleSheet.create({
     },
     remove: {
         backgroundColor: '#ffffff',
-        width: 24,
-        height: 24,
+        width: width*0.05,
+        height: width*0.05,
         position: 'absolute',
-        top: -9,
-        left: (width-30)/4-15,
+        top: -width*0.02,
+        left: width*0.205,
         borderRadius: 13,
     }
 })

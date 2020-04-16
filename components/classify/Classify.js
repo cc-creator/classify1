@@ -10,28 +10,30 @@ import Tflite from 'tflite-react-native';
 import { Button } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
 /*自定义组件*/
-import Header from '../global/Header';
 import CellList from './CellList';
 import ToastExample from '../../nativeComponents/ToastExample';
+import Header from "../global/Header";
 
 const dimension = Dimensions.get('window')
+const width = dimension.width;
+const height = dimension.height;
 const styles = StyleSheet.create({
     buttonView: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginTop: 10
+        marginTop: height*0.02
     },
     buttonStyle: {
-        height:50,
-        width:120
+        height:width*0.125,
+        width:width*0.25,
     },
     titleStyle: {
-        fontSize:20
+        fontSize:15
     },
     list: {
-        marginTop: 55,
-        marginBottom: 30
+        marginTop: height*0.08,
+        marginBottom: height*0.2
     }
 });
 
@@ -67,7 +69,7 @@ export default class Classify extends Component {
         }).then(imgs => {
             for(let i in imgs){
                 imageUrls.push({url:imgs[i].path});
-                images.push({url:imgs[i].path,label1:"other",label2:"",dateTime: imgs[i].exif.DateTime});
+                images.push({url:imgs[i].path,label1:"other",label2:"",dateTime: imgs[i].modificationDate});
             }
             this.setState({
                 imagePaths: imgs.map(i => {
@@ -114,9 +116,10 @@ export default class Classify extends Component {
         if(images.length == 0)
             ToastExample.show("请选择图片",ToastExample.SHORT);
         else{
+            this.setState({isLoad: true})
             ToastExample.show("正在准备",ToastExample.SHORT);
             let dateBegin = new Date();
-            console.log("-----------分类结果-----------")
+            console.log("-----------正在分类-----------")
             for(let i=0;i<images.length;i++){
                 await tflite.runModelOnImage({
                     path: images[i].url,  // 图像文件地址，必填
@@ -132,16 +135,16 @@ export default class Classify extends Component {
                     }
                     if(i == images.length-1){
                         //ToastExample.show("完成分类",ToastExample.SHORT);
-                        this.setState({isLoad: false})
                         let dateEnd = new Date();
                         let time = this.changeTwoDecimal_f((dateEnd-dateBegin)/1000);
+                        this.setState({isLoad: false})
                         let newTime = time;
-                        /*继续分类将已经分好类的图片加进images中*/
+                        let source = typeof(this.props.source) === 'undefined' ? 'temp' : this.props.source;
                         if(this.props.again){
                             time = this.changeTwoDecimal_f(Number(time) + Number(this.props.time));
                         }
-                        let source = typeof(this.props.source) === 'undefined' ? 'temp' : this.props.source;
                         Actions.detail({
+                            last: 'classify',
                             images: images,
                             source: source,
                             newTime: newTime,
@@ -154,6 +157,11 @@ export default class Classify extends Component {
                             path: this.props.path,
                             categoryId: this.props.categoryId,
                             cover: this.props.cover});
+                        imageUrls = [];
+                        images = [];
+                        this.setState({
+                            imagePaths: null
+                        })
                     }
                 })
             }
@@ -194,7 +202,7 @@ export default class Classify extends Component {
 
     render() {
         return (<View>
-            {this.props.again ? <Header title='图片分类' flag={true}/> : <Header title='图片分类' flag={false}/>}
+            {this.props.again ? <Header title='图片分类' left_flag={true} right_flag={false} again={this.props.again} last={this.props.last}/> : <Header title='图片分类' left_flag={false} right_flag={false} again={this.props.again}/>}
             <View style={styles.buttonView}>
                 <Button
                     buttonStyle={styles.buttonStyle}
@@ -207,7 +215,6 @@ export default class Classify extends Component {
                     buttonStyle={styles.buttonStyle}
                     titleStyle={styles.titleStyle}
                     onPress={() => {
-                        this.setState({isLoad: true})
                         this.clissifyImages()
                     }}
                     loading={this.state.isLoad}

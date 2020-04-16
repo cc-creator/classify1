@@ -16,7 +16,7 @@ const DetailCell = ({prop}) => {
         <View style={styles.container}>
             <View style={{flex: 1,flexDirection: 'row'}}>
                 <Text style={styles.text}>{prop.item.label}</Text>
-                <Badge badgeStyle={{top: 5,left: 5}} value={prop.item.sum} status="success" />
+                <Badge badgeStyle={{top: 4,left: 5}} value={prop.item.sum} status="success" />
             </View>
             <View>
                 <FlatList
@@ -25,8 +25,8 @@ const DetailCell = ({prop}) => {
                     keyExtractor={(item, index)=> ''+index}
                     renderItem={(item) => <TouchableOpacity onPress={() => {Actions.cellDetail({images:item.item.group})}}>
                         <Image style={styles.image} source={{uri: item.item.group[0].url}}></Image>
-                        <Badge badgeStyle={{top: -10,left: -5}} value={item.item.sum} status="primary" />
-                        <Text style={{top: -20}}>{item.item.label2}</Text>
+                        <Badge badgeStyle={{top: -10,left: 30}} value={item.item.sum} status="primary" />
+                        <Text style={{top: -20,fontSize:12}}>{item.item.label2}</Text>
                     </TouchableOpacity>}
                 ></FlatList>
             </View>

@@ -13,11 +13,25 @@ import Header from "../global/Header";
 
 let index = 0;
 export default class CellDetail extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             isImageShow: false,
+            images: this.props.images.sort((a,b) => {return b.dateTime - a.dateTime}).map((image) => {return image})
         };
+    }
+
+    timeOrder(asc) {
+        let images = this.state.images;
+        if(!asc){
+            images.sort((a,b) => {return b.dateTime - a.dateTime})
+        }else {
+            images.sort((a,b) => {return a.dateTime - b.dateTime})
+        }
+        this.setState({
+            images: images.map((image) => {return image})
+        })
+        console.log(images)
     }
 
     render() {
@@ -28,9 +42,9 @@ export default class CellDetail extends Component {
         }
         return (
             <View>
-                <Header title='分类详情' flag={true} />
+                <Header title='分类详情' left_flag={true} right_flag={true} timeOrder={this.timeOrder.bind(this)}/>
                 <FlatList
-                    data={images}
+                    data={this.state.images}
                     numColumns={4}
                     keyExtractor={(item, index)=> ''+index}
                     renderItem={({item}) =>

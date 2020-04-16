@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Card } from "react-native-elements";
 import { Actions } from 'react-native-router-flux';
+import ToastExample from "../../nativeComponents/ToastExample";
 
 export default class RecordCell extends Component {
 
@@ -21,7 +22,7 @@ export default class RecordCell extends Component {
 
     getImages(cId,ctitle,remark,time,dateTime,pdfUri,cover) {
         let categoryId = {"categoryId": cId};
-        fetch('http://192.168.195.1:8080/images/getImages', {
+        fetch(global.variables.ip+'/images/getImages', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -31,15 +32,16 @@ export default class RecordCell extends Component {
         })
             .then((response) => response.json())
             .then((responseJson) => {
-                Actions.detail({images: responseJson,source: 'remote',ctitle: ctitle,remark: remark,time: time,dateTime: dateTime,pdfUri: pdfUri,cover: cover})
+                Actions.detail({last: 'record',categoryId: cId,images: responseJson,source: 'remote',ctitle: ctitle,remark: remark,time: time,dateTime: dateTime,pdfUri: pdfUri,cover: cover})
             })
-            .catch(err => console.log(err))
+            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
     }
 
     goto_detail() {
         let item = this.props.prop.item;
         if (this.props.getFlag()) {
             Actions.detail({
+                last: 'record',
                 path: item.path,
                 images: item.group,
                 ctitle: item.ctitle,
@@ -60,6 +62,7 @@ export default class RecordCell extends Component {
         let item = this.props.prop.item;
         if (this.props.getFlag()) {//本地记录
             Actions.classify({
+                last: 'record',
                 path: item.path,
                 source: 'local',
                 ctitle: item.ctitle,
@@ -72,6 +75,7 @@ export default class RecordCell extends Component {
             })
         } else {//云端记录
             Actions.classify({
+                last: 'record',
                 categoryId: item.categoryId,
                 source: 'remote',
                 ctitle: item.ctitle,
@@ -107,15 +111,15 @@ export default class RecordCell extends Component {
                     </TouchableOpacity>
                     {this.state.isVisable ?
                         <View style={styles.delView}>
-                            <TouchableOpacity
+                            <TouchableOpacity style={{alignItems: 'center'}}
                                 onPress={this.goto_classify.bind(this)}>
                                 <Image source={require('../../imgs/goon.png')} style={styles.delStyle}></Image>
                             </TouchableOpacity>
-                            <TouchableOpacity
+                            <TouchableOpacity  style={{alignItems: 'center'}}
                                               onPress={() => {this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)}}>
                                 <Image source={require('../../imgs/remove.png')} style={styles.delStyle}></Image>
                             </TouchableOpacity>
-                            <TouchableOpacity
+                            <TouchableOpacity  style={{alignItems: 'center'}}
                                               onPress={() => {this.setState({isVisable: false})}}>
                                 <Image source={require('../../imgs/cancel.png')} style={styles.delStyle}></Image>
                             </TouchableOpacity>
@@ -141,25 +145,23 @@ const styles = StyleSheet.create({
     describe: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-around',
         alignItems: 'center',
-        height: height/10,
-        marginTop: 70,
-        marginBottom: 80
+        height: height*0.28,
     },
     titleStyle: {
         fontSize:20
     },
     delView: {
+        right: height*0.01,
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-evenly',
         height: height/4.5,
-        marginTop: 20
+        marginTop: 20,
     },
     delStyle: {
-        width: 40,
-        height: 40,
+        width: width*0.1,
+        height: width*0.1,
     }
 });
 

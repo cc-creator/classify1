@@ -11,7 +11,6 @@ import {
 import {Button, Input} from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import ToastExample from "../../nativeComponents/ToastExample";
-import Icon from "react-native-vector-icons/AntDesign"
 
 export default class LogReg extends Component {
 
@@ -19,8 +18,18 @@ export default class LogReg extends Component {
         super(props);
         this.state = {
             below_flag: true,
-            account: props.account,
-            passwd: ''
+            login_account: '',
+            regist_account: '',
+            passwd: '',
+            passwd1: '',
+            passwd2: '',
+            login_account_prompt: '',
+            login_passwd_prompt: '',
+            regist_account_prompt: '',
+            regist_passwd_prompt: '',
+            regist_conpwd_prompt: '',
+            login_disabled: true,
+            regist_disabled: true,
         }
     }
 
@@ -28,8 +37,8 @@ export default class LogReg extends Component {
         this.setState({
             below_flag: true
         });
-        let user = {account: this.state.account,password: this.state.passwd}
-        fetch('http://192.168.195.1:8080/user/selectUser', {
+        let user = {account: this.state.login_account,password: this.state.passwd}
+        fetch(global.variables.ip+'/user/selectUser', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -38,26 +47,26 @@ export default class LogReg extends Component {
             body: JSON.stringify(user)})
             .then((response) => response.json())
             .then((responseJson) => {
-                if(responseJson.userId !== null){
+                if(responseJson != null){
                     global.variables.userToken = true;
                     global.variables.userId = responseJson.userId;
                     console.log(responseJson)
                     ToastExample.show("登陆成功",ToastExample.SHORT);
-                    console.log("登陆成功"+global.variables.userId)
                     Actions.pop();
                 }else{
-                    ToastExample.show("没有该用户",ToastExample.SHORT);
+                    ToastExample.show("用户名或密码错误",ToastExample.SHORT);
+                    this.setState({passwd: ''})
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
     }
 
     goto_regist() {
         this.setState({
             below_flag: false
         });
-        let user = {account: this.state.account,password: this.state.passwd1};
-        fetch('http://192.168.195.1:8080/user/insertUser', {
+        let user = {account: this.state.regist_account,password: this.state.passwd1};
+        fetch(global.variables.ip+'/user/insertUser', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -66,10 +75,43 @@ export default class LogReg extends Component {
             body: JSON.stringify(user)})
             .then(res => {
                 this.setState({
-                    below_flag: true
+                    below_flag: true,
+                    login_account: this.state.regist_account
                 });
             })
-            .catch(err => console.log(err))
+            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
+    }
+
+    checkUserRegistOrNo(account) {
+        let temp_account = {"account": account};
+        fetch(global.variables.ip+'/user/selectUserRegistOrNo', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(temp_account)
+        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if( responseJson != null ){
+                    this.setState({
+                        regist_account_prompt: '用户已存在',
+                        regist_disabled: true
+                    })
+                }else{
+                    this.setState({
+                        regist_account_prompt: ''
+                    },() => {
+                        if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2)){
+                            this.setState({regist_disabled: false})
+                        }else{
+                            this.setState({regist_disabled: true})
+                        }
+                    })
+                }
+            })
+            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
     }
 
     render() {
@@ -89,56 +131,145 @@ export default class LogReg extends Component {
                     {this.state.below_flag ?
                         <View style={styles.container_login}>
                             <View style={styles.inputView}>
-                                <Input value={this.state.account}
-                                       containerStyle={{width: width*0.6}}
-                                       onChangeText={(text) => this.setState({account: text})}
-                                       label={'账号'}/*
-                                       leftIcon={<Icon name={'user'} size={40} color={'gray'}/>}
-                                       leftIconContainerStyle={{left: -15}}*/
+                                <Input value={this.state.login_account}
+                                       containerStyle={{width: width*0.6,height: width*0.1}}
+                                       onChangeText={(text) => {
+                                           this.setState({login_account: text},() => {
+                                               if(this.state.login_account !== '' && this.state.passwd !== ''){
+                                                   this.setState({login_disabled: false})
+                                               }else{
+                                                   this.setState({login_disabled: true})
+                                               }
+                                           })
+                                       }}
+                                       onEndEditing={() => {
+                                           if(this.state.login_account === ''){
+                                               this.setState({login_account_prompt: '账号不能为空'})
+                                           }else{
+                                               this.setState({login_account_prompt: ''})
+                                           }
+                                       }}
+                                       label={'账号'}
                                        placeholder='请输入账号'
                                 />
+                                <Text style={styles.prompt}>{this.state.login_account_prompt}</Text>
                             </View>
                             <View style={styles.inputView}>
                                 <Input value={this.state.passwd}
-                                       containerStyle={{width: width*0.6}}
-                                       onChangeText={(text) => this.setState({passwd: text})}
+                                       containerStyle={{width: width*0.6,height: width*0.1}}
+                                       onChangeText={(text) => {
+                                           this.setState({passwd: text},() => {
+                                               if(this.state.login_account !== '' && this.state.passwd !== ''){
+                                                   this.setState({login_disabled: false})
+                                               }else{
+                                                   this.setState({login_disabled: true})
+                                               }
+                                           })
+                                       }}
+                                       onEndEditing={() => {
+                                           if(this.state.passwd === ''){
+                                               this.setState({login_passwd_prompt: '密码不能为空'})
+                                           }else{
+                                               this.setState({login_passwd_prompt: ''})
+                                           }
+                                       }}
+                                       secureTextEntry={true}
                                        label={'密码'}
                                        placeholder='请输入密码'
                                 />
+                                <Text style={styles.prompt}>{this.state.login_passwd_prompt}</Text>
                             </View>
                             <Button
                                 buttonStyle={styles.buttonStyle}
                                 titleStyle={styles.titleStyle}
                                 onPress={() => this.goto_login()}
+                                disabled={this.state.login_disabled}
                                 title='登录'
                             />
                     </View> :
                     <View style={styles.container_regist}>
                         <View style={styles.inputView}>
-                            <Input value={this.state.account}
-                                   containerStyle={{width: width*0.6}}
-                                   onChangeText={(text) => this.setState({account: text})}
+                            <Input value={this.state.regist_account}
+                                   containerStyle={{width: width*0.6,height: width*0.1}}
+                                   onChangeText={(text) => {
+                                       this.setState({regist_account: text},() => {
+                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
+                                               this.setState({regist_disabled: false})
+                                           }else{
+                                               this.setState({regist_disabled: true})
+                                           }
+                                       })
+                                   }}
+                                   onEndEditing={() => {
+                                       this.checkUserRegistOrNo(this.state.regist_account)
+                                       if(this.state.regist_account === ''){
+                                           this.setState({regist_account_prompt: '账号不能为空'})
+                                       }else{
+                                           this.setState({regist_account_prompt: ''})
+                                       }
+                                   }}
                                    label={'账号'}
                                    placeholder='请输入账号'/>
+                            <Text style={styles.prompt}>{this.state.regist_account_prompt}</Text>
                         </View>
                         <View style={styles.inputView}>
                             <Input value={this.state.passwd1}
-                                   containerStyle={{width: width*0.6}}
-                                   onChangeText={(text) => this.setState({passwd1: text})}
+                                   containerStyle={{width: width*0.6,height: width*0.1}}
+                                   onChangeText={(text) => {
+                                       this.setState({passwd1: text},() => {
+                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
+                                               this.setState({regist_disabled: false})
+                                           }else{
+                                               this.setState({regist_disabled: true})
+                                           }
+                                       })
+                                   }}
+                                   onEndEditing={() => {
+                                       if(this.state.passwd1 === ''){
+                                           this.setState({regist_passwd_prompt: '密码不能为空'})
+                                       }else{
+                                           this.setState({regist_passwd_prompt: ''})
+                                       }
+                                   }}
+                                   secureTextEntry={true}
                                    label={'密码'}
                                    placeholder='请输入密码'/>
+                            <Text style={styles.prompt}>{this.state.regist_passwd_prompt}</Text>
                         </View>
                         <View style={styles.inputView}>
                             <Input value={this.state.passwd2}
-                                   containerStyle={{width: width*0.6}}
-                                   onChangeText={(text) => this.setState({passwd2: text})}
+                                   containerStyle={{width: width*0.6,height: width*0.1}}
+                                   onChangeText={(text) => {
+                                       this.setState({passwd2: text},() => {
+                                           if(this.state.passwd1 !== this.state.passwd2){
+                                               this.setState({regist_conpwd_prompt: '两次密码输入不一致'})
+                                           }else{
+                                               this.setState({regist_conpwd_prompt: ''})
+                                           }
+                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
+                                               this.setState({regist_disabled: false})
+                                           }else{
+                                               this.setState({regist_disabled: true})
+                                           }
+                                       })
+                                   }}
+                                   onEndEditing={() => {
+                                       if(this.state.passwd2 === ''){
+                                           this.setState({regist_conpwd_prompt: '确认密码不能为空'})
+                                       }else{
+                                           this.setState({regist_conpwd_prompt: ''})
+                                       }
+                                   }}
+                                   secureTextEntry={true}
                                    label={'确认密码'}
                                    placeholder='请再次输入密码'/>
+                            <Text style={styles.prompt}>{this.state.regist_conpwd_prompt}</Text>
                         </View>
                         <Button
                             buttonStyle={styles.buttonStyle}
                             titleStyle={styles.titleStyle}
                             onPress={() => {this.goto_regist()}}
+                            disabled={this.state.regist_disabled}
                             title='注册'
                         />
                     </View>}
@@ -153,8 +284,8 @@ let height = dimension.height
 let width = dimension.width
 const styles = StyleSheet.create({
     container_login:{
-        width: width/1.5,
-        height: height/3.3,
+        width: width*0.65,
+        height: height*0.32,
         backgroundColor: 'white',
         top: height/4.2,
         left: width/5.5,
@@ -164,8 +295,8 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     container_regist: {
-        width: width/1.5,
-        height: height/2.5,
+        width: width*0.65,
+        height: height*0.4,
         backgroundColor: 'white',
         top: height/5.2,
         left: width/5.5,
@@ -179,15 +310,15 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     buttonStyle: {
-        height:50,
-        width:120,
+        height:width*0.125,
+        width:width*0.25,
         borderRadius: 5,
-        top: -25,
-        left: 90,
-        marginTop: 40
+        top: -height*0.02,
+        left: width*0.18,
+        marginTop: height*0.02
     },
     titleStyle: {
-        fontSize:20
+        fontSize:15
     },
     textView_login: {
         width: width/1.5,
@@ -230,6 +361,10 @@ const styles = StyleSheet.create({
     inputView: {
         flex: 1,
         flexDirection: 'row'
+    },
+    prompt: {
+        left: -width*0.3,
+        color: 'red'
     }
 });
 
