@@ -7,7 +7,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Tflite from 'tflite-react-native';
-import { Button } from 'react-native-elements'
+import { Button,Overlay } from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
 /*自定义组件*/
 import CellList from './CellList';
@@ -134,7 +134,7 @@ export default class Classify extends Component {
                         images[i].label2 = temp_lables[1];
                     }
                     if(i == images.length-1){
-                        //ToastExample.show("完成分类",ToastExample.SHORT);
+                        ToastExample.show("完成分类",ToastExample.SHORT);
                         let dateEnd = new Date();
                         let time = this.changeTwoDecimal_f((dateEnd-dateBegin)/1000);
                         this.setState({isLoad: false})
@@ -202,7 +202,7 @@ export default class Classify extends Component {
 
     render() {
         return (<View>
-            {this.props.again ? <Header title='图片分类' left_flag={true} right_flag={false} again={this.props.again} last={this.props.last}/> : <Header title='图片分类' left_flag={false} right_flag={false} again={this.props.again}/>}
+            {this.props.again ? <Header title='图片分类' left_flag={true} again={this.props.again} last={this.props.last}/> : <Header title='图片分类' left_flag={false} again={this.props.again}/>}
             <View style={styles.buttonView}>
                 <Button
                     buttonStyle={styles.buttonStyle}

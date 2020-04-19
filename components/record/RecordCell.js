@@ -103,7 +103,7 @@ export default class RecordCell extends Component {
                         <Card
                             title={item.ctitle}
                             titleStyle={styles.titleStyle}
-                            containerStyle={{width: width * 0.8}}
+                            containerStyle={{width: width * 0.85}}
                             image={{uri: item.cover}}
                             imageProps={{resizeMode: 'cover'}}>
                             <Text>{item.remark}</Text>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        height: height*0.28,
+        height: height*0.33,
     },
     titleStyle: {
         fontSize:20

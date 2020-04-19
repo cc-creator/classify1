@@ -8,6 +8,8 @@ import Detail from './components/record/Detail';
 import CellDetail from "./components/record/CellDetail";
 import LogReg from './components/global/Log&Reg';
 import MyInfo from './components/mine/MyInfo';
+import EditInfo from "./components/mine/EditInfo";
+import ViewInfo from "./components/mine/ViewInfo";
 import './components/global/Global';
 
 const TabIcon = ({ focused, title }) => {
@@ -51,11 +53,28 @@ const App = () => {
                   hideNavBar
               />
             </Scene>
-            <Scene key="my" title="我" icon={TabIcon}>
+            <Scene key="my" title="我的" icon={TabIcon} tabBarOnPress={() => {
+              if(!global.variables.userToken){
+                console.log("转去登录");
+                Actions.logreg();
+              }else {
+                Actions.myInfo()
+              }
+            }}>
               <Scene
                   key="myInfo"
                   title='我的'
                   component={MyInfo}
+                  hideNavBar
+              />
+              <Scene
+                  key="editInfo"
+                  component={EditInfo}
+                  hideNavBar
+              />
+              <Scene
+                  key="viewInfo"
+                  component={ViewInfo}
                   hideNavBar
               />
             </Scene>

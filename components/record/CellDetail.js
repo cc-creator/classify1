@@ -42,7 +42,7 @@ export default class CellDetail extends Component {
         }
         return (
             <View>
-                <Header title='分类详情' left_flag={true} right_flag={true} timeOrder={this.timeOrder.bind(this)}/>
+                <Header title='分类详情' left_flag={true} timeOrder={this.timeOrder.bind(this)}/>
                 <FlatList
                     data={this.state.images}
                     numColumns={4}

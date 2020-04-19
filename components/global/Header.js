@@ -43,7 +43,7 @@ export default class Header extends Component {
                                            }}>
                     <Image style={styles.image} source={require('../../imgs/back.png')}/>
                 </TouchableOpacity> : null }
-                { this.props.right_flag ? <TouchableOpacity onPress={() => {
+                { this.props.title === '分类详情' ? <TouchableOpacity onPress={() => {
                     this.setState({
                         asc: !this.state.asc
                     })
@@ -51,6 +51,11 @@ export default class Header extends Component {
                 }} style={styles.touchableOpacity_right}>
                     { !this.state.asc ? <Image source={require('../../imgs/desc.png')} style={styles.image}/>
                     : <Image source={require('../../imgs/asc.png')} style={styles.image}/> }
+                </TouchableOpacity> : null }
+                { this.props.title === '我的' ? <TouchableOpacity onPress={() => {
+                    Actions.editInfo();
+                }} style={styles.touchableOpacity_right}>
+                    <Text style={{color: 'white'}}>编辑</Text>
                 </TouchableOpacity> : null }
             </View>
         )
@@ -67,19 +72,22 @@ const styles = StyleSheet.create({
         height: height*0.07,
         alignItems: 'center',
         borderBottomWidth: 0.5,
-        borderColor: '#d2d2d2'
+        borderColor: '#d2d2d2',
+        backgroundColor: '#2089DC'
     },
     title: {
         fontSize: 20,
-        lineHeight: height*0.07
+        lineHeight: height*0.07,
+        color: 'white'
     },
     touchableOpacity_left: {
         position: 'absolute',
-        top: height*0.02,
+        top: width*0.025,
         left: 10,
-    },touchableOpacity_right: {
+    },
+    touchableOpacity_right: {
         position: 'absolute',
-        top: height*0.02,
+        top: height*0.015,
         right: 10,
     },
     image: {

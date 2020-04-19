@@ -80,7 +80,7 @@ export default class Record extends Component{
                         RNFS.readFile(paths[i])
                             .then((result) => {
                                 let temp = result.split('@');
-                                temp_groups.push({path: paths[i],ctitle: temp[0],remark: temp[1],cover: temp[2],time: temp[3],dateTime: temp[4],group: JSON.parse(temp[5]),pdfUri: temp[6]})
+                                temp_groups.push({path: paths[i],ctitle: temp[0],remark: temp[1],cover: temp[2],time: temp[3],dateTime: temp[4],group: JSON.parse(temp[14]),pdfUri: temp[15]})
                                 if(i == paths.length-1){
                                     this.setState({
                                         local_groups: temp_groups.map(group => {
@@ -170,7 +170,7 @@ export default class Record extends Component{
     render(){
         return (
             <View style={styles.container}>
-                <Header title='分类记录' left_flag={false} right_flag={false} />
+                <Header title='分类记录' left_flag={false} />
                 <View style={styles.buttonView}>
                     <Button
                         buttonStyle={this.state.flag ? styles.buttonStyle1 : styles.buttonStyle2}
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
         fontSize:15
     },
     listView: {
-        marginTop: 70,
+        marginTop: 50,
         height: height*0.72
     }
 });

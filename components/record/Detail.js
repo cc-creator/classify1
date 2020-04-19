@@ -4,7 +4,7 @@ import {
     StyleSheet,
     View,
     Text,
-    FlatList, Modal, Image, ProgressBarAndroid
+    FlatList, Modal, Image, ProgressBarAndroid,TouchableOpacity
 } from 'react-native';
 import { Actions} from 'react-native-router-flux';
 import { Button,Card,Overlay,Input } from 'react-native-elements';
@@ -43,6 +43,7 @@ export default class Detail extends Component{
             source: '', //存放生成PDF的路径
             flag: typeof(this.props.again) === 'undefined' ? false : true,
             isLoad: false,
+            isCompleted: false,
         }
         /*检测PDF是否存在*/
         if(this.props.pdfUri != null && !this.props.again){
@@ -231,10 +232,10 @@ export default class Detail extends Component{
             images_person.push({group: images_person_passport,label1: '人像',label2: '证件照',sum: images_person_passport.length})
         }
         if(images_document_erweima.length > 0){
-            images_document.push({group: images_document_erweima,label1: '文档',label2: '二维码',sum: images_document_erweima.length})
+            images_document.push({group: images_document_erweima,label1: '文件',label2: '二维码',sum: images_document_erweima.length})
         }
         if(images_document_passport.length > 0){
-            images_document.push({group: images_document_passport,label1: '文档',label2: '证件',sum: images_document_passport.length})
+            images_document.push({group: images_document_passport,label1: '文件',label2: '证件',sum: images_document_passport.length})
         }
         if(images_food_meal.length > 0){
             images_food.push({group: images_food_meal,label1: '美食',label2: '饭菜',sum: images_food_meal.length})
@@ -292,7 +293,7 @@ export default class Detail extends Component{
             temp_groups.push({group:images_clothing,label:"服装",sum: sum_clothing});
         }
         if(images_document.length > 0){
-            temp_groups.push({group:images_document,label:"文档",sum: sum_document});
+            temp_groups.push({group:images_document,label:"文件",sum: sum_document});
         }
         if(images_other.length > 0){
             temp_groups.push({group:images_other,label:"其他",sum: sum_other});
@@ -304,12 +305,28 @@ export default class Detail extends Component{
         })
     }
 
+    makeInfoString() {
+        let result = sum_person.toString() + '+' + sum_animal.toString() + '+' + sum_plant.toString() + '+' + sum_food.toString() + '+' + sum_scenery.toString() + '+' + sum_clothing.toString() + '+' + sum_thing.toString() + '+' + sum_document.toString() + '+' + sum_other.toString();
+        result += '@' + images_person_single.length + '+' + images_person_dubbo.length + '+' + images_person_multi.length + '+' + images_person_passport.length; //单人+双人+集体+证件
+        result += '@' + images_animal_mammal.length + '+' + images_animal_bird.length + '+' + images_animal_fish.length + '+' + images_animal_insect.length + '+' + images_animal_anphibious.length; //哺乳+鸟+鱼+昆虫+两栖
+        result += '@' + images_plant_flower.length + '+' + images_plant_grass.length + '+' + images_plant_tree.length; //花+草+树
+        result += '@' + images_food_meal.length + '+' + images_food_drink.length + '+' + images_food_dessert.length; // 饭菜+饮料+甜点
+        result += '@' + images_scenery_outside.length + '+' + images_scenery_night.length; //室外+夜景
+        result += '@' + images_clothing_clothing.length + '+' + images_clothing_hat.length + '+' + images_clothing_shoes.length; //衣服+帽子+鞋子
+        result += '@' + images_thing_dianqi.length + '+' + images_thing_furniture.length; //电器+家具
+        result += '@' + images_document_erweima.length + '+' + images_document_passport.length; //二维码+证件
+        return result;
+    }
+
     local_store() {
         if(!this.props.again){
             console.log("首次分类")
             let local_path = rnfsPath + "/"+this.state.title + '.txt';
-            let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@" + time + "@" + dateTime + "@" + JSON.stringify(images) + "@";
+            let temp_str = this.state.title + "@" + this.state.remark + "@" + images[0].url + "@" + time + "@" + dateTime;
+            temp_str += "@" + this.makeInfoString();
+            temp_str += "@" + JSON.stringify(images) + "@";
             temp_str += this.state.source === '' ? '' : this.state.source.uri;
+            console.log(temp_str)
             RNFS.writeFile(local_path,temp_str,'utf8')
                 .then((success) => {
                     RNFS.appendFile(jilu_path,"@"+local_path,'utf8')
@@ -330,9 +347,11 @@ export default class Detail extends Component{
             RNFS.unlink(this.props.pdfUri)
                 .then(()=>{})
                 .catch(() => {})*/
-            let temp_str = this.state.title + "@" + this.state.remark + "@" + this.props.cover + "@" + time + "@" + dateTime + "@" + JSON.stringify(images) + "@";
+            let temp_str = this.state.title + "@" + this.state.remark + "@" + this.props.cover + "@" + time + "@" + dateTime;
+            temp_str += "@" + this.makeInfoString();
+            temp_str += "@" + JSON.stringify(images) + "@";
             temp_str += this.state.source === '' ? '' : this.state.source.uri;
-            console.log("----------"+this.state.source === '' ? '' : this.state.source.uri)
+            console.log(temp_str)
             RNFS.unlink(this.props.path)
                 .then(()=>{
                     RNFS.writeFile(this.props.path,temp_str,'utf8')
@@ -377,6 +396,8 @@ export default class Detail extends Component{
             formdata.append('userId', global.variables.userId);
             formdata.append('ctitle', this.state.title);
             formdata.append('remark', this.state.remark);
+            formdata.append('remark', this.props.cover);
+            formdata.append('info',this.makeInfoString());
             formdata.append('time',time);
             formdata.append('pdfUri',this.state.source === '' ? '' : this.state.source.uri);
             formdata.append('dateTime', dateTime);
@@ -390,10 +411,8 @@ export default class Detail extends Component{
             .then((responseJson) => {
                 ToastExample.show("上传成功",ToastExample.SHORT);
                 this.setState({
-                    isLoad: false,
-                    isVisible: false
+                    isCompleted: true
                 })
-                Actions.record();
             })
             .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
         }else {
@@ -407,10 +426,10 @@ export default class Detail extends Component{
             formdata.append('categoryId',this.props.categoryId);
             formdata.append('ctitle',this.state.title);
             formdata.append('remark',this.state.remark);
+            formdata.append('info',this.makeInfoString());
             formdata.append('time',time);
             formdata.append('pdfUri',this.state.source === '' ? '' : this.state.source.uri);
             formdata.append('dateTime', dateTime);
-            console.log(formdata)
             fetch(global.variables.ip+'/images/uploadImages', {
                 method: 'POST',
                 headers: {
@@ -419,14 +438,10 @@ export default class Detail extends Component{
                 body: formdata})
                 .then((response) => response.json())
                 .then((responseJson) => {
-                    this.setState({isVisible: false})
                     ToastExample.show("上传成功",ToastExample.SHORT);
                     this.setState({
-                        isLoad: false,
-                        isVisible: false
+                        isCompleted: true
                     })
-
-                    Actions.record();
                 })
                 .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
         }
@@ -556,7 +571,7 @@ export default class Detail extends Component{
             '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_thing_furniture.length +'</td>' +
             '</tr>\n' +
             '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="2" style="text-align: center;border-bottom: 1px solid #666;">文档<span style="color: #2089DC;">( '+ sum_document +' )</span></td>\n' +
+            '<td height="74" rowspan="2" style="text-align: center;border-bottom: 1px solid #666;">文件<span style="color: #2089DC;">( '+ sum_document +' )</span></td>\n' +
             '<td height="74" style="text-align: center">证件</td>\n' +
             '<td height="74" style="text-align: center;color: #2089DC">'+ images_document_passport.length +'</td>' +
             '</tr>\n' +
@@ -625,7 +640,7 @@ export default class Detail extends Component{
             RNFS.readFile(this.props.path)
                 .then((result) => {
                     let temp = result.split('@');
-                    old_images = JSON.parse(temp[5]);
+                    old_images = JSON.parse(temp[14]);
                     for(let i=0;i<old_images.length;i++){
                         images.push(old_images[i])
                     }
@@ -662,7 +677,7 @@ export default class Detail extends Component{
     render()  {
         return (
             <View style={styles.container}>
-                <Header title='分类总览' left_flag={true} right_flag={false} again={this.props.again} last={this.props.last}/>
+                <Header title='分类总览' left_flag={true} again={this.props.again} last={this.props.last}/>
                 {this.props.source !== 'temp' && !this.state.flag ?
                     <View style={styles.describe}>
                         <Card
@@ -751,7 +766,7 @@ export default class Detail extends Component{
                     </View>
                 }
                 <Overlay isVisible={this.state.isVisible}
-                         onBackdropPress={() => this.setState({ isVisible: false })}
+                         //onBackdropPress={() => this.setState({ isVisible: false })}
                          overlayStyle={{padding: 0}}
                          height={height*0.25}>
                     { !this.state.isLoad ? <View style={{padding: 10}}>
@@ -768,10 +783,11 @@ export default class Detail extends Component{
                                 buttonStyle={styles.buttonStyle}
                                 titleStyle={styles.titleStyle}
                                 onPress={() => {
-                                    this.setState({isLoad: true})
                                     if(flag){
                                         this.local_store();
+                                        this.setState({isVisible: false})
                                     }else {
+                                        this.setState({isLoad: true})
                                         this.uploadCategory();
                                     }
                                 }}
@@ -785,12 +801,21 @@ export default class Detail extends Component{
                             />
                         </View>
                     </View> : <View style={styles.p_container}>
-                            <View style={styles.p_view1}>
-                                <Text style={styles.p_text}>正在上传</Text>
-                            </View>
-                            <View style={styles.p_view2}>
-                                <ProgressBarAndroid styleAttr='Large' color='#2089DC' style={styles.p_progress}/>
-                            </View></View> }
+                                    <View style={styles.p_view1}>
+                                        {this.state.isCompleted ? <View>
+                                            <Text style={styles.p_text}>上传成功</Text>
+                                            <TouchableOpacity style={{top: -width*0.15,left: width*0.4}} onPress={()=>{
+                                                this.setState({isLoad: false,isCompleted:false,isVisible: false})
+                                                Actions.record();
+                                            }}><Image style={{width: 40,height: 40}} source={require('../../imgs/close.png')}/></TouchableOpacity>
+                                        </View> : <Text style={styles.p_text}>正在上传</Text>}
+                                    </View>
+                                    {this.state.isCompleted ?
+                                        <Image style={{width: 70,height: 70,left: width*0.35,top: width*0.05}} source={require('../../imgs/complete.png')}/> :
+                                        <View style={styles.p_view2}><ProgressBarAndroid styleAttr='Large' color='#2089DC' style={styles.p_progress}/></View>
+                                    }
+                                </View>
+                    }
                 </Overlay>
                 <Modal visible={this.state.visible} onRequestClose={() => {this.setState({visible: false})}}>
                     { this.state.source == '' ? null :
@@ -861,7 +886,8 @@ const styles = StyleSheet.create({
     },
     p_text: {
         lineHeight: height*0.1,
-        fontSize: 25
+        fontSize: 25,
+        color: 'white'
     },
     p_view2: {
         height: height*0.2

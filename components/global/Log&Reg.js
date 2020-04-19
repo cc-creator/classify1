@@ -6,9 +6,9 @@ import {
     View,
     ImageBackground,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity, ProgressBarAndroid
 } from 'react-native';
-import {Button, Input} from 'react-native-elements';
+import {Button, Input, Overlay} from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import ToastExample from "../../nativeComponents/ToastExample";
 
@@ -17,6 +17,7 @@ export default class LogReg extends Component {
     constructor(props){
         super(props);
         this.state = {
+            isVisible: false,
             below_flag: true,
             login_account: '',
             regist_account: '',
@@ -35,7 +36,8 @@ export default class LogReg extends Component {
 
     goto_login() {
         this.setState({
-            below_flag: true
+            below_flag: true,
+            isVisible: true
         });
         let user = {account: this.state.login_account,password: this.state.passwd}
         fetch(global.variables.ip+'/user/selectUser', {
@@ -47,9 +49,14 @@ export default class LogReg extends Component {
             body: JSON.stringify(user)})
             .then((response) => response.json())
             .then((responseJson) => {
+                this.setState({
+                    isVisible: false
+                })
                 if(responseJson != null){
                     global.variables.userToken = true;
                     global.variables.userId = responseJson.userId;
+                    global.variables.name = responseJson.name;
+                    global.variables.signature = responseJson.signature;
                     console.log(responseJson)
                     ToastExample.show("登陆成功",ToastExample.SHORT);
                     Actions.pop();
@@ -63,7 +70,8 @@ export default class LogReg extends Component {
 
     goto_regist() {
         this.setState({
-            below_flag: false
+            below_flag: false,
+            isVisible: true
         });
         let user = {account: this.state.regist_account,password: this.state.passwd1};
         fetch(global.variables.ip+'/user/insertUser', {
@@ -76,7 +84,10 @@ export default class LogReg extends Component {
             .then(res => {
                 this.setState({
                     below_flag: true,
-                    login_account: this.state.regist_account
+                    login_account: this.state.regist_account,
+                    passwd1: '',
+                    passwd2: '',
+                    isVisible: false
                 });
             })
             .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
@@ -274,6 +285,13 @@ export default class LogReg extends Component {
                         />
                     </View>}
                 </ImageBackground>
+                <Overlay
+                    isVisible={this.state.isVisible}
+                    height={width*0.25}
+                    width={width*0.25}
+                >
+                    <ProgressBarAndroid style={{marginTop: width*0.02}} styleAttr='Large' color='#2089DC'/>
+                </Overlay>
             </View>
         );
     }
