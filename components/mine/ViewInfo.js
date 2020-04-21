@@ -62,14 +62,15 @@ export default class ViewInfo extends Component{
                 <ScrollView contentContainerStyle={{alignItems: 'center'}}>
                     <View>
                         <Text style={{fontSize: 20,top: 30,left:width*0.1}}>一级分类</Text>
-                        <VictoryChart width={400} theme={VictoryTheme.material} >
+                        <VictoryChart width={400} theme={VictoryTheme.material}  minDomain={{ y: 0 }}>
                             <VictoryBar
                                 animate={{
                                     duration: 2000,
                                     onLoad: { duration: 1000 }
                                 }}
+                                labels={({ datum }) => datum.y_data}
                                 domain={{y:[1,first_data[first_data.length-1].y_data]}}
-                                domainPadding={{x:[30,0]}}
+                                domainPadding={{x:[30,30]}}
                                 categories={{ x: ["人像", "动物", "植物", "美食", "风景", "服装" , "事物", "文件"] }}
                                 style={{
                                     data: { fill: "#c43a31" },
@@ -80,10 +81,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.person == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-人像</Text>
-                            <VictoryChart width={350} theme={VictoryTheme.material}>
+                            <VictoryChart width={350} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
                                 <VictoryBar
-                                    domainPadding={{x:[40,0]}}
-                                    domain={{y:[1,second_person[second_person.length-1].y_data]}}
+                                    domainPadding={{x:[40,40]}}
+                                    labels={({ datum }) => datum.y_data}
                                     categories={{ x: ["单人照", "双人照", "集体照", "证件照"] }}
                                     style={{
                                         data: {fill: "#c43a31"},
@@ -95,9 +96,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.animal == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-动物</Text>
-                            <VictoryChart width={350} theme={VictoryTheme.material}>
+                            <VictoryChart width={350} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
                                 <VictoryBar
-                                    domainPadding={{x:[35,0]}}
+                                    domainPadding={{x:[35,35]}}
+                                    labels={({ datum }) => datum.y_data}
                                     domain={{y:[1,second_animal[second_animal.length-1].y_data]}}
                                     categories={{ x: ["鸟类", "哺乳类", "鱼类", "昆虫", "两栖类"] }}
                                     style={{
@@ -110,9 +112,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.plant == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-植物</Text>
-                            <VictoryChart width={300} theme={VictoryTheme.material}>
+                            <VictoryChart width={300} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
                                 <VictoryBar
-                                    domainPadding={{x:[50,0]}}
+                                    domainPadding={{x:[50,50]}}
+                                    labels={({ datum }) => datum.y_data}
                                     domain={{y:[1,second_plant[second_plant.length-1].y_data]}}
                                     categories={{ x: ["鲜花", "小草", "树木"] }}
                                     style={{
@@ -125,9 +128,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.food == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-美食</Text>
-                            <VictoryChart width={300} theme={VictoryTheme.material}>
+                            <VictoryChart width={300} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
                                 <VictoryBar
-                                    domainPadding={{x:[50,0]}}
+                                    domainPadding={{x:[50,50]}}
+                                    labels={({ datum }) => datum.y_data}
                                     domain={{y:[1,second_food[second_food.length-1].y_data]}}
                                     categories={{ x: ["饭菜", "饮品", "甜点"] }}
                                     style={{
@@ -140,9 +144,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.scenery == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-风景</Text>
-                            <VictoryChart width={250} theme={VictoryTheme.material}>
+                            <VictoryChart width={250} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
                                 <VictoryBar
-                                    domainPadding={{x:[65,0]}}
+                                    domainPadding={{x:[65,65]}}
+                                    labels={({ datum }) => datum.y_data}
                                     domain={{y:[1,second_scenery[second_scenery.length-1].y_data]}}
                                     categories={{ x: ["室外", "夜景"] }}
                                     style={{
@@ -155,9 +160,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.clothing == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-服装</Text>
-                            <VictoryChart width={300} theme={VictoryTheme.material}>
+                            <VictoryChart width={300} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
                                 <VictoryBar
-                                    domainPadding={{x:[50,0]}}
+                                    domainPadding={{x:[50,50]}}
+                                    labels={({ datum }) => datum.y_data}
                                     domain={{y:[1,second_clothing[second_clothing.length-1].y_data]}}
                                     categories={{ x: ["衣服", "帽子", "鞋子"] }}
                                     style={{
@@ -170,9 +176,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.thing == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-事物</Text>
-                            <VictoryChart width={250} theme={VictoryTheme.material}>
+                            <VictoryChart width={250} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
                                 <VictoryBar
-                                    domainPadding={{x:[65,0]}}
+                                    domainPadding={{x:[65,65]}}
+                                    labels={({ datum }) => datum.y_data}
                                     domain={{y:[1,second_thing[second_thing.length-1].y_data]}}
                                     categories={{ x: ["电器", "家具"] }}
                                     style={{
@@ -185,9 +192,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.document == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-文件</Text>
-                            <VictoryChart width={250} theme={VictoryTheme.material}>
+                            <VictoryChart width={250} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
                                 <VictoryBar
-                                    domainPadding={{x:[65,0]}}
+                                    domainPadding={{x:[65,65]}}
+                                    labels={({ datum }) => datum.y_data}
                                     domain={{y:[1,second_document[second_document.length-1].y_data]}}
                                     categories={{ x: ["二维码", "证件"] }}
                                     style={{

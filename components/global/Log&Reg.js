@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     prompt: {
-        left: -width*0.3,
+        left: -width*0.25,
         color: 'red'
     }
 });

@@ -71,6 +71,7 @@ export default class Record extends Component{
         let temp_groups = [];
         RNFS.readFile(jilu_path)
             .then((result) => {
+                console.log(result)
                 let paths = result.split('@');
                 paths.splice(0,1);
                 if(paths.length == 0){
@@ -81,6 +82,7 @@ export default class Record extends Component{
                             .then((result) => {
                                 let temp = result.split('@');
                                 temp_groups.push({path: paths[i],ctitle: temp[0],remark: temp[1],cover: temp[2],time: temp[3],dateTime: temp[4],group: JSON.parse(temp[14]),pdfUri: temp[15]})
+                                console.log(temp_groups)
                                 if(i == paths.length-1){
                                     this.setState({
                                         local_groups: temp_groups.map(group => {

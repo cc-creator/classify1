@@ -468,6 +468,146 @@ export default class Detail extends Component{
     _keyExtractor=(item, index)=> ''+index;
 
     makeHtmlString(ctitle,remark,length,time,dateTime) {
+        let person_rowspan = 0;
+        if(images_person_single.length != 0) person_rowspan++;
+        if(images_person_dubbo.length != 0) person_rowspan++;
+        if(images_person_multi.length != 0) person_rowspan++;
+        if(images_person_passport.length != 0) person_rowspan++;
+        let person_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="'+ person_rowspan.toString() +'" style="text-align: center;border-bottom: 1px solid #666;">人像<span style="color: #2089DC;">( '+ sum_person +' )</span></td>\n' +
+            (images_person_single.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">单人照</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_person_single.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_person_dubbo.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">双人照</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_person_dubbo.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_person_multi.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">集体照</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_person_multi.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_person_passport.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">证件照</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_person_passport.length +'</td>' +
+            '</tr>\n');
+        let animal_rowspan = 0;
+        if(images_animal_mammal.length != 0) animal_rowspan++;
+        if(images_animal_fish.length != 0) animal_rowspan++;
+        if(images_animal_bird.length != 0) animal_rowspan++;
+        if(images_animal_insect.length != 0) animal_rowspan++;
+        if(images_animal_anphibious.length != 0) animal_rowspan++;
+        let animal_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="'+ animal_rowspan +'" style="text-align: center;border-bottom: 1px solid #666;">动物<span style="color: #2089DC;">( '+ sum_animal +' )</span></td>\n' +
+            (images_animal_mammal.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">哺乳类</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_animal_mammal.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_animal_fish.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">鱼类</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_animal_fish.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_animal_bird.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">鸟类</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_animal_bird.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_animal_insect.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">昆虫</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_animal_insect.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_animal_anphibious.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">两栖类</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC;border-bottom: 1px solid #666;">'+ images_animal_anphibious.length +'</td>' +
+            '</tr>\n') ;
+        let plant_rowspan = 0;
+        if(images_plant_flower.length != 0) person_rowspan++;
+        if(images_plant_grass.length != 0) person_rowspan++;
+        if(images_plant_tree.length != 0) person_rowspan++;
+        let plant_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="'+ plant_rowspan +'" style="text-align: center;border-bottom: 1px solid #666;">植物<span style="color: #2089DC;">( '+ sum_plant +' )</span></td>\n' +
+            (images_plant_flower.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">花朵</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_plant_flower.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_plant_grass.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">小草</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_plant_grass.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_plant_tree.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">树木</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC;border-bottom: 1px solid #666;">'+ images_plant_tree.length +'</td>' +
+            '</tr>\n');
+        let food_rowspan = 0;
+        if(images_food_meal.length != 0) food_rowspan++;
+        if(images_food_drink.length != 0) food_rowspan++;
+        if(images_food_dessert.length != 0) food_rowspan++;
+        let food_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="'+ food_rowspan +'" style="text-align: center;border-bottom: 1px solid #666;">美食<span style="color: #2089DC;">( '+ sum_food +' )</span></td>\n' +
+            (images_food_meal.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">饭菜</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_food_meal.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_food_drink.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">饮料</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_food_drink.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_food_dessert.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">甜点</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC;border-bottom: 1px solid #666;">'+ images_food_dessert.length +'</td>' +
+            '</tr>\n');
+        let scenery_rowspan = 0;
+        if(images_scenery_outside.length != 0) scenery_rowspan++;
+        if(images_scenery_night.length != 0) scenery_rowspan++;
+        let scenery_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="'+ scenery_rowspan +'" style="text-align: center;border-bottom: 1px solid #666;">风景<span style="color: #2089DC;">( '+ sum_scenery +' )</span></td>\n' +
+            (images_scenery_outside.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">室外景色</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_scenery_outside.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_scenery_night.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">夜景</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC;border-bottom: 1px solid #666;">'+ images_scenery_night.length +'</td>' +
+            '</tr>\n');
+        let clothing_rowspan = 0;
+        if(images_clothing_clothing.length != 0) clothing_rowspan++;
+        if(images_clothing_shoes.length != 0) clothing_rowspan++;
+        if(images_clothing_hat.length != 0) clothing_rowspan++;
+        let clothing_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="'+ clothing_rowspan +'" style="text-align: center;border-bottom: 1px solid #666;">服装<span style="color: #2089DC;">( '+ sum_clothing +' )</span></td>\n' +
+            (images_clothing_clothing.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">衣服</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_clothing_clothing.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_clothing_shoes.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">鞋子</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_clothing_shoes.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_clothing_hat.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">帽子</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC;border-bottom: 1px solid #666;">'+ images_clothing_hat.length +'</td>' +
+            '</tr>\n');
+        let thing_rowspan = 0;
+        if(images_thing_dianqi.length != 0) thing_rowspan++;
+        if(images_thing_furniture.length != 0) thing_rowspan++;
+        let thing_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="'+ thing_rowspan +'" style="text-align: center;border-bottom: 1px solid #666;">物品<span style="color: #2089DC;">( '+ sum_thing +' )</span></td>\n' +
+            (images_thing_dianqi.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">电器</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_thing_dianqi.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_thing_furniture.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">家具</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC;border-bottom: 1px solid #666;">'+ images_thing_furniture.length +'</td>' +
+            '</tr>\n');
+        let document_rowspan = 0;
+        if(images_document_passport.length != 0) document_rowspan++;
+        if(images_document_erweima.length != 0) document_rowspan++;
+        let docement_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" rowspan="'+ document_rowspan +'" style="text-align: center;border-bottom: 1px solid #666;">文件<span style="color: #2089DC;">( '+ sum_document +' )</span></td>\n' +
+            (images_document_passport.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">证件</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC;border-bottom: 1px solid #666;">'+ images_document_passport.length +'</td>' +
+            '</tr>\n' +
+            '<tr style="font-size: 30px;">') +
+            (images_document_erweima.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">二维码</td>\n' +
+            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC;border-bottom: 1px solid #666;">'+ images_document_erweima.length +'</td>' +
+            '</tr>\n');
+        let other_string = '<tr style="font-size: 30px;">' +
+            '<td height="74" colspan="2" style="text-align: center">其他</td>\n' +
+            '<td height="74" style="text-align: center;color: #2089DC">'+ sum_other +'</td>' +
+            '</tr>\n';
         let table = '<table cellpadding="0px" frame="box" style="width: 100%">\n' +
             '<thead style="background-color: #2089DC;color: #fff;">\n' +
             '<tr style="font-size: 38px"><th height="74">一级类别</th>\n' +
@@ -475,114 +615,15 @@ export default class Detail extends Component{
             '<th height="74">数量</th></tr>\n' +
             '</thead>\n' +
             '<tbody>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="4" style="text-align: center;border-bottom: 1px solid #666;">人像<span style="color: #2089DC;">( '+ sum_person +' )</span></td>\n' +
-            '<td height="74" style="text-align: center">单人照</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_person_single.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center">双人照</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_person_dubbo.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;">集体照</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_person_multi.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">证件照</td>\n' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_person_passport.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="5" style="text-align: center;border-bottom: 1px solid #666;">动物<span style="color: #2089DC;">( '+ sum_animal +' )</span></td>\n' +
-            '<td height="74" style="text-align: center">哺乳类</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_animal_mammal.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center">鱼类</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_animal_fish.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center">鸟类</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_animal_bird.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center">昆虫</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_animal_insect.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">两栖类</td>\n' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_animal_anphibious.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="3" style="text-align: center;border-bottom: 1px solid #666;">植物<span style="color: #2089DC;">( '+ sum_plant +' )</span></td>\n' +
-            '<td height="74" style="text-align: center">花朵</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_plant_flower.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center">小草</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_plant_grass.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">树木</td>\n' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_plant_tree.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="3" style="text-align: center;border-bottom: 1px solid #666;">美食<span style="color: #2089DC;">( '+ sum_food +' )</span></td>\n' +
-            '<td height="74" style="text-align: center">食物</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_food_meal.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center">饮料</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_food_drink.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">甜点</td>\n' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_food_dessert.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="2" style="text-align: center;border-bottom: 1px solid #666;">风景<span style="color: #2089DC;">( '+ sum_scenery +' )</span></td>\n' +
-            '<td height="74" style="text-align: center">室外景色</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_scenery_outside.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">夜景</td>\n' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_scenery_night.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="3" style="text-align: center;border-bottom: 1px solid #666;">服装<span style="color: #2089DC;">( '+ sum_clothing +' )</span></td>\n' +
-            '<td height="74" style="text-align: center">衣服</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_clothing_clothing.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center">鞋子</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_clothing_shoes.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">帽子</td>\n' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_clothing_hat.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="2" style="text-align: center;border-bottom: 1px solid #666;">物品<span style="color: #2089DC;">( '+ sum_thing +' )</span></td>\n' +
-            '<td height="74" style="text-align: center">电器</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_thing_dianqi.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">家具</td>\n' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_thing_furniture.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" rowspan="2" style="text-align: center;border-bottom: 1px solid #666;">文件<span style="color: #2089DC;">( '+ sum_document +' )</span></td>\n' +
-            '<td height="74" style="text-align: center">证件</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ images_document_passport.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">二维码</td>\n' +
-            '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC">'+ images_document_erweima.length +'</td>' +
-            '</tr>\n' +
-            '<tr style="font-size: 30px;">' +
-            '<td height="74" colspan="2" style="text-align: center">其他</td>\n' +
-            '<td height="74" style="text-align: center;color: #2089DC">'+ sum_other +'</td>' +
-            '</tr>\n' +
+            (sum_person == 0 ? '' : person_string.toString()) +
+            (sum_animal == 0 ? '' : animal_string.toString()) +
+            (sum_plant == 0 ? '' : plant_string.toString()) +
+            (sum_food == 0 ? '' : food_string.toString()) +
+            (sum_scenery == 0 ? '' : scenery_string.toString()) +
+            (sum_clothing == 0 ? '' : clothing_string.toString()) +
+            (sum_thing == 0 ? '' : thing_string.toString()) +
+            (sum_document == 0 ? '' : docement_string.toString()) +
+            (sum_other == 0 ? '' : other_string.toString())
             '</tbody>\n' +
             '</table>';
         let result = '';
@@ -611,7 +652,7 @@ export default class Detail extends Component{
                     ToastExample.show(file.filePath,ToastExample.LONG);
                 })
                 .catch((err) => {})
-        }if(this.props.source === 'remote' && typeof(this.props.categoryId) !== 'undefined' && typeof(this.props.again) === 'undefined'){
+        }else if(this.props.source === 'remote' && typeof(this.props.categoryId) !== 'undefined' && typeof(this.props.again) === 'undefined'){
             console.log('生成PDF')
             let body = {
                 'categoryId': this.props.categoryId,
@@ -626,7 +667,7 @@ export default class Detail extends Component{
                 body: JSON.stringify(body)})
                 .then((response) => response.json())
                 .then((responseJson) => {
-                    console.log(responseJson)
+                    ToastExample.show(file.filePath,ToastExample.LONG);
                 })
                 .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
         } else {
@@ -804,14 +845,14 @@ export default class Detail extends Component{
                                     <View style={styles.p_view1}>
                                         {this.state.isCompleted ? <View>
                                             <Text style={styles.p_text}>上传成功</Text>
-                                            <TouchableOpacity style={{top: -width*0.15,left: width*0.4}} onPress={()=>{
+                                            <TouchableOpacity style={{top: -width*0.18,left: width*0.46}} onPress={()=>{
                                                 this.setState({isLoad: false,isCompleted:false,isVisible: false})
                                                 Actions.record();
-                                            }}><Image style={{width: 40,height: 40}} source={require('../../imgs/close.png')}/></TouchableOpacity>
+                                            }}><Image style={{width: width*0.05,height: width*0.05}} source={require('../../imgs/close.png')}/></TouchableOpacity>
                                         </View> : <Text style={styles.p_text}>正在上传</Text>}
                                     </View>
                                     {this.state.isCompleted ?
-                                        <Image style={{width: 70,height: 70,left: width*0.35,top: width*0.05}} source={require('../../imgs/complete.png')}/> :
+                                        <Image style={{width: 70,height: 70,left: width*0.32,top: width*0.05}} source={require('../../imgs/complete.png')}/> :
                                         <View style={styles.p_view2}><ProgressBarAndroid styleAttr='Large' color='#2089DC' style={styles.p_progress}/></View>
                                     }
                                 </View>

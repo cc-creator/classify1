@@ -55,7 +55,7 @@ export default class Header extends Component {
                 { this.props.title === '我的' ? <TouchableOpacity onPress={() => {
                     Actions.editInfo();
                 }} style={styles.touchableOpacity_right}>
-                    <Text style={{color: 'white'}}>编辑</Text>
+                    <Text style={{color: 'white',lineHeight: height*0.045}}>编辑</Text>
                 </TouchableOpacity> : null }
             </View>
         )
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     },
     touchableOpacity_right: {
         position: 'absolute',
-        top: height*0.015,
+        top: width*0.025,
         right: 10,
     },
     image: {

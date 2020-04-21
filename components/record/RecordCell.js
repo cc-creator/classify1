@@ -152,10 +152,10 @@ const styles = StyleSheet.create({
         fontSize:20
     },
     delView: {
-        right: height*0.01,
+        right: width*0.02,
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'space-evenly',
+        justifyContent: 'space-around',
         height: height/4.5,
         marginTop: 20,
     },
