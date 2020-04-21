@@ -29,8 +29,6 @@ export default class MyInfo extends Component{
 
     UNSAFE_componentWillMount(): void {
         this.local_getInfo();
-        this.remote_getInfo();
-
     }
 
     local_getInfo() {
@@ -92,8 +90,12 @@ export default class MyInfo extends Component{
     }
 
     remote_getInfo() {
+        if(!global.variables.userToken){
+            console.log("转去登录");
+            Actions.logreg();
+        }else {
             let userId = {"userId": global.variables.userId};
-            fetch(global.variables.ip+'/category/getCategorys', {
+            fetch(global.variables.ip + '/category/getCategorys', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -104,15 +106,15 @@ export default class MyInfo extends Component{
                 .then((response) => response.json())
                 .then((responseJson) => {
                     let temp_groups = responseJson;
-                    if(temp_groups.length == 0){
-                        ToastExample.show("暂无记录",ToastExample.SHORT);
-                    }else{
+                    if (temp_groups.length == 0) {
+                        ToastExample.show("暂无记录", ToastExample.SHORT);
+                    } else {
                         let list = [];
-                        for(let i=0;i<temp_groups.length;i++){
+                        for (let i = 0; i < temp_groups.length; i++) {
                             let temp = temp_groups[i].info.split("@");
                             let first_level = temp[0].split('+');
-                            let sum= 0;
-                            for(let j=0;j<first_level.length;j++){
+                            let sum = 0;
+                            for (let j = 0; j < first_level.length; j++) {
                                 sum += Number(first_level[j]);
                             }
                             let second_person = temp[1].split("+");
@@ -131,29 +133,61 @@ export default class MyInfo extends Component{
                                 'time': temp_groups[i].time,
                                 'dateTime': temp_groups[i].datetime,
                                 'sum': sum,
-                                'person': first_level[0], 'animal': first_level[1], 'plant': first_level[2], 'food': first_level[3], 'scenery': first_level[4], 'clothing': first_level[5], 'thing': first_level[6], 'document': first_level[7], 'other': first_level[8],
-                                'single': second_person[0], 'dubbo': second_person[1], 'multi': second_person[2], 'passport': second_person[3],
-                                'mammal': second_animal[0], 'bird': second_animal[1], 'fish': second_animal[2], 'insect': second_animal[3], 'anphibious': second_animal[4],
-                                'flower': second_plant[0], 'grass': second_plant[1], 'tree': second_plant[2],
-                                'meal': second_food[0], 'drink': second_food[1], 'desert': second_food[2],
-                                'outside': second_scenery[0], 'night': second_scenery[1],
-                                'clothe': second_clothing[0], 'hat': second_clothing[1], 'shoes': second_clothing[2],
-                                'dianqi': second_thing[0], 'furniture': second_thing[1],
-                                'erweima': second_document[0], 'zhengjian': second_document[1]
+                                'person': first_level[0],
+                                'animal': first_level[1],
+                                'plant': first_level[2],
+                                'food': first_level[3],
+                                'scenery': first_level[4],
+                                'clothing': first_level[5],
+                                'thing': first_level[6],
+                                'document': first_level[7],
+                                'other': first_level[8],
+                                'single': second_person[0],
+                                'dubbo': second_person[1],
+                                'multi': second_person[2],
+                                'passport': second_person[3],
+                                'mammal': second_animal[0],
+                                'bird': second_animal[1],
+                                'fish': second_animal[2],
+                                'insect': second_animal[3],
+                                'anphibious': second_animal[4],
+                                'flower': second_plant[0],
+                                'grass': second_plant[1],
+                                'tree': second_plant[2],
+                                'meal': second_food[0],
+                                'drink': second_food[1],
+                                'desert': second_food[2],
+                                'outside': second_scenery[0],
+                                'night': second_scenery[1],
+                                'clothe': second_clothing[0],
+                                'hat': second_clothing[1],
+                                'shoes': second_clothing[2],
+                                'dianqi': second_thing[0],
+                                'furniture': second_thing[1],
+                                'erweima': second_document[0],
+                                'zhengjian': second_document[1]
                             })
-                            if(i == temp_groups.length-1){
+                            if (i == temp_groups.length - 1) {
                                 this.setState({
-                                    remote_list: list.map(item => {return item})
+                                    remote_list: list.map(item => {
+                                        return item
+                                    })
                                 })
                             }
                         }
                     }
                 })
                 .catch(err => console.log(err))
+        }
     }
 
     updateIndex (selectedIndex) {
-        this.setState({selectedIndex})
+        this.setState({selectedIndex},() => {
+            if(this.state.selectedIndex == 1){
+                console.log('++++++')
+                this.remote_getInfo();
+            }
+        })
     }
 
     render() {
@@ -170,10 +204,9 @@ export default class MyInfo extends Component{
                     source={require('../../imgs/bg2.jpg')}
                     containerStyle={{top: -40,left: 40,borderWidth: 3,borderColor: 'white'}}
                 />
-                <Text style={{position: 'absolute',fontSize: 30,color: 'white',top: height*0.27,left: width*0.4}}>{global.variables.name}</Text>
-                <Text style={{position: 'absolute',fontSize: 15,color: 'black',top: height*0.32,left: width*0.4}}>{global.variables.userId}</Text>
-                <Text style={{position: 'absolute',color: 'black',fontSize: 20,top: height*0.37,left: 20}}>{global.variables.signature}</Text>
-
+                {global.variables.userToken ? <Text style={{position: 'absolute',fontSize: 30,color: 'white',top: height*0.27,left: width*0.4}}>{global.variables.name}</Text> : null}
+                {global.variables.userToken ? <Text style={{position: 'absolute',fontSize: 15,color: 'black',top: height*0.32,left: width*0.4}}>{global.variables.userId}</Text> : null}
+                {global.variables.userToken ? <Text style={{position: 'absolute',color: 'black',fontSize: 20,top: height*0.37,left: 20}}>{global.variables.signature}</Text> : null}
                 <ButtonGroup
                     onPress={this.updateIndex.bind(this)}
                     selectedIndex={this.state.selectedIndex}

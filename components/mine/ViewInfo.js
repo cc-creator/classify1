@@ -24,23 +24,23 @@ export default class ViewInfo extends Component{
     readyInfo() {
         first_data = [];
         second_person = [];second_document=[];second_thing=[];second_clothing=[];second_scenery=[];second_food=[];second_plant=[];second_animal=[];
-        first_data.push({x_data: '人像',y_data: this.props.item.person});first_data.push({x_data: '动物',y_data: this.props.item.animal});first_data.push({x_data: '植物',y_data: this.props.item.plant});first_data.push({x_data: '美食',y_data: this.props.item.food});first_data.push({x_data: '风景',y_data: this.props.item.scenery});first_data.push({x_data: '服装',y_data: this.props.item.clothing});first_data.push({x_data: '事物',y_data: this.props.item.thing});first_data.push({x_data: '文件',y_data: this.props.item.document});
+        first_data.push({x_data: '人像',y_data: this.props.item.person == 0 ? null : this.props.item.person});first_data.push({x_data: '动物',y_data: this.props.item.animal == 0 ? null : this.props.item.animal});first_data.push({x_data: '植物',y_data: this.props.item.plant == 0 ? null : this.props.item.plant});first_data.push({x_data: '美食',y_data: this.props.item.food == 0 ? null : this.props.item.food});first_data.push({x_data: '风景',y_data: this.props.item.scenery == 0 ? null : this.props.item.scenery});first_data.push({x_data: '服装',y_data: this.props.item.clothing == 0 ? null : this.props.item.clothing});first_data.push({x_data: '事物',y_data: this.props.item.thing == 0 ? null : this.props.item.thing});first_data.push({x_data: '文件',y_data: this.props.item.document == 0 ? null : this.props.item.document});first_data.push({x_data: '其他',y_data: this.props.item.other == 0 ? null : this.props.item.other});
         first_data.sort((a,b) => {return a.y_data - b.y_data})
-        second_person.push({x_data:'单人照',y_data:this.props.item.single});second_person.push({x_data:'双人照',y_data:this.props.item.dubbo});second_person.push({x_data:'集体照',y_data:this.props.item.multi});second_person.push({x_data:'证件照',y_data:this.props.item.passport});
+        second_person.push({x_data:'单人照',y_data:this.props.item.single == 0 ? null : this.props.item.single});second_person.push({x_data:'双人照',y_data:this.props.item.dubbo == 0 ? null : this.props.item.dubbo});second_person.push({x_data:'集体照',y_data:this.props.item.multi == 0 ? null : this.props.item.multi});second_person.push({x_data:'证件照',y_data:this.props.item.passport == 0 ? null : this.props.item.passport});
         second_person.sort((a,b) => {return a.y_data - b.y_data})
-        second_animal.push({x_data:'哺乳类',y_data:this.props.item.mammal});second_animal.push({x_data:'鸟类',y_data:this.props.item.bird});second_animal.push({x_data:'鱼类',y_data:this.props.item.fish});second_animal.push({x_data:'昆虫',y_data:this.props.item.insect});second_animal.push({x_data:'两栖类',y_data:this.props.item.anphibious});
+        second_animal.push({x_data:'哺乳类',y_data:this.props.item.mammal == 0 ? null : this.props.item.mammal});second_animal.push({x_data:'鸟类',y_data:this.props.item.bird == 0 ? null : this.props.item.bird});second_animal.push({x_data:'鱼类',y_data:this.props.item.fish == 0 ? null : this.props.item.fish});second_animal.push({x_data:'昆虫',y_data:this.props.item.insect == 0 ? null : this.props.item.insect});second_animal.push({x_data:'两栖类',y_data:this.props.item.anphibious == 0 ? null : this.props.item.anphibious});
         second_animal.sort((a,b) => {return a.y_data - b.y_data})
-        second_plant.push({x_data:'鲜花',y_data:this.props.item.flower});second_plant.push({x_data:'小草',y_data:this.props.item.grass});second_plant.push({x_data:'树木',y_data:this.props.item.tree});
+        second_plant.push({x_data:'鲜花',y_data:this.props.item.flower == 0 ? null : this.props.item.flower});second_plant.push({x_data:'小草',y_data:this.props.item.grass == 0 ? null : this.props.item.grass});second_plant.push({x_data:'树木',y_data:this.props.item.tree == 0 ? null : this.props.item.tree});
         second_plant.sort((a,b) => {return a.y_data - b.y_data})
-        second_food.push({x_data:'饭菜',y_data:this.props.item.meal});second_food.push({x_data:'饮品',y_data:this.props.item.drink});second_food.push({x_data:'甜点',y_data:this.props.item.desert});
+        second_food.push({x_data:'饭菜',y_data:this.props.item.meal == 0 ? null : this.props.item.meal});second_food.push({x_data:'饮品',y_data:this.props.item.drink == 0 ? null : this.props.item.drink});second_food.push({x_data:'甜点',y_data:this.props.item.desert ? null : this.props.item.desert});
         second_food.sort((a,b) => {return a.y_data - b.y_data})
-        second_scenery.push({x_data:'室外',y_data:this.props.item.outside});second_scenery.push({x_data:'夜景',y_data:this.props.item.night});
+        second_scenery.push({x_data:'室外',y_data:this.props.item.outside == 0 ? null : this.props.item.outside});second_scenery.push({x_data:'夜景',y_data:this.props.item.night == 0 ? null : this.props.item.night});
         second_scenery.sort((a,b) => {return a.y_data - b.y_data})
-        second_clothing.push({x_data:'衣服',y_data:this.props.item.clothe});second_clothing.push({x_data:'帽子',y_data:this.props.item.hat});second_clothing.push({x_data:'鞋子',y_data:this.props.item.shoes});
+        second_clothing.push({x_data:'衣服',y_data:this.props.item.clothe == 0 ? null : this.props.item.clothe});second_clothing.push({x_data:'帽子',y_data:this.props.item.hat == 0 ? null : this.props.item.hat});second_clothing.push({x_data:'鞋子',y_data:this.props.item.shoes == 0 ? null : this.props.item.shoes});
         second_clothing.sort((a,b) => {return a.y_data - b.y_data})
-        second_thing.push({x_data:'电器',y_data:this.props.item.dianqi});second_thing.push({x_data:'家具',y_data:this.props.item.furniture});
+        second_thing.push({x_data:'电器',y_data:this.props.item.dianqi == 0 ? null : this.props.item.dianqi});second_thing.push({x_data:'家具',y_data:this.props.item.furniture == 0 ? null : this.props.item.furniture});
         second_thing.sort((a,b) => {return a.y_data - b.y_data})
-        second_document.push({x_data:'二维码',y_data:this.props.item.erweima});second_document.push({x_data:'证件',y_data:this.props.item.zhengjian});
+        second_document.push({x_data:'二维码',y_data:this.props.item.erweima == 0 ? null : this.props.item.erweima});second_document.push({x_data:'证件',y_data:this.props.item.zhengjian == 0 ? null : this.props.item.zhengjian});
         second_document.sort((a,b) => {return a.y_data - b.y_data})
     }
 
@@ -69,9 +69,9 @@ export default class ViewInfo extends Component{
                                     onLoad: { duration: 1000 }
                                 }}
                                 labels={({ datum }) => datum.y_data}
-                                domain={{y:[1,first_data[first_data.length-1].y_data]}}
+                                //domain={{y:[0,first_data[first_data.length-1].y_data]}}
                                 domainPadding={{x:[30,30]}}
-                                categories={{ x: ["人像", "动物", "植物", "美食", "风景", "服装" , "事物", "文件"] }}
+                                categories={{ x: ["人像", "动物", "植物", "美食", "风景", "服装" , "事物", "文件", "其他"] }}
                                 style={{
                                     data: { fill: "#c43a31" },
                                     parent: { border: "1px solid #ccc"}
@@ -81,7 +81,7 @@ export default class ViewInfo extends Component{
                     {this.props.item.person == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-人像</Text>
-                            <VictoryChart width={350} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryChart width={350} theme={VictoryTheme.material}>
                                 <VictoryBar
                                     domainPadding={{x:[40,40]}}
                                     labels={({ datum }) => datum.y_data}
@@ -96,11 +96,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.animal == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-动物</Text>
-                            <VictoryChart width={350} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryChart width={350} theme={VictoryTheme.material}>
                                 <VictoryBar
                                     domainPadding={{x:[35,35]}}
                                     labels={({ datum }) => datum.y_data}
-                                    domain={{y:[1,second_animal[second_animal.length-1].y_data]}}
                                     categories={{ x: ["鸟类", "哺乳类", "鱼类", "昆虫", "两栖类"] }}
                                     style={{
                                         data: {fill: "#c43a31"},
@@ -112,11 +111,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.plant == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-植物</Text>
-                            <VictoryChart width={300} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryChart width={300} theme={VictoryTheme.material}>
                                 <VictoryBar
                                     domainPadding={{x:[50,50]}}
                                     labels={({ datum }) => datum.y_data}
-                                    domain={{y:[1,second_plant[second_plant.length-1].y_data]}}
                                     categories={{ x: ["鲜花", "小草", "树木"] }}
                                     style={{
                                         data: { fill: "#c43a31" },
@@ -128,11 +126,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.food == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-美食</Text>
-                            <VictoryChart width={300} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryChart width={300} theme={VictoryTheme.material}>
                                 <VictoryBar
                                     domainPadding={{x:[50,50]}}
                                     labels={({ datum }) => datum.y_data}
-                                    domain={{y:[1,second_food[second_food.length-1].y_data]}}
                                     categories={{ x: ["饭菜", "饮品", "甜点"] }}
                                     style={{
                                         data: {fill: "#c43a31"},
@@ -144,11 +141,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.scenery == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-风景</Text>
-                            <VictoryChart width={250} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryChart width={250} theme={VictoryTheme.material}>
                                 <VictoryBar
                                     domainPadding={{x:[65,65]}}
                                     labels={({ datum }) => datum.y_data}
-                                    domain={{y:[1,second_scenery[second_scenery.length-1].y_data]}}
                                     categories={{ x: ["室外", "夜景"] }}
                                     style={{
                                         data: {fill: "#c43a31"},
@@ -160,11 +156,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.clothing == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-服装</Text>
-                            <VictoryChart width={300} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryChart width={300} theme={VictoryTheme.material}>
                                 <VictoryBar
                                     domainPadding={{x:[50,50]}}
                                     labels={({ datum }) => datum.y_data}
-                                    domain={{y:[1,second_clothing[second_clothing.length-1].y_data]}}
                                     categories={{ x: ["衣服", "帽子", "鞋子"] }}
                                     style={{
                                         data: {fill: "#c43a31"},
@@ -176,11 +171,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.thing == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-事物</Text>
-                            <VictoryChart width={250} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryChart width={250} theme={VictoryTheme.material}>
                                 <VictoryBar
                                     domainPadding={{x:[65,65]}}
                                     labels={({ datum }) => datum.y_data}
-                                    domain={{y:[1,second_thing[second_thing.length-1].y_data]}}
                                     categories={{ x: ["电器", "家具"] }}
                                     style={{
                                         data: {fill: "#c43a31"},
@@ -192,11 +186,10 @@ export default class ViewInfo extends Component{
                     {this.props.item.document == 0 ? null :
                         <View>
                             <Text style={{fontSize: 20,top: 30,left:width*0.1}}>二级分类-文件</Text>
-                            <VictoryChart width={250} theme={VictoryTheme.material} minDomain={{ y: 0 }}>
+                            <VictoryChart width={250} theme={VictoryTheme.material}>
                                 <VictoryBar
                                     domainPadding={{x:[65,65]}}
                                     labels={({ datum }) => datum.y_data}
-                                    domain={{y:[1,second_document[second_document.length-1].y_data]}}
                                     categories={{ x: ["二维码", "证件"] }}
                                     style={{
                                         data: {fill: "#c43a31"},

@@ -53,14 +53,7 @@ const App = () => {
                   hideNavBar
               />
             </Scene>
-            <Scene key="my" title="我的" icon={TabIcon} tabBarOnPress={() => {
-              if(!global.variables.userToken){
-                console.log("转去登录");
-                Actions.logreg();
-              }else {
-                Actions.myInfo()
-              }
-            }}>
+            <Scene key="my" title="我的" icon={TabIcon} tabBarOnPress={() => {Actions.myInfo()}}>
               <Scene
                   key="myInfo"
                   title='我的'
