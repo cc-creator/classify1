@@ -192,11 +192,17 @@ export default class Classify extends Component {
     getDateTime(dateTime) {
         let _year = dateTime.getFullYear().toString();
         let _month = (dateTime.getMonth()+1).toString();
+        if(_month.length == 1) _month = '0' + _month;
         let _day = dateTime.getDate().toString();
+        if(_day.length == 1) _day = '0' + _day;
         let _hour = dateTime.getHours().toString();
+        if(_hour.length == 1) _hour = '0' + _hour;
         let _minute = dateTime.getMinutes().toString();
+        if(_minute.length == 1) _minute = '0' + _minute;
         let _second = dateTime.getSeconds().toString();
+        if(_second.length == 1) _second = '0' + _second;
         let _time = _year + "-" + _month + "-" + _day + " " + _hour + ":" + _minute + ":" + _second;
+        console.log(_time)
         return _time;
     }
 
