@@ -57,9 +57,15 @@ export default class LogReg extends Component {
                     global.variables.userId = responseJson.userId;
                     global.variables.name = responseJson.name;
                     global.variables.signature = responseJson.signature;
+                    global.variables.avatar = responseJson.avatar;
+                    global.variables.account = responseJson.account;
                     console.log(responseJson)
                     ToastExample.show("登陆成功",ToastExample.SHORT);
-                    Actions.pop();
+                    if(this.props.last === 'myInfo'){
+                        Actions.pop({refresh:({selectedIndex: 1})})
+                    }else{
+                        Actions.pop();
+                    }
                 }else{
                     ToastExample.show("用户名或密码错误",ToastExample.SHORT);
                     this.setState({passwd: ''})

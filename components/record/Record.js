@@ -29,13 +29,14 @@ export default class Record extends Component{
     }
 
     remote_get() {
-        this.setState({
-            flag: false
-        });
         if(!global.variables.userToken){
             console.log("转去登录");
             Actions.logreg();
+
         }else {
+            this.setState({
+                flag: false
+            });
             console.log(global.variables.userId)
             let userId = {"userId": global.variables.userId};
             fetch(global.variables.ip+'/category/getCategorys', {

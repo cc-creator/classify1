@@ -18,12 +18,12 @@ const rnfsPath = RNFS.DocumentDirectoryPath;
 const jilu_path = rnfsPath + '/jilu.text';
 export default class MyInfo extends Component{
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             local_list: [],
             remote_list: [],
-            selectedIndex: 0
+            selectedIndex: 0,
         }
     }
 
@@ -92,7 +92,8 @@ export default class MyInfo extends Component{
     remote_getInfo() {
         if(!global.variables.userToken){
             console.log("转去登录");
-            Actions.logreg();
+            Actions.logreg({last: 'myInfo'});
+            this.setState({selectedIndex: 0})
         }else {
             let userId = {"userId": global.variables.userId};
             fetch(global.variables.ip + '/category/getCategorys', {
@@ -191,21 +192,30 @@ export default class MyInfo extends Component{
     }
 
     render() {
+        let userToken = global.variables.userToken;
         return (
             <View>
                 <Header title='我的' left_flag={false} />
                 <View style={{height: height*0.25}}>
                     <ImageBackground style={{width: width,height: height*0.25}} source={require('../../imgs/bg2.jpg')}/>
                 </View>
-                <Avatar
+                {typeof(global.variables.avatar) === 'undefined' || global.variables.avatar === '' ?
+                    <Avatar
                     size="large"
                     rounded
-                    title={'cc'}
-                    source={require('../../imgs/bg2.jpg')}
-                    containerStyle={{top: -40,left: 40,borderWidth: 3,borderColor: 'white'}}
-                />
+                    title={userToken ? global.variables.name : '登录'}
+                    titleStyle={{fontSize:25}}
+                    containerStyle={{top: -40,left: 40,borderWidth: 2,borderColor: 'white'}}
+                     /> :
+                    <Avatar
+                        size="large"
+                        rounded
+                        source={{uri: global.variables.avatar}}
+                        containerStyle={{top: -40,left: 40,borderWidth: 2,borderColor: 'white'}}
+                    />
+                }
                 {global.variables.userToken ? <Text style={{position: 'absolute',fontSize: 30,color: 'white',top: height*0.27,left: width*0.4}}>{global.variables.name}</Text> : null}
-                {global.variables.userToken ? <Text style={{position: 'absolute',fontSize: 15,color: 'black',top: height*0.32,left: width*0.4}}>{global.variables.userId}</Text> : null}
+                {global.variables.userToken ? <Text style={{position: 'absolute',fontSize: 15,color: 'black',top: height*0.32,left: width*0.4}}>{global.variables.account}</Text> : null}
                 {global.variables.userToken ? <Text style={{position: 'absolute',color: 'black',fontSize: 20,top: height*0.37,left: 20}}>{global.variables.signature}</Text> : null}
                 <ButtonGroup
                     onPress={this.updateIndex.bind(this)}
@@ -213,10 +223,10 @@ export default class MyInfo extends Component{
                     buttons={['本地记录','云端记录']}
                     containerStyle={{height: width*0.1}}
                 />
-                {this.state.selectedIndex == 0 ?
-                    <View style={{height: height * 0.43, width: width}}>
+                {this.state.selectedIndex == 1 ?
+                    <View style={{height: height * 0.5, width: width}}>
                         <FlatList
-                            data={this.state.local_list}
+                            data={this.state.remote_list}
                             renderItem={(item) => {
                                 return <InfoCell prop={item}/>
                             }}
@@ -225,9 +235,9 @@ export default class MyInfo extends Component{
                             }}
                             keyExtractor={(item, index) => '' + index}/>
                     </View> :
-                    <View style={{height: height * 0.5, width: width}}>
+                    <View style={{height: height * 0.43, width: width}}>
                         <FlatList
-                            data={this.state.remote_list}
+                            data={this.state.local_list}
                             renderItem={(item) => {
                                 return <InfoCell prop={item}/>
                             }}

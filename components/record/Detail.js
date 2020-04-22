@@ -447,18 +447,6 @@ export default class Detail extends Component{
         }
     }
 
-    getDateTime() {
-        let dateTime = new Date();
-        let _year = dateTime.getFullYear().toString();
-        let _month = (dateTime.getMonth()+1).toString();
-        let _day = dateTime.getDate().toString();
-        let _hour = dateTime.getHours().toString();
-        let _minute = dateTime.getMinutes().toString();
-        let _second = dateTime.getSeconds().toString();
-        let _time = _year + "-" + _month + "-" + _day + " " + _hour + ":" + _minute + ":" + _second;
-        return _time;
-    }
-
     getImageName(url){
         let index = url.lastIndexOf('/') + 1;
         let length = url.length - index;
@@ -518,9 +506,9 @@ export default class Detail extends Component{
             '<td height="74" style="text-align: center;border-bottom: 1px solid #666;color: #2089DC;border-bottom: 1px solid #666;">'+ images_animal_anphibious.length +'</td>' +
             '</tr>\n') ;
         let plant_rowspan = 0;
-        if(images_plant_flower.length != 0) person_rowspan++;
-        if(images_plant_grass.length != 0) person_rowspan++;
-        if(images_plant_tree.length != 0) person_rowspan++;
+        if(images_plant_flower.length != 0) plant_rowspan++;
+        if(images_plant_grass.length != 0) plant_rowspan++;
+        if(images_plant_tree.length != 0) plant_rowspan++;
         let plant_string = '<tr style="font-size: 30px;">' +
             '<td height="74" rowspan="'+ plant_rowspan +'" style="text-align: center;border-bottom: 1px solid #666;">植物<span style="color: #2089DC;">( '+ sum_plant +' )</span></td>\n' +
             (images_plant_flower.length == 0 ? '' : '<td height="74" style="text-align: center;border-bottom: 1px solid #666;">花朵</td>\n' +

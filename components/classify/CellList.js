@@ -1,11 +1,12 @@
 import React from 'react';
 import {
-    Image,
     StyleSheet,
     Dimensions,
+    Image,
     View,
     TouchableOpacity
 } from 'react-native';
+//import {Image} from 'react-native-elements';
 
 const dimension = Dimensions.get('window')
 const CellList = ({prop,removeImg,findIndex,clissifyImage}) => {
@@ -21,7 +22,8 @@ const CellList = ({prop,removeImg,findIndex,clissifyImage}) => {
             >
                 <Image
                     source={prop.item.image}
-                    style={styles.cellImage}/>
+                    style={styles.cellImage}
+                />
             </TouchableOpacity>
             <TouchableOpacity style={styles.remove}
                 onPress={() => {
@@ -44,7 +46,7 @@ const styles = StyleSheet.create({
     cellImage: {
         width: (width-50)/4,
         height: (width-50)/4,
-        borderRadius: 10.0,
+        borderRadius: 10
     },
     remove: {
         backgroundColor: '#ffffff',

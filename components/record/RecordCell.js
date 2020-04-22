@@ -5,9 +5,9 @@ import {
     Image,
     View,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity, ProgressBarAndroid
 } from 'react-native';
-import { Card } from "react-native-elements";
+import {Button, Card, Overlay} from "react-native-elements";
 import { Actions } from 'react-native-router-flux';
 import ToastExample from "../../nativeComponents/ToastExample";
 
@@ -16,7 +16,8 @@ export default class RecordCell extends Component {
     constructor(props){
         super(props);
         this.state = {
-            isVisable: false
+            isVisable: false,
+            isShow: false
         }
     }
 
@@ -116,7 +117,9 @@ export default class RecordCell extends Component {
                                 <Image source={require('../../imgs/goon.png')} style={styles.delStyle}></Image>
                             </TouchableOpacity>
                             <TouchableOpacity  style={{alignItems: 'center'}}
-                                              onPress={() => {this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)}}>
+                                              onPress={() => {
+                                                  this.setState({isShow:true})
+                                              }}>
                                 <Image source={require('../../imgs/remove.png')} style={styles.delStyle}></Image>
                             </TouchableOpacity>
                             <TouchableOpacity  style={{alignItems: 'center'}}
@@ -126,6 +129,34 @@ export default class RecordCell extends Component {
                         </View>
                         : null}
                 </View>
+                <Overlay isVisible={this.state.isShow}
+                         onBackdropPress={() => this.setState({ isShow: false })}
+                         overlayStyle={{padding: 0}}
+                         height={height*0.25}>
+                    <View style={styles.p_container}>
+                        <View style={styles.p_view1}>
+                            <Text style={{fontSize: 20,top: 10}}>{item.ctitle}</Text>
+                            <Text style={styles.p_text}>确定删除该记录吗？</Text>
+                        </View>
+                            <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: height*0.02}}>
+                                <Button
+                                    buttonStyle={styles.buttonStyle}
+                                    titleStyle={styles.titleStyle}
+                                    onPress={() => {
+                                        this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)
+                                        this.setState({ isShow: false })
+                                    }}
+                                    title='确定'
+                                />
+                                <Button
+                                    buttonStyle={styles.buttonStyle}
+                                    titleStyle={styles.titleStyle}
+                                    onPress={() => this.setState({ isShow: false })}
+                                    title='取消'
+                                />
+                        </View>
+                    </View>
+                </Overlay>
             </View>
         );
     }
@@ -149,19 +180,39 @@ const styles = StyleSheet.create({
         height: height*0.33,
     },
     titleStyle: {
-        fontSize:20
+        fontSize: 20
     },
     delView: {
         right: width*0.02,
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-around',
-        height: height/4.5,
-        marginTop: 20,
+        height: height/4.7,
+        marginTop: 35,
     },
     delStyle: {
-        width: width*0.1,
-        height: width*0.1,
-    }
+        width: width*0.08,
+        height: width*0.08,
+    },
+    p_container: {
+        padding: 0
+    },
+    p_view1: {
+        backgroundColor: '#2089DC',
+        height: height*0.13,
+        alignItems: 'center'
+    },
+    p_text: {
+        lineHeight: height*0.1,
+        fontSize: 25,
+        color: 'white'
+    },
+    buttonStyle: {
+        height:width*0.125,
+        width:width*0.25,
+        borderRadius: 25,
+        marginBottom: 5,
+        opacity: 0.8
+    },
 });
 

@@ -52,10 +52,13 @@ export default class Header extends Component {
                     { !this.state.asc ? <Image source={require('../../imgs/desc.png')} style={styles.image}/>
                     : <Image source={require('../../imgs/asc.png')} style={styles.image}/> }
                 </TouchableOpacity> : null }
-                { this.props.title === '我的' ? <TouchableOpacity onPress={() => {
+                { this.props.title === '我的' && global.variables.userToken ? <TouchableOpacity onPress={() => {
                     Actions.editInfo();
                 }} style={styles.touchableOpacity_right}>
                     <Text style={{color: 'white',lineHeight: height*0.045}}>编辑</Text>
+                </TouchableOpacity> : null }
+                { this.props.title === '编辑个人信息' ? <TouchableOpacity onPress={() => {this.props.updateInfo()}} style={styles.touchableOpacity_right}>
+                    <Text style={{color: 'white',lineHeight: height*0.045}}>完成</Text>
                 </TouchableOpacity> : null }
             </View>
         )
@@ -71,8 +74,6 @@ const styles = StyleSheet.create({
         width: width,
         height: height*0.07,
         alignItems: 'center',
-        borderBottomWidth: 0.5,
-        borderColor: '#d2d2d2',
         backgroundColor: '#2089DC'
     },
     title: {

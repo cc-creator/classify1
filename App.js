@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text} from 'react-native';
+import {View, Image, Text, Dimensions} from 'react-native';
 import {Actions, Router, Scene, Tabs, Modal} from 'react-native-router-flux';
 
 import Classify from './components/classify/Classify';
@@ -12,9 +12,17 @@ import EditInfo from "./components/mine/EditInfo";
 import ViewInfo from "./components/mine/ViewInfo";
 import './components/global/Global';
 
+const dimension = Dimensions.get('window')
+let height = dimension.height
+let width = dimension.width
 const TabIcon = ({ focused, title }) => {
   return (
-      <Text style={{color: focused ? '#2089DC' : 'black'}}>{title}</Text>
+      <View>
+          {title === '记录' ? focused ? <Image source={require('./imgs/tab_record.png')} style={{width:35,height:35}}/> : <Image source={require('./imgs/tab_record_unfocused.png')} style={{width:30,height:30}}/> : null}
+          {title === '分类' ? focused ? <Image source={require('./imgs/tab_classify.png')} style={{width:35,height:35}}/> : <Image source={require('./imgs/tab_classify_unfocused.png')} style={{width:30,height:30}}/> : null}
+          {title === '我的' ? focused ? <Image source={require('./imgs/tab_my.png')} style={{width:35,height:35}}/> : <Image source={require('./imgs/tab_my_unfocused.png')} style={{width:30,height:30}}/> : null}
+          <Text style={{color: focused ? '#2089DC' : 'black',textAlign: 'center'}}>{title}</Text>
+      </View>
   );
 }
 const App = () => {
@@ -24,6 +32,7 @@ const App = () => {
           <Tabs
               hideNavBar
               showLabel={false}
+              tabBarStyle={{height: height*0.08}}
           >
             <Scene key="record" title="记录" icon={TabIcon}>
               <Scene

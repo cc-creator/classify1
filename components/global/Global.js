@@ -1,4 +1,4 @@
-global.variables = {userToken: false,userId: '',ip: 'http://192.168.43.143:8080',name:'',signature: ''}
+global.variables = {userToken: false,userId: '',ip: 'http://192.168.43.143:8080',account: '',name:'',signature: '',avatar: ''}
 
 
 /*
