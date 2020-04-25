@@ -5,9 +5,9 @@ import {
     Image,
     View,
     Dimensions,
-    TouchableOpacity, ProgressBarAndroid
+    TouchableOpacity
 } from 'react-native';
-import {Button, Card, Overlay} from "react-native-elements";
+import { Card, Overlay} from "react-native-elements";
 import { Actions } from 'react-native-router-flux';
 import ToastExample from "../../nativeComponents/ToastExample";
 
@@ -131,30 +131,22 @@ export default class RecordCell extends Component {
                 </View>
                 <Overlay isVisible={this.state.isShow}
                          onBackdropPress={() => this.setState({ isShow: false })}
-                         overlayStyle={{padding: 0}}
+                         overlayStyle={{padding: 15,width: width*0.9,height: width*0.3,backgroundColor: '#384B60'}}
                          height={height*0.25}>
-                    <View style={styles.p_container}>
-                        <View style={styles.p_view1}>
-                            <Text style={{fontSize: 20,top: 10}}>{item.ctitle}</Text>
-                            <Text style={styles.p_text}>确定删除该记录吗？</Text>
-                        </View>
-                            <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: height*0.035}}>
-                                <Button
-                                    buttonStyle={styles.buttonStyle}
-                                    titleStyle={styles.titleStyle}
-                                    onPress={() => {
-                                        this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)
-                                        this.setState({ isShow: false })
-                                    }}
-                                    title='确定'
-                                />
-                                <Button
-                                    buttonStyle={styles.buttonStyle}
-                                    titleStyle={styles.titleStyle}
-                                    onPress={() => this.setState({ isShow: false })}
-                                    title='取消'
-                                />
-                        </View>
+                    <View>
+                        <Text style={{fontSize: 18,color: '#F8F7F2'}}>确定删除该记录吗？</Text>
+                        <Text style={{color: '#F8F7F2'}}>{item.ctitle}</Text>
+                    </View>
+                    <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end',marginTop: height*0.035}}>
+                        <TouchableOpacity style={{height:20,marginRight: 20}} onPress={() => this.setState({ isShow: false })}>
+                            <Text style={{color: '#BEDAFA'}}>取消</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{height:20,marginRight: 5}} onPress={() => {
+                            this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)
+                            this.setState({ isShow: false })
+                        }}>
+                            <Text style={{color: '#BEDAFA'}}>删除</Text>
+                        </TouchableOpacity>
                     </View>
                 </Overlay>
             </View>
@@ -194,25 +186,10 @@ const styles = StyleSheet.create({
         width: width*0.08,
         height: width*0.08,
     },
-    p_container: {
-        padding: 0
-    },
-    p_view1: {
-        backgroundColor: '#2089DC',
-        height: height*0.13,
-        alignItems: 'center'
-    },
     p_text: {
         lineHeight: height*0.1,
-        fontSize: 25,
+        fontSize: 15,
         color: 'white'
-    },
-    buttonStyle: {
-        height:width*0.125,
-        width:width*0.25,
-        borderRadius: 25,
-        marginBottom: 5,
-        opacity: 0.8
     },
 });
 
