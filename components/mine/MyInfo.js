@@ -5,14 +5,15 @@ import {
     StyleSheet,
     View,
     Text,
-    FlatList
+    FlatList, TouchableOpacity, ProgressBarAndroid
 } from 'react-native';
-import {Avatar, Divider, ButtonGroup } from 'react-native-elements';
+import {Avatar, Divider, ButtonGroup, Overlay} from 'react-native-elements';
 import Header from "../global/Header";
 import InfoCell from './InfoCell';
 import RNFS from "react-native-fs";
 import ToastExample from "../../nativeComponents/ToastExample";
 import {Actions} from "react-native-router-flux";
+import ImagePicker from "react-native-image-crop-picker";
 
 const rnfsPath = RNFS.DocumentDirectoryPath;
 const jilu_path = rnfsPath + '/jilu.text';
@@ -24,6 +25,8 @@ export default class MyInfo extends Component{
             local_list: [],
             remote_list: [],
             selectedIndex: 0,
+            background: '',
+            isVisible: false
         }
     }
 
@@ -191,18 +194,68 @@ export default class MyInfo extends Component{
         })
     }
 
+    getImageName(url){
+        let index = url.lastIndexOf('/') + 1;
+        let length = url.length - index;
+        return url.substr(index,length);
+    }
+
+    updateBackground() {
+        if(!global.variables.userToken){
+            console.log("转去登录");
+            Actions.logreg({last: 'myInfo'});
+            this.setState({selectedIndex: 0})
+        }else {
+            ImagePicker.openPicker({
+                cropping: true,
+            }).then(image => {
+                let formdata = new FormData();
+                formdata.append('background', {
+                    uri: image.path,
+                    type: 'multipart/form-data',
+                    name: this.getImageName(image.path)
+                });
+                formdata.append('userId', global.variables.userId);
+                this.setState({isVisible: true})
+                fetch(global.variables.ip + '/user/updateBackground', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: formdata
+                })
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        console.log(responseJson)
+                        if (responseJson !== 'FALSE') {
+                            ToastExample.show("上传成功", ToastExample.SHORT);
+                            global.variables.background = responseJson;
+                            this.setState({background: responseJson,isVisible: false})
+                        } else {
+                            ToastExample.show("上传失败", ToastExample.SHORT);
+                            this.setState({isVisible: false})
+                        }
+                    })
+                    .catch(err => console.log(err))
+            }).catch(err => {
+            })
+        }
+    }
+
     render() {
         let userToken = global.variables.userToken;
         return (
             <View>
                 <Header title='我的' left_flag={false} />
-                <View style={{height: height*0.25}}>
-                    <ImageBackground style={{width: width,height: height*0.25}} source={require('../../imgs/bg2.jpg')}/>
-                </View>
+                <TouchableOpacity onPress={() => {this.updateBackground()}} style={{height: height*0.25}}>
+                    {!global.variables.userToken ? <ImageBackground style={{width: width,height: height*0.25}} source={require('../../imgs/bg2.jpg')}/> :
+                        <ImageBackground style={{width: width,height: height*0.25}} source={{uri: global.variables.background}}/> }
+                </TouchableOpacity>
                 {typeof(global.variables.avatar) === 'undefined' || global.variables.avatar === '' ?
                     <Avatar
                     size="large"
                     rounded
+                    onPress={() => {if(!userToken){Actions.logreg({last: 'myInfo'});}}}
                     title={userToken ? global.variables.name : '登录'}
                     titleStyle={{fontSize:25}}
                     containerStyle={{top: -40,left: 40,borderWidth: 2,borderColor: 'white'}}
@@ -210,6 +263,7 @@ export default class MyInfo extends Component{
                     <Avatar
                         size="large"
                         rounded
+                        onPress={() => {Actions.editInfo()}}
                         source={{uri: global.variables.avatar}}
                         containerStyle={{top: -40,left: 40,borderWidth: 2,borderColor: 'white'}}
                     />
@@ -235,7 +289,7 @@ export default class MyInfo extends Component{
                             }}
                             keyExtractor={(item, index) => '' + index}/>
                     </View> :
-                    <View style={{height: height * 0.43, width: width}}>
+                    <View style={{height: height * 0.39, width: width}}>
                         <FlatList
                             data={this.state.local_list}
                             renderItem={(item) => {
@@ -247,6 +301,14 @@ export default class MyInfo extends Component{
                             keyExtractor={(item, index) => '' + index}/>
                     </View>
                 }
+                <Overlay
+                    isVisible={this.state.isVisible}
+                    height={width*0.25}
+                    width={width*0.25}
+                    overlayStyle={{padding: 0,paddingTop: width*0.024}}
+                >
+                    <ProgressBarAndroid styleAttr='Large' color='#2089DC'/>
+                </Overlay>
             </View>
         );
     }

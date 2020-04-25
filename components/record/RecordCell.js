@@ -138,7 +138,7 @@ export default class RecordCell extends Component {
                             <Text style={{fontSize: 20,top: 10}}>{item.ctitle}</Text>
                             <Text style={styles.p_text}>确定删除该记录吗？</Text>
                         </View>
-                            <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: height*0.02}}>
+                            <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: height*0.035}}>
                                 <Button
                                     buttonStyle={styles.buttonStyle}
                                     titleStyle={styles.titleStyle}

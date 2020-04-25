@@ -4,12 +4,13 @@ import {
     TouchableOpacity,
     StyleSheet,
     View,
-    Text, Image,
+    Text, Image, ProgressBarAndroid,
 } from 'react-native';
 import Header from "../global/Header";
 import {Avatar, Input, Overlay} from "react-native-elements";
 import ImagePicker from 'react-native-image-crop-picker';
-import ViewInfo from "./ViewInfo";
+import {Actions} from "react-native-router-flux";
+import ToastExample from "../../nativeComponents/ToastExample";
 
 export default class EditInfo extends Component{
 
@@ -18,30 +19,70 @@ export default class EditInfo extends Component{
         this.state = {
             name: global.variables.name,
             signature: global.variables.signature,
-            visible: false,
             avatar: global.variables.avatar,
+            visible: false,
+            isVisible: false,
         }
     }
 
+    getImageName(url){
+        let index = url.lastIndexOf('/') + 1;
+        let length = url.length - index;
+        return url.substr(index,length);
+    }
+
     updateInfo() {
-        console.log('updateInfo')
+        this.setState({isVisible: true})
+        let formdata = new FormData();
+        formdata.append('avatar',{uri: this.state.avatar,type: 'multipart/form-data',name: this.getImageName(this.state.avatar)});
+        formdata.append('userId', global.variables.userId);
+        formdata.append('name', this.state.name);
+        formdata.append('signature', this.state.signature);
+        fetch(global.variables.ip+'/user/updateUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formdata})
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if(responseJson !== 'FALSE'){
+                    ToastExample.show("上传成功",ToastExample.SHORT);
+                    global.variables.avatar = responseJson;
+                    global.variables.name = this.state.name;
+                    global.variables.signature = this.state.signature;
+                    this.setState({isVisible: false})
+                    Actions.myInfo();
+                }else{
+                    ToastExample.show("上传失败",ToastExample.SHORT);
+                    this.setState({isVisible: false})
+                }
+            })
+            .catch(err => console.log(err))
     }
 
     pickImageFromGallery() {
         ImagePicker.openPicker({
-            cropping: true
+            cropping: true,
+            cropperCircleOverlay: true,
+            compressImageQuality: 0.5,
+            mediaType: 'photo',
+            freeStyleCropEnabled: true,
         }).then(image => {
             console.log(image);
-            this.setState({visible: false})
-        })
+            this.setState({visible: false,avatar: image.path})
+        }).catch(err => {})
     }
 
     pickImageFromCamera() {
         ImagePicker.openCamera({
             cropping: true,
+            cropperCircleOverlay: true,
+            compressImageQuality: 0.5
         }).then(image => {
             console.log(image);
-        })
+            this.setState({visible: false,avatar: image.path})
+        }).catch(err => {})
     }
 
     render() {
@@ -51,7 +92,7 @@ export default class EditInfo extends Component{
                 <View style={{padding: 5,paddingLeft:10,paddingRight:10}}>
                     <Text style={{fontSize: 20}}>头像:</Text>
                     <View style={{alignItems: 'center',paddingTop: 10}}>
-                        {typeof(global.variables.avatar) === 'undefined' || global.variables.avatar === '' ?
+                        {typeof(this.state.avatar) === 'undefined' || this.state.avatar === '' ?
                             <Avatar
                                 size="xlarge"
                                 rounded
@@ -63,7 +104,7 @@ export default class EditInfo extends Component{
                             <Avatar
                                 size="xlarge"
                                 rounded
-                                source={{uri: global.variables.avatar}}
+                                source={{uri: this.state.avatar}}
                                 showEditButton={true}
                                 onEditPress={() => {this.setState({visible: true})}}
                             />
@@ -94,6 +135,14 @@ export default class EditInfo extends Component{
                             <Text style={{lineHeight: height*0.06,fontSize:20}}>取消</Text>
                         </TouchableOpacity>
                     </View>
+                </Overlay>
+                <Overlay
+                    isVisible={this.state.isVisible}
+                    height={width*0.25}
+                    width={width*0.25}
+                    overlayStyle={{padding: 0,paddingTop: width*0.024}}
+                >
+                    <ProgressBarAndroid styleAttr='Large' color='#2089DC'/>
                 </Overlay>
             </View>
         );

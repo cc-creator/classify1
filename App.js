@@ -6,7 +6,7 @@ import Classify from './components/classify/Classify';
 import Record from './components/record/Record';
 import Detail from './components/record/Detail';
 import CellDetail from "./components/record/CellDetail";
-import LogReg from './components/global/Log&Reg';
+import LogReg from './components/global/test_Log&Reg';
 import MyInfo from './components/mine/MyInfo';
 import EditInfo from "./components/mine/EditInfo";
 import ViewInfo from "./components/mine/ViewInfo";
@@ -18,9 +18,9 @@ let width = dimension.width
 const TabIcon = ({ focused, title }) => {
   return (
       <View>
-          {title === '记录' ? focused ? <Image source={require('./imgs/tab_record.png')} style={{width:35,height:35}}/> : <Image source={require('./imgs/tab_record_unfocused.png')} style={{width:30,height:30}}/> : null}
-          {title === '分类' ? focused ? <Image source={require('./imgs/tab_classify.png')} style={{width:35,height:35}}/> : <Image source={require('./imgs/tab_classify_unfocused.png')} style={{width:30,height:30}}/> : null}
-          {title === '我的' ? focused ? <Image source={require('./imgs/tab_my.png')} style={{width:35,height:35}}/> : <Image source={require('./imgs/tab_my_unfocused.png')} style={{width:30,height:30}}/> : null}
+          {title === '记录' ? focused ? <Image source={require('./imgs/tab_record.png')} style={{width:width*0.08,height:width*0.08}}/> : <Image source={require('./imgs/tab_record_unfocused.png')} style={{width:width*0.075,height:width*0.075}}/> : null}
+          {title === '分类' ? focused ? <Image source={require('./imgs/tab_classify.png')} style={{width:width*0.08,height:width*0.08}}/> : <Image source={require('./imgs/tab_classify_unfocused.png')} style={{width:width*0.075,height:width*0.075}}/> : null}
+          {title === '我的' ? focused ? <Image source={require('./imgs/tab_my.png')} style={{width:width*0.08,height:width*0.08}}/> : <Image source={require('./imgs/tab_my_unfocused.png')} style={{width:width*0.08,height:width*0.075}}/> : null}
           <Text style={{color: focused ? '#2089DC' : 'black',textAlign: 'center'}}>{title}</Text>
       </View>
   );
@@ -32,7 +32,7 @@ const App = () => {
           <Tabs
               hideNavBar
               showLabel={false}
-              tabBarStyle={{height: height*0.08}}
+              tabBarStyle={{height: height*0.08,backgroundColor: '#FaFaFa',borderTopWidth: 0}}
           >
             <Scene key="record" title="记录" icon={TabIcon}>
               <Scene

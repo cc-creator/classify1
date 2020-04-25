@@ -27,37 +27,16 @@ export default class InfoCell extends Component{
             <View>
                 <View style={{flex: 1,flexDirection: 'row',paddingLeft: 20,paddingRight: 20,paddingTop: 5,paddingBottom: 10}}>
                     <Image source={{uri: this.props.prop.item.cover}} style={{width: width*0.15,height: width*0.15,borderRadius: width*0.075}}/>
-                    <View style={{flex: 1,flexDirection: 'column',paddingLeft: 20,paddingTop: 15}}>
+                    <View style={{flex: 1,flexDirection: 'column',paddingLeft: 20,paddingTop: width*0.02}}>
                         <Text style={{fontSize: 20}}>{this.props.prop.item.title}</Text>
                         <Text>{this.props.prop.item.dateTime}</Text>
                     </View>
-                    <TouchableOpacity style={{width: width*0.08,height: width*0.08,marginTop: 20}} onPress={() => {
+                    <TouchableOpacity style={{width: width*0.08,height: width*0.08,marginTop: width*0.04}} onPress={() => {
                         Actions.viewInfo({'item': this.props.prop.item});
                     }}>
                         <Image source={require('../../imgs/right.png')} style={{width: width*0.08,height: width*0.08}}/>
                     </TouchableOpacity>
-                    {/*{this.state.isVisible ?
-                        <TouchableOpacity style={{width: width*0.08,height: width*0.08,marginTop: 20}} onPress={() => {
-                            this.setState({isVisible: false})
-                        }}>
-                            <Image source={require('../../imgs/right.png')} style={{width: width*0.08,height: width*0.08}}/>
-                        </TouchableOpacity> :
-                        <TouchableOpacity style={{width: width*0.08,height: width*0.08,marginTop: 20}} onPress={() => {
-                            this.setState({isVisible: true})
-                        }}>
-                            <Image source={require('../../imgs/down.png')} style={{width: width*0.08,height: width*0.08}}/>
-                        </TouchableOpacity>
-                    }*/}
                 </View>
-                {/*{ this.state.isVisible ?
-                    <View style={{marginLeft: width*0.05,width:width*0.9,backgroundColor: 'green',padding: 5,marginBottom: 5}}>
-                        <Text>title</Text>
-                        <Text>remark</Text>
-                        <Text>dateTime</Text>
-                        <Text>总数</Text>
-                        <Text>时间</Text>
-                    </View> : null
-                }*/}
             </View>
         );
     }

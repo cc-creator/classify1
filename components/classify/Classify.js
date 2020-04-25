@@ -104,7 +104,7 @@ export default class Classify extends Component {
                 imageMean: 128.0, // mean，默认为 127.5
                 imageStd: 128.0,  // std，默认为 127.5
                 numResults: 3,    // 返回结果数，默认为 5
-                threshold: 0.05   // 可信度阈值，默认为 0.1
+                threshold: 0.5   // 可信度阈值，默认为 0.1
             },
             (err, res) => {
                 if(!err)
