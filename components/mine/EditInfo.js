@@ -94,7 +94,7 @@ export default class EditInfo extends Component{
                     <View style={{alignItems: 'center',paddingTop: 10}}>
                         {typeof(this.state.avatar) === 'undefined' || this.state.avatar === '' ?
                             <Avatar
-                                size="xlarge"
+                                size="large"
                                 rounded
                                 title={global.variables.name}
                                 titleStyle={{fontSize:25}}
@@ -102,7 +102,7 @@ export default class EditInfo extends Component{
                                 onEditPress={() => {this.setState({visible: true})}}
                             /> :
                             <Avatar
-                                size="xlarge"
+                                size="large"
                                 rounded
                                 source={{uri: this.state.avatar}}
                                 showEditButton={true}

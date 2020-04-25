@@ -36,14 +36,15 @@ export default class Detail extends Component{
         this.state = {
             groups: [], //存放分好类的image，用FlatList显示
             isVisible: false, //控制overLay的显示
-            title: this.props.ctitle,
-            remark: this.props.remark,
+            title: typeof(this.props.ctitle) === 'undefined' ? '' : this.props.ctitle,
+            remark: typeof(this.props.remark) === 'undefined' ? '' : this.props.remark,
             isPdf: false, //标识当前页面的PDF是否生成
             visible: false, //控制Modal的显示
             source: '', //存放生成PDF的路径
             flag: typeof(this.props.again) === 'undefined' ? false : true,
             isLoad: false,
             isCompleted: false,
+            temp: 0
         }
         /*检测PDF是否存在*/
         if(this.props.pdfUri != null && !this.props.again){
@@ -795,53 +796,52 @@ export default class Detail extends Component{
                     </View>
                 }
                 <Overlay isVisible={this.state.isVisible}
-                         //onBackdropPress={() => this.setState({ isVisible: false })}
-                         overlayStyle={{padding: 0}}
-                         height={height*0.25}>
+                         overlayStyle={{padding: 0,borderRadius:10,backgroundColor: '#F8F7F2'}}
+                         height={width*0.45}
+                         width={width*0.9}>
                     { !this.state.isLoad ? <View style={{padding: 10}}>
-                        <Input placeholder='标题' value={this.state.title}
+                        <Text style={{fontSize:20,marginBottom:10,color: '#2089DC'}}>保存记录</Text>
+                        <Input placeholder='请输入记录标题' value={this.state.title}
                                maxLength={10}
+                               multiline={false}
                                style={{marginTop: 5}}
+                               inputContainerStyle={{height:width*0.1,width: width*0.7}}
                                onChangeText={(text) => {this.setState({title: text})}}/>
-                        <Input placeholder='备注' value={this.state.remark}
-                               maxLength={35}
+                        <Text style={{position: 'absolute',right:20,top:width*0.18,color: '#2089DC'}}>{this.state.title.length}/10</Text>
+                        <Input placeholder='请输入记录备注' value={this.state.remark}
+                               maxLength={30}
                                multiline={true}
+                               inputContainerStyle={{height:width*0.1,width: width*0.7}}
                                onChangeText={(text) => {this.setState({remark: text})}}/>
-                        <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: height*0.02}}>
-                            <Button
-                                buttonStyle={styles.buttonStyle}
-                                titleStyle={styles.titleStyle}
-                                onPress={() => {
-                                    if(flag){
-                                        this.local_store();
-                                        this.setState({isVisible: false})
-                                    }else {
-                                        this.setState({isLoad: true})
-                                        this.uploadCategory();
-                                    }
-                                }}
-                                title='确定'
-                            />
-                            <Button
-                                buttonStyle={styles.buttonStyle}
-                                titleStyle={styles.titleStyle}
-                                onPress={() => this.setState({ isVisible: false })}
-                                title='取消'
-                            />
+                        <Text style={{position: 'absolute',right:20,top:width*0.28,color: '#2089DC'}}>{this.state.remark.length}/30</Text>
+                        <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end',marginTop: width*0.05}}>
+                            <TouchableOpacity style={{height:20,marginRight: 25}} onPress={() => this.setState({ isVisible: false })}>
+                                <Text style={{color: '#2089DC'}}>取消</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{height:20,marginRight: 10}} onPress={() => {
+                                if(flag){
+                                    this.local_store();
+                                    this.setState({isVisible: false})
+                                }else {
+                                    this.setState({isLoad: true})
+                                    this.uploadCategory();
+                                }}}>
+                                <Text style={{color: '#2089DC'}}>保存</Text>
+                            </TouchableOpacity>
                         </View>
                     </View> : <View style={styles.p_container}>
                                     <View style={styles.p_view1}>
                                         {this.state.isCompleted ? <View>
                                             <Text style={styles.p_text}>上传成功</Text>
-                                            <TouchableOpacity style={{top: -width*0.18,left: width*0.46}} onPress={()=>{
+                                            <TouchableOpacity style={{top: -width*0.17,left: width*0.5}} onPress={()=>{
                                                 this.setState({isLoad: false,isCompleted:false,isVisible: false})
                                                 Actions.record();
                                             }}><Image style={{width: width*0.05,height: width*0.05}} source={require('../../imgs/close.png')}/></TouchableOpacity>
                                         </View> : <Text style={styles.p_text}>正在上传</Text>}
                                     </View>
                                     {this.state.isCompleted ?
-                                        <Image style={{width: 70,height: 70,left: width*0.32,top: width*0.05}} source={require('../../imgs/complete.png')}/> :
-                                        <View style={styles.p_view2}><ProgressBarAndroid styleAttr='Large' color='#2089DC' style={styles.p_progress}/></View>
+                                        <Image style={{width: 70,height: 70,left: width*0.36}} source={require('../../imgs/complete.png')}/> :
+                                        <View style={styles.p_view2}><ProgressBarAndroid styleAttr='Large' color='#2089DC'/></View>
                                     }
                                 </View>
                     }
@@ -909,20 +909,16 @@ const styles = StyleSheet.create({
         padding: 0
     },
     p_view1: {
-        backgroundColor: '#2089DC',
         height: height*0.1,
         alignItems: 'center'
     },
     p_text: {
         lineHeight: height*0.1,
         fontSize: 25,
-        color: 'white'
+        color: '#2089DC'
     },
     p_view2: {
         height: height*0.2
-    },
-    p_progress: {
-        marginTop: height*0.03
     }
 });
 

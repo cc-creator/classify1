@@ -131,23 +131,27 @@ export default class RecordCell extends Component {
                 </View>
                 <Overlay isVisible={this.state.isShow}
                          onBackdropPress={() => this.setState({ isShow: false })}
-                         overlayStyle={{padding: 15,width: width*0.9,height: width*0.3,backgroundColor: '#384B60'}}
-                         height={height*0.25}>
-                    <View>
-                        <Text style={{fontSize: 18,color: '#F8F7F2'}}>确定删除该记录吗？</Text>
-                        <Text style={{color: '#F8F7F2'}}>{item.ctitle}</Text>
-                    </View>
-                    <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end',marginTop: height*0.035}}>
-                        <TouchableOpacity style={{height:20,marginRight: 20}} onPress={() => this.setState({ isShow: false })}>
-                            <Text style={{color: '#BEDAFA'}}>取消</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{height:20,marginRight: 5}} onPress={() => {
-                            this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)
-                            this.setState({ isShow: false })
-                        }}>
-                            <Text style={{color: '#BEDAFA'}}>删除</Text>
-                        </TouchableOpacity>
-                    </View>
+                         overlayStyle={{padding: 15,width: width*0.9,height: width*0.3,backgroundColor: '#F8F7F2'}}
+                         height={height*0.25}
+                         children={
+                                 <View>
+                                    <View>
+                                        <Text style={{fontSize: 18,color: '#2089DC'}}>确定删除该记录吗？</Text>
+                                        <Text style={{color: '#2089DC'}}>{item.ctitle}</Text>
+                                    </View>
+                                    <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end',marginTop: height*0.035}}>
+                                        <TouchableOpacity style={{height:20,marginRight: 20}} onPress={() => this.setState({ isShow: false })}>
+                                            <Text style={{color: '#2089DC'}}>取消</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={{height:20,marginRight: 5}} onPress={() => {
+                                            this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)
+                                            this.setState({ isShow: false })
+                                        }}>
+                                            <Text style={{color: '#2089DC'}}>删除</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                            </View>
+                         }>
                 </Overlay>
             </View>
         );
