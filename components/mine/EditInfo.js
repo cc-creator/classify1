@@ -113,13 +113,14 @@ export default class EditInfo extends Component{
                     <Text style={{fontSize: 20}}>昵称:</Text>
                     <Input placeholder='昵称' value={this.state.name}
                            maxLength={10}
-                           rightIcon={<TouchableOpacity onPress={() => this.setState({name: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../android/app/src/main/assets/remove.png")}/></TouchableOpacity>}
+                           rightIcon={<TouchableOpacity onPress={() => this.setState({name: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
                            onChangeText={(text) => {this.setState({name: text})}}/>
-                    <Text style={{fontSize: 20}}>个性签名:</Text>
+                    <Text style={{width: 45,textAlign: 'center',left: width*0.8}}>{this.state.name.length}/10</Text>
                     <Input placeholder='个性签名' value={this.state.signature}
                            maxLength={20}
-                           rightIcon={<TouchableOpacity onPress={() => this.setState({signature: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../android/app/src/main/assets/remove.png")}/></TouchableOpacity>}
+                           rightIcon={<TouchableOpacity onPress={() => this.setState({signature: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
                            onChangeText={(text) => {this.setState({signature: text})}}/>
+                    <Text style={{width: 45,textAlign: 'center',left: width*0.8}}>{this.state.signature.length}/20</Text>
                 </View>
                 <Overlay
                     isVisible={this.state.visible}

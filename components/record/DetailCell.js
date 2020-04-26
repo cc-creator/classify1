@@ -3,13 +3,12 @@ import {
     StyleSheet,
     Text,
     View,
-    Image,
     Dimensions,
     TouchableOpacity,
     FlatList
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { Badge } from 'react-native-elements';
+import { Badge,Image } from 'react-native-elements';
 
 const DetailCell = ({prop}) => {
     return (
@@ -24,7 +23,10 @@ const DetailCell = ({prop}) => {
                     horizontal={true}
                     keyExtractor={(item, index)=> ''+index}
                     renderItem={(item) => <TouchableOpacity onPress={() => {Actions.cellDetail({images:item.item.group})}}>
-                        <Image style={styles.image} source={{uri: item.item.group[0].url}}></Image>
+                        <Image source={{uri: item.item.group[0].url}}
+                            containerStyle={styles.image}
+                            PlaceholderContent={<Text>加载中</Text>}>
+                        </Image>
                         <Badge badgeStyle={{top: -10,left: 30}} value={item.item.sum} status="primary" />
                         <Text style={{top: -20,fontSize:12}}>{item.item.label2}</Text>
                     </TouchableOpacity>}
@@ -49,9 +51,10 @@ const styles = StyleSheet.create({
     image: {
         width: (width-50)/4,
         height: (width-50)/4,
-        borderRadius: 10.0,
+        borderRadius: 10,
         marginRight: 15,
-        marginTop: 30
+        marginTop: 30,
+        overflow: 'hidden'
     }
 });
 

@@ -51,7 +51,7 @@ export default class Classify extends Component {
             isLoad: false
         };
         tflite.loadModel({
-                model: 'my_model2.tflite',
+                model: 'my_model3.tflite',
                 labels: 'my_lables2.txt',
                 numThreads: 1,
             });
@@ -71,10 +71,16 @@ export default class Classify extends Component {
                 imageUrls.push({url:imgs[i].path});
                 images.push({url:imgs[i].path,label1:"other",label2:"",dateTime: imgs[i].modificationDate});
             }
+            let temp_images = imgs;
+            temp_images.push(require('../../imgs/add.png'))
             this.setState({
-                imagePaths: imgs.map(i => {
+                imagePaths: temp_images.map((i,index) => {
                     /*return {image: {uri: i.path,data: i.data,mime: i.mime}}; // base64编码*/
-                    return {image: {uri: i.path}}
+                    if(index == temp_images.length-1){
+                        return {image: i}
+                    }else{
+                        return {image: {uri: i.path}}
+                    }
                 })
             });
         }).catch(e => {});
@@ -82,52 +88,86 @@ export default class Classify extends Component {
 
     removeImg(uri){
         const filteredImages = this.state.imagePaths.filter(item => item.image.uri !== uri);
-        imageUrls = imageUrls.filter(item => item.url !== uri);
         images = images.filter(item => item.url !== uri);
-        this.setState({
-            imagePaths: filteredImages
-        })
+        if(filteredImages.length == 1){
+            imageUrls = [];
+            this.setState({
+                imagePaths: []
+            })
+        }else{ imageUrls = imageUrls.filter(item => item.url !== uri);
+            this.setState({
+                imagePaths: filteredImages
+            })
+        }
     }
 
     _keyExtractor=(item, index)=> ''+index;
 
-    findIndex(uri){
-        index = this.state.imagePaths.findIndex(item => item.image.uri === uri);
-        this.setState({
-            isImageShow: true
-        });
+    findIndex(image){
+        /*继续选择图片*/
+        if(typeof(image.uri) === 'undefined'){
+            ImagePicker.openPicker({
+                multiple: true,
+                waitAnimationEnd: false,
+                includeExif: true,
+                mediaType: 'photo',
+                includeBase64: true
+            }).then(imgs => {
+                for(let i in imgs){
+                    imageUrls.push({url:imgs[i].path});
+                    images.push({url:imgs[i].path,label1:"other",label2:"",dateTime: imgs[i].modificationDate});
+                }
+                let temp_images = this.state.imagePaths;
+                temp_images.pop();
+                for(let i=0;i<imgs.length;i++){
+                    temp_images.push({image: {uri:imgs[i].path}})
+                }
+                temp_images.push({image: require('../../imgs/add.png')})
+                this.setState({imagePaths: temp_images.map(i => {return i})});
+            }).catch(e => {});
+        }else{
+            for(let i=0;i<imageUrls.length;i++){
+                if(imageUrls[i].url === image.uri){
+                    index = i;
+                }
+            }
+            this.setState({
+                isImageShow: true
+            });
+        }
     }
 
     clissifyImage(uri){
         tflite.runModelOnImage({
                 path: uri,  // 图像文件地址，必填
-                imageMean: 128.0, // mean，默认为 127.5
-                imageStd: 128.0,  // std，默认为 127.5
+                imageMean: 127.5, // mean，默认为 127.5
+                imageStd: 127.5,  // std，默认为 127.5
                 numResults: 3,    // 返回结果数，默认为 5
                 threshold: 0.5   // 可信度阈值，默认为 0.1
             },
             (err, res) => {
                 if(!err)
-                    ToastExample.show(res[0].label+"\n"+"自信率："+res[0].confidence,ToastExample.SHORT);
+                    console.log(res)
+                    // ToastExample.show(res[0].label+"\n"+"自信率："+res[0].confidence,ToastExample.SHORT);
             });
     }
 
-    async clissifyImages(){
+    clissifyImages(){
         if(images.length == 0)
             ToastExample.show("请选择图片",ToastExample.SHORT);
         else{
             this.setState({isLoad: true})
-            ToastExample.show("正在准备",ToastExample.SHORT);
             let dateBegin = new Date();
             console.log("-----------正在分类-----------")
             for(let i=0;i<images.length;i++){
-                await tflite.runModelOnImage({
+                tflite.runModelOnImage({
                     path: images[i].url,  // 图像文件地址，必填
-                    imageMean: 128.0, // mean，默认为 127.5
-                    imageStd: 128.0,  // std，默认为 127.5
+                    imageMean: 127.5, // mean，默认为 127.5
+                    imageStd: 127.5,  // std，默认为 127.5
                     numResults: 1,    // 返回结果数，默认为 5
-                    threshold: 0.1   // 可信度阈值，默认为 0.1
+                    threshold: 0.5   // 可信度阈值，默认为 0.1
                 },(err,res) => {
+                    console.log('+++')
                     if(res.length > 0){
                         let temp_lables = res[0].label.split('-');
                         images[i].label1 = temp_lables[0];
@@ -137,7 +177,6 @@ export default class Classify extends Component {
                         ToastExample.show("完成分类",ToastExample.SHORT);
                         let dateEnd = new Date();
                         let time = this.changeTwoDecimal_f((dateEnd-dateBegin)/1000);
-                        this.setState({isLoad: false})
                         let newTime = time;
                         let source = typeof(this.props.source) === 'undefined' ? 'temp' : this.props.source;
                         if(this.props.again){
@@ -160,7 +199,8 @@ export default class Classify extends Component {
                         imageUrls = [];
                         images = [];
                         this.setState({
-                            imagePaths: null
+                            imagePaths: null,
+                            isLoad: false
                         })
                     }
                 })

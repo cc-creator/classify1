@@ -2,11 +2,11 @@ import React from 'react';
 import {
     StyleSheet,
     Dimensions,
-    Image,
     View,
+    Text,
     TouchableOpacity
 } from 'react-native';
-//import {Image} from 'react-native-elements';
+import {Image} from 'react-native-elements';
 
 const dimension = Dimensions.get('window')
 const CellList = ({prop,removeImg,findIndex,clissifyImage}) => {
@@ -14,24 +14,26 @@ const CellList = ({prop,removeImg,findIndex,clissifyImage}) => {
         <View style={styles.cellContainer}>
             <TouchableOpacity
                 onLongPress={() => {
-                    clissifyImage(prop.item.image.uri)
+                    if(typeof(prop.item.image.uri) !== 'undefined')
+                        clissifyImage(prop.item.image.uri)
                 }}
                 onPress={() => {
-                    findIndex(prop.item.image.uri)
+                    findIndex(prop.item.image)
                 }}
             >
                 <Image
                     source={prop.item.image}
-                    style={styles.cellImage}
+                    containerStyle={styles.cellImage}
+                    PlaceholderContent={<Text>加载中</Text>}
                 />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.remove}
+            { typeof(prop.item.image.uri) !== 'undefined' ? <TouchableOpacity style={styles.remove}
                 onPress={() => {
                     removeImg(prop.item.image.uri)
                 }}
             >
-                <Image style={{width: width*0.05,height: width*0.05}} source={require("../../android/app/src/main/assets/remove.png")} />
-            </TouchableOpacity>
+                <Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")} />
+            </TouchableOpacity> : null }
         </View>
     );
 };
@@ -46,7 +48,8 @@ const styles = StyleSheet.create({
     cellImage: {
         width: (width-50)/4,
         height: (width-50)/4,
-        borderRadius: 10
+        borderRadius: 10,
+        overflow: 'hidden'
     },
     remove: {
         backgroundColor: '#ffffff',

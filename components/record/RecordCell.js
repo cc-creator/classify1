@@ -131,7 +131,7 @@ export default class RecordCell extends Component {
                 </View>
                 <Overlay isVisible={this.state.isShow}
                          onBackdropPress={() => this.setState({ isShow: false })}
-                         overlayStyle={{padding: 15,width: width*0.9,height: width*0.3,backgroundColor: '#F8F7F2'}}
+                         overlayStyle={{padding: 15,width: width*0.9,height: width*0.33,backgroundColor: '#F8F7F2'}}
                          height={height*0.25}
                          children={
                                  <View>
@@ -140,10 +140,10 @@ export default class RecordCell extends Component {
                                         <Text style={{color: '#2089DC'}}>{item.ctitle}</Text>
                                     </View>
                                     <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end',marginTop: height*0.035}}>
-                                        <TouchableOpacity style={{height:20,marginRight: 20}} onPress={() => this.setState({ isShow: false })}>
+                                        <TouchableOpacity style={{height:20,marginRight: 30}} onPress={() => this.setState({ isShow: false })}>
                                             <Text style={{color: '#2089DC'}}>取消</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={{height:20,marginRight: 5}} onPress={() => {
+                                        <TouchableOpacity style={{height:20,marginRight: 15}} onPress={() => {
                                             this.props.deleteRecord(this.props.prop.index,this.props.prop.item.pdfUri)
                                             this.setState({ isShow: false })
                                         }}>

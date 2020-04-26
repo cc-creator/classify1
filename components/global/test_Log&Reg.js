@@ -70,7 +70,10 @@ export default class test_LogReg extends Component {
                     this.setState({passwd: ''})
                 }
             })
-            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
+            .catch(err => {
+                this.setState({isVisible: false});
+                ToastExample.show("网络出错",ToastExample.SHORT)
+            })
     }
 
     goto_regist() {
@@ -95,7 +98,10 @@ export default class test_LogReg extends Component {
                     isVisible: false
                 });
             })
-            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
+            .catch(err => {
+                this.setState({isVisible: false});
+                ToastExample.show("网络出错",ToastExample.SHORT)
+            })
     }
 
     checkUserRegistOrNo(account) {
@@ -156,7 +162,7 @@ export default class test_LogReg extends Component {
                             <View style={styles.inputView}>
                                 <Input value={this.state.login_account}
                                        containerStyle={{width: width*0.84,height: width*0.1}}
-                                       rightIcon={<TouchableOpacity onPress={() => this.setState({login_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../android/app/src/main/assets/remove.png")}/></TouchableOpacity>}
+                                       rightIcon={<TouchableOpacity onPress={() => this.setState({login_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
                                        onChangeText={(text) => {
                                            this.setState({login_account: text},() => {
                                                if(this.state.login_account !== '' && this.state.passwd !== ''){
@@ -215,7 +221,7 @@ export default class test_LogReg extends Component {
                         <View style={styles.inputView}>
                             <Input value={this.state.regist_account}
                                    containerStyle={{width: width*0.84,height: width*0.1}}
-                                   rightIcon={<TouchableOpacity onPress={() => this.setState({regist_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../android/app/src/main/assets/remove.png")}/></TouchableOpacity>}
+                                   rightIcon={<TouchableOpacity onPress={() => this.setState({regist_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/remove.png")}/></TouchableOpacity>}
                                    onChangeText={(text) => {
                                        this.setState({regist_account: text},() => {
                                            if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){

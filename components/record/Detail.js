@@ -119,76 +119,76 @@ export default class Detail extends Component{
         sum_scenery = 0;
         sum_other = 0;
         for(let i=0;i<images.length;i++){
-            if(images[i].label2 == 'anphibious'){
+            if(images[i].label2 === 'anphibious'){
                 images_animal_anphibious.push(images[i]);
                 sum_animal++;
-            }else if(images[i].label2 == 'bird'){
+            }else if(images[i].label2 === 'bird'){
                 images_animal_bird.push(images[i]);
                 sum_animal++;
-            }else if(images[i].label2 == 'fish'){
+            }else if(images[i].label2 === 'fish'){
                 images_animal_fish.push(images[i]);
                 sum_animal++;
-            }else if(images[i].label2 == 'insect'){
+            }else if(images[i].label2 === 'insect'){
                 images_animal_insect.push(images[i]);
                 sum_animal++;
-            }else if(images[i].label2 == 'mammal'){
+            }else if(images[i].label2 === 'mammal'){
                 images_animal_mammal.push(images[i]);
                 sum_animal++;
-            }else if(images[i].label2 == 'clothing'){
+            }else if(images[i].label2 === 'clothing'){
                 images_clothing_clothing.push(images[i]);
                 sum_clothing++;
-            }else if(images[i].label2 == 'hat'){
+            }else if(images[i].label2 === 'hat'){
                 images_clothing_hat.push(images[i]);
                 sum_clothing++;
-            }else if(images[i].label2 == 'shoes'){
+            }else if(images[i].label2 === 'shoes'){
                 images_clothing_shoes.push(images[i]);
                 sum_clothing++;
-            }else if(images[i].label2 == 'erweima'){
+            }else if(images[i].label2 === 'erweima'){
                 images_document_erweima.push(images[i]);
                 sum_document++;
-            }else if(images[i].label2 == 'passport'){
+            }else if(images[i].label1 === 'document' && images[i].label2 === 'passport'){
                 images_document_passport.push(images[i]);
                 sum_document++;
-            }else if(images[i].label2 == 'dessert'){
+            }else if(images[i].label2 === 'dessert'){
                 images_food_dessert.push(images[i]);
                 sum_food++;
-            }else if(images[i].label2 == 'drink'){
+            }else if(images[i].label2 === 'drink'){
                 images_food_drink.push(images[i]);
                 sum_food++;
-            }else if(images[i].label2 == 'meal'){
+            }else if(images[i].label2 === 'meal'){
                 images_food_meal.push(images[i]);
                 sum_food++;
-            }else if(images[i].label2 == 'dubbo'){
+            }else if(images[i].label2 === 'dubbo'){
                 images_person_dubbo.push(images[i]);
                 sum_person++;
-            }else if(images[i].label2 == 'multi'){
+            }else if(images[i].label2 === 'multi'){
                 images_person_multi.push(images[i]);
                 sum_person++;
-            }else if(images[i].label2 == 'passport'){
+            }else if(images[i].label1 === 'person' && images[i].label2 === 'passport'){
                 images_person_passport.push(images[i]);
                 sum_person++;
-            }else if(images[i].label2 == 'single'){
+            }else if(images[i].label2 === 'single'){
                 images_person_single.push(images[i]);
                 sum_person++;
-            }else if(images[i].label2 == 'flower'){
+            }else if(images[i].label2 === 'flower'){
                 images_plant_flower.push(images[i]);
                 sum_plant++;
-            }else if(images[i].label2 == 'grass'){
+            }else if(images[i].label2 === 'grass'){
                 images_plant_grass.push(images[i]);
                 sum_plant++;
-            }else if(images[i].label2 == 'tree'){
+            }else if(images[i].label2 === 'tree'){
                 images_plant_tree.push(images[i]);
                 sum_plant++;
-            }else if(images[i].label2 == 'night'){
+            }else if(images[i].label2 === 'night'){
                 images_scenery_night.push(images[i]);
                 sum_scenery++;
-            }else if(images[i].label2 == 'outside'){
+            }else if(images[i].label2 === 'outside'){
                 images_scenery_outside.push(images[i]);
                 sum_scenery++;
-            }else if(images[i].label2 == 'dianqi'){
+            }else if(images[i].label2 === 'dianqi'){
                 images_thing_dianqi.push(images[i]);
                 sum_thing++;
-            }else if(images[i].label2 == 'furniture'){
+            }else if(images[i].label2 === 'furniture'){
                 images_thing_furniture.push(images[i]);
                 sum_thing++;
             }else{
@@ -713,9 +713,9 @@ export default class Detail extends Component{
                         <Card
                             title={ctitle}
                             titleStyle={styles.titleStyle}
-                            containerStyle={{width: width*0.8}}
+                            containerStyle={{width: width*0.9}}
                             image={{uri: cover}}
-                        imageProps={{resizeMode: 'cover'}}>
+                            imageProps={{resizeMode: 'cover'}}>
                             <Text>{remark}</Text>
                         </Card>
                     </View> : null
@@ -797,28 +797,30 @@ export default class Detail extends Component{
                 }
                 <Overlay isVisible={this.state.isVisible}
                          overlayStyle={{padding: 0,borderRadius:10,backgroundColor: '#F8F7F2'}}
-                         height={width*0.45}
+                         height={width*0.55}
                          width={width*0.9}>
-                    { !this.state.isLoad ? <View style={{padding: 10}}>
+                    { !this.state.isLoad ? <View style={{padding: 5,paddingLeft: 10}}>
                         <Text style={{fontSize:20,marginBottom:10,color: '#2089DC'}}>保存记录</Text>
                         <Input placeholder='请输入记录标题' value={this.state.title}
                                maxLength={10}
                                multiline={false}
                                style={{marginTop: 5}}
-                               inputContainerStyle={{height:width*0.1,width: width*0.7}}
+                               rightIcon={<TouchableOpacity onPress={() => this.setState({title: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
+                               inputContainerStyle={{height:width*0.1}}
                                onChangeText={(text) => {this.setState({title: text})}}/>
-                        <Text style={{position: 'absolute',right:20,top:width*0.18,color: '#2089DC'}}>{this.state.title.length}/10</Text>
+                        <Text style={{width: 45,textAlign: 'center',left: width*0.73}}>{this.state.title.length}/10</Text>
                         <Input placeholder='请输入记录备注' value={this.state.remark}
                                maxLength={30}
                                multiline={true}
-                               inputContainerStyle={{height:width*0.1,width: width*0.7}}
+                               rightIcon={<TouchableOpacity onPress={() => this.setState({remark: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
+                               inputContainerStyle={{height:width*0.1}}
                                onChangeText={(text) => {this.setState({remark: text})}}/>
-                        <Text style={{position: 'absolute',right:20,top:width*0.28,color: '#2089DC'}}>{this.state.remark.length}/30</Text>
+                        <Text style={{width: 45,textAlign: 'center',left: width*0.73}}>{this.state.remark.length}/30</Text>
                         <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end',marginTop: width*0.05}}>
-                            <TouchableOpacity style={{height:20,marginRight: 25}} onPress={() => this.setState({ isVisible: false })}>
+                            <TouchableOpacity style={{height:20,marginRight: 30}} onPress={() => this.setState({ isVisible: false })}>
                                 <Text style={{color: '#2089DC'}}>取消</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{height:20,marginRight: 10}} onPress={() => {
+                            <TouchableOpacity style={{height:20,marginRight: 15}} onPress={() => {
                                 if(flag){
                                     this.local_store();
                                     this.setState({isVisible: false})
@@ -841,7 +843,7 @@ export default class Detail extends Component{
                                     </View>
                                     {this.state.isCompleted ?
                                         <Image style={{width: 70,height: 70,left: width*0.36}} source={require('../../imgs/complete.png')}/> :
-                                        <View style={styles.p_view2}><ProgressBarAndroid styleAttr='Large' color='#2089DC'/></View>
+                                        <View><ProgressBarAndroid styleAttr='Large' color='#2089DC'/></View>
                                     }
                                 </View>
                     }
@@ -916,9 +918,6 @@ const styles = StyleSheet.create({
         lineHeight: height*0.1,
         fontSize: 25,
         color: '#2089DC'
-    },
-    p_view2: {
-        height: height*0.2
     }
 });
 

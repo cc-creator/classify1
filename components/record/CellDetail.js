@@ -1,15 +1,15 @@
 import React,{ Component } from 'react';
 import {
-    Image,
     StyleSheet,
     Dimensions,
     View,
     FlatList,
     Modal,
-    TouchableOpacity
+    TouchableOpacity, Text
 } from 'react-native';
 import ImageViewer from "react-native-image-zoom-viewer";
 import Header from "../global/Header";
+import {Image} from "react-native-elements";
 
 let index = 0;
 export default class CellDetail extends Component {
@@ -55,9 +55,9 @@ export default class CellDetail extends Component {
                                     isImageShow: true
                                 });
                             }}>
-                            <Image
-                                style={styles.cellImage}
-                                source={{uri: item.url}}/>
+                            <Image source={{uri: item.url}}
+                                   containerStyle={styles.cellImage}
+                                   PlaceholderContent={<Text>加载中</Text>}/>
                         </TouchableOpacity>}
                 ></FlatList>
                 {this.state.isImageShow ?
@@ -90,7 +90,8 @@ const styles = StyleSheet.create({
         height: (width-50)/4,
         borderRadius: 10.0,
         marginTop: 10,
-        marginLeft: 10
+        marginLeft: 10,
+        overflow: 'hidden'
     }
 })
 
