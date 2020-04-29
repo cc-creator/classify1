@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {Button, Input, Overlay} from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
-import ToastExample from "../../nativeComponents/ToastExample";
+import ToastExample from "../native/Toast";
 
 export default class LogReg extends Component {
 

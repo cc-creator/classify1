@@ -10,7 +10,7 @@ import Header from "../global/Header";
 import {Avatar, Input, Overlay} from "react-native-elements";
 import ImagePicker from 'react-native-image-crop-picker';
 import {Actions} from "react-native-router-flux";
-import ToastExample from "../../nativeComponents/ToastExample";
+import ToastExample from "../native/Toast";
 
 export default class EditInfo extends Component{
 
@@ -23,6 +23,7 @@ export default class EditInfo extends Component{
             visible: false,
             isVisible: false,
         }
+        console.log('-------')
     }
 
     getImageName(url){

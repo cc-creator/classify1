@@ -32,7 +32,7 @@ const CellList = ({prop,removeImg,findIndex,clissifyImage}) => {
                     removeImg(prop.item.image.uri)
                 }}
             >
-                <Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")} />
+                <Image containerStyle={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")} />
             </TouchableOpacity> : null }
         </View>
     );

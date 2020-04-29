@@ -11,7 +11,7 @@ import {Avatar, Divider, ButtonGroup, Overlay} from 'react-native-elements';
 import Header from "../global/Header";
 import InfoCell from './InfoCell';
 import RNFS from "react-native-fs";
-import ToastExample from "../../nativeComponents/ToastExample";
+import ToastExample from "../native/Toast";
 import {Actions} from "react-native-router-flux";
 import ImagePicker from "react-native-image-crop-picker";
 
@@ -248,7 +248,7 @@ export default class MyInfo extends Component{
             <View>
                 <Header title='我的' left_flag={false} />
                 <TouchableOpacity onPress={() => {this.updateBackground()}} style={{height: height*0.25}}>
-                    {!global.variables.userToken ? <ImageBackground style={{width: width,height: height*0.25}} source={require('../../imgs/bg2.jpg')}/> :
+                    {!global.variables.userToken ? <View style={{width: width,height: height*0.25,backgroundColor: 'gray',alignItems:'center'}}><Text style={{height:height*0.25,fontSize:40,color: 'white',lineHeight:height*0.25}}>背景</Text></View> :
                         <ImageBackground style={{width: width,height: height*0.25}} source={{uri: global.variables.background}}/> }
                 </TouchableOpacity>
                 {typeof(global.variables.avatar) === 'undefined' || global.variables.avatar === '' ?

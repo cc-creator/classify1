@@ -8,7 +8,7 @@ import { Actions } from 'react-native-router-flux';
 import RNFS from "react-native-fs";
 import RecordCell from './RecordCell';
 import {Button} from "react-native-elements";
-import ToastExample from "../../nativeComponents/ToastExample";
+import ToastExample from "../native/Toast";
 import Header from '../global/Header';
 
 const rnfsPath = RNFS.DocumentDirectoryPath;

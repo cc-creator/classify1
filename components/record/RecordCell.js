@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Card, Overlay} from "react-native-elements";
 import { Actions } from 'react-native-router-flux';
-import ToastExample from "../../nativeComponents/ToastExample";
+import ToastExample from "../native/Toast";
 
 export default class RecordCell extends Component {
 
@@ -105,6 +105,7 @@ export default class RecordCell extends Component {
                             title={item.ctitle}
                             titleStyle={styles.titleStyle}
                             containerStyle={{width: width * 0.85}}
+                            imageStyle={{borderTopWidth: 1,borderBottomWidth:1,borderColor: 'gray'}}
                             image={{uri: item.cover}}
                             imageProps={{resizeMode: 'cover'}}>
                             <Text>{item.remark}</Text>
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
         height: height*0.33,
     },
     titleStyle: {
-        fontSize: 20
+        fontSize: 20,
     },
     delView: {
         right: width*0.02,

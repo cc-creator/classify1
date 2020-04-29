@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
 import {
     View, StyleSheet, FlatList,
-    Dimensions, Modal,
+    Dimensions, Modal, Text, Image, TouchableOpacity
 } from 'react-native';
 /*第三方组件*/
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import Tflite from 'tflite-react-native';
-import { Button,Overlay } from 'react-native-elements'
+import {Button, Overlay} from 'react-native-elements'
 import { Actions } from 'react-native-router-flux';
+import * as Progress from 'react-native-progress';
 /*自定义组件*/
 import CellList from './CellList';
-import ToastExample from '../../nativeComponents/ToastExample';
 import Header from "../global/Header";
+import Toast from '../native/Toast';
 
 const dimension = Dimensions.get('window')
 const width = dimension.width;
@@ -34,27 +34,29 @@ const styles = StyleSheet.create({
     list: {
         marginTop: height*0.08,
         marginBottom: height*0.2
+    },
+    progressContainer: {
+        alignItems: "center",
+        flexDirection: "row",
+        marginLeft:15,
+        marginRight:15
     }
 });
 
-let imageUrls = [];
-let images = [];
+let imageUrls = [];let images = [];
 let index = 0;
-let tflite = new Tflite();
+let time = 0;let newTime = 0;let source = '';let dateBegin = '';
 export default class Classify extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            imagePaths: null,
+            imagePaths: [],
             isImageShow: false,
-            isLoad: false
+            isDisabled: false,
+            isVisible: false,
+            num: 0
         };
-        tflite.loadModel({
-                model: 'my_model3.tflite',
-                labels: 'my_lables2.txt',
-                numThreads: 1,
-            });
     }
 
     pickMultiple() {
@@ -138,72 +140,40 @@ export default class Classify extends Component {
     }
 
     clissifyImage(uri){
-        tflite.runModelOnImage({
-                path: uri,  // 图像文件地址，必填
-                imageMean: 127.5, // mean，默认为 127.5
-                imageStd: 127.5,  // std，默认为 127.5
-                numResults: 3,    // 返回结果数，默认为 5
-                threshold: 0.5   // 可信度阈值，默认为 0.1
-            },
-            (err, res) => {
-                if(!err)
-                    console.log(res)
-                    // ToastExample.show(res[0].label+"\n"+"自信率："+res[0].confidence,ToastExample.SHORT);
-            });
+        global.variables.ccTflite.ccrunModelOnImage(uri,127.5,127.5,3,0.5)
+            .then(res => console.log(res))
+            .catch( err => console.log(err))
     }
 
-    clissifyImages(){
+    async clissifyImages(){
         if(images.length == 0)
-            ToastExample.show("请选择图片",ToastExample.SHORT);
+            Toast.show("请选择图片",Toast.SHORT);
         else{
-            this.setState({isLoad: true})
-            let dateBegin = new Date();
-            console.log("-----------正在分类-----------")
+            this.setState({isDisabled: true})
+            dateBegin = new Date();
             for(let i=0;i<images.length;i++){
-                tflite.runModelOnImage({
-                    path: images[i].url,  // 图像文件地址，必填
-                    imageMean: 127.5, // mean，默认为 127.5
-                    imageStd: 127.5,  // std，默认为 127.5
-                    numResults: 1,    // 返回结果数，默认为 5
-                    threshold: 0.5   // 可信度阈值，默认为 0.1
-                },(err,res) => {
-                    console.log('+++')
-                    if(res.length > 0){
-                        let temp_lables = res[0].label.split('-');
-                        images[i].label1 = temp_lables[0];
-                        images[i].label2 = temp_lables[1];
-                    }
-                    if(i == images.length-1){
-                        ToastExample.show("完成分类",ToastExample.SHORT);
-                        let dateEnd = new Date();
-                        let time = this.changeTwoDecimal_f((dateEnd-dateBegin)/1000);
-                        let newTime = time;
-                        let source = typeof(this.props.source) === 'undefined' ? 'temp' : this.props.source;
-                        if(this.props.again){
-                            time = this.changeTwoDecimal_f(Number(time) + Number(this.props.time));
+                console.log('+++++++')
+                this.setState({num: i+1})
+                await global.variables.ccTflite.ccrunModelOnImage(images[i].url,127.5,127.5,3,0.5)
+                    .then(res => {
+                        console.log('---------')
+                        if(res.length > 0){
+                            let temp_lables = res[0].label.split('-');
+                            images[i].label1 = temp_lables[0];
+                            images[i].label2 = temp_lables[1];
                         }
-                        Actions.detail({
-                            last: 'classify',
-                            images: images,
-                            source: source,
-                            newTime: newTime,
-                            time: time,
-                            dateTime: this.getDateTime(dateBegin),
-                            again: this.props.again,
-                            ctitle: this.props.ctitle,
-                            remark: this.props.remark,
-                            pdfUri: this.props.pdfUri,
-                            path: this.props.path,
-                            categoryId: this.props.categoryId,
-                            cover: this.props.cover});
-                        imageUrls = [];
-                        images = [];
-                        this.setState({
-                            imagePaths: null,
-                            isLoad: false
-                        })
-                    }
-                })
+                        if(i == images.length-1){
+                            let dateEnd = new Date();
+                            time = this.changeTwoDecimal_f((dateEnd-dateBegin)/1000);
+                            console.log(time)
+                            newTime = time;
+                            source = typeof(this.props.source) === 'undefined' ? 'temp' : this.props.source;
+                            if(this.props.again){
+                                time = this.changeTwoDecimal_f(Number(time) + Number(this.props.time));
+                            }
+                        }
+                    })
+                    .catch(err => console.log(err))
             }
         }
     }
@@ -254,16 +224,17 @@ export default class Classify extends Component {
                     buttonStyle={styles.buttonStyle}
                     onPress={this.pickMultiple.bind(this)}
                     titleStyle={styles.titleStyle}
-                    disabled={this.state.isLoad}
+                    disabled={this.state.isDisabled}
                     title='选择图片'
                 />
                 <Button
                     buttonStyle={styles.buttonStyle}
                     titleStyle={styles.titleStyle}
+                    disabled={this.state.isDisabled}
                     onPress={() => {
+                        this.setState({isVisible: true})
                         this.clissifyImages()
                     }}
-                    loading={this.state.isLoad}
                     title={this.props.again ? '继续分类' : '开始分类'}
                 />
             </View>
@@ -297,6 +268,38 @@ export default class Classify extends Component {
                                  }}
                                  index={index}/>
                 </Modal> : null}
+            <Overlay isVisible={this.state.isVisible}
+                     overlayStyle={{padding: 0,borderRadius:10,backgroundColor: '#F8F7F2',alignItems: 'center'}}
+                     onRequestClose={() => {this.setState({isVisible: false,isDisabled: false})}}
+                     height={width*0.45}
+                     width={width*0.9}>
+                {this.state.num==this.state.imagePaths.length-1 ?
+                    <TouchableOpacity style={{position:'absolute',top: 5,right: 5}} onPress={()=>{
+                        Actions.detail({
+                            last: 'classify',
+                            images: images,
+                            source: source,
+                            newTime: newTime,
+                            time: time,
+                            dateTime: this.getDateTime(dateBegin),
+                            again: this.props.again,
+                            ctitle: this.props.ctitle,
+                            remark: this.props.remark,
+                            pdfUri: this.props.pdfUri,
+                            path: this.props.path,
+                            categoryId: this.props.categoryId,
+                            cover: this.props.cover});
+                        this.setState({isDisabled: false,isVisible: false,imagePaths: []})
+                        imageUrls = [];images = [];
+                    }}><Image style={{width: width*0.05,height: width*0.05}} source={require('../../imgs/close.png')}/>
+                    </TouchableOpacity> : null }
+                <Text style={{fontSize:25,marginTop:25,marginBottom:15}}>{this.state.num!=this.state.imagePaths.length-1 ? '正在分类' : '分类完成'}</Text>
+                {this.state.imagePaths != null ?
+                    <View>
+                        <Progress.Bar progress={this.state.num/(this.state.imagePaths.length-1)} width={width*0.8} height={20} style={{borderRadius:10}} />
+                        <Text style={{fontSize:20,textAlign:'center',marginTop:20}}>{this.state.num}/{this.state.imagePaths.length-1}</Text>
+                    </View> : null}
+            </Overlay>
         </View>);
     }
 }

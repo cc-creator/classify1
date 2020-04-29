@@ -11,7 +11,7 @@ import { Button,Card,Overlay,Input } from 'react-native-elements';
 import RNFS from 'react-native-fs';
 
 import DetailCell from "./DetailCell";
-import ToastExample from "../../nativeComponents/ToastExample";
+import ToastExample from "../native/Toast";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import Pdf from "react-native-pdf";
 import Header from "../global/Header";
@@ -712,8 +712,9 @@ export default class Detail extends Component{
                     <View style={styles.describe}>
                         <Card
                             title={ctitle}
-                            titleStyle={styles.titleStyle}
+                            titleStyle={{fontSize:20}}
                             containerStyle={{width: width*0.9}}
+                            imageStyle={{borderTopWidth: 1,borderBottomWidth:1,borderColor: 'gray'}}
                             image={{uri: cover}}
                             imageProps={{resizeMode: 'cover'}}>
                             <Text>{remark}</Text>

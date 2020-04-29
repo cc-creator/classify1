@@ -9,8 +9,9 @@ import {
 } from 'react-native';
 import {Button, Input, Overlay} from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
-import ToastExample from "../../nativeComponents/ToastExample";
+import ToastExample from "../native/Toast";
 
+const phone = /^[1][3-5,7-8]\d{9}$/
 export default class test_LogReg extends Component {
 
     constructor(props){
@@ -165,10 +166,16 @@ export default class test_LogReg extends Component {
                                        rightIcon={<TouchableOpacity onPress={() => this.setState({login_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
                                        onChangeText={(text) => {
                                            this.setState({login_account: text},() => {
-                                               if(this.state.login_account !== '' && this.state.passwd !== ''){
-                                                   this.setState({login_disabled: false})
+                                               if(!phone.test(this.state.login_account)){
+                                                   this.setState({login_account_prompt: '手机号不合法',login_disabled: true})
                                                }else{
-                                                   this.setState({login_disabled: true})
+                                                   this.setState({login_account_prompt: ''},() => {
+                                                       if(this.state.passwd !== ''){
+                                                           this.setState({login_disabled: false})
+                                                       }else{
+                                                           this.setState({login_disabled: true})
+                                                       }
+                                                   })
                                                }
                                            })
                                        }}
@@ -189,7 +196,7 @@ export default class test_LogReg extends Component {
                                        containerStyle={{width: width*0.84,height: width*0.1}}
                                        onChangeText={(text) => {
                                            this.setState({passwd: text},() => {
-                                               if(this.state.login_account !== '' && this.state.passwd !== ''){
+                                               if(this.state.passwd !== '' && this.state.login_account_prompt === ''){
                                                    this.setState({login_disabled: false})
                                                }else{
                                                    this.setState({login_disabled: true})
@@ -221,13 +228,19 @@ export default class test_LogReg extends Component {
                         <View style={styles.inputView}>
                             <Input value={this.state.regist_account}
                                    containerStyle={{width: width*0.84,height: width*0.1}}
-                                   rightIcon={<TouchableOpacity onPress={() => this.setState({regist_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/remove.png")}/></TouchableOpacity>}
+                                   rightIcon={<TouchableOpacity onPress={() => this.setState({regist_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
                                    onChangeText={(text) => {
                                        this.setState({regist_account: text},() => {
-                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
-                                               this.setState({regist_disabled: false})
+                                           if(!phone.test(this.state.regist_account)){
+                                               this.setState({regist_account_prompt: '手机号不合法',regist_disabled: true})
                                            }else{
-                                               this.setState({regist_disabled: true})
+                                               this.setState({regist_account_prompt: ''},() => {
+                                                   if(this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2)){
+                                                       this.setState({regist_disabled: false})
+                                                   }else{
+                                                       this.setState({regist_disabled: true})
+                                                   }
+                                               })
                                            }
                                        })
                                    }}
@@ -248,7 +261,7 @@ export default class test_LogReg extends Component {
                                    containerStyle={{width: width*0.84,height: width*0.1}}
                                    onChangeText={(text) => {
                                        this.setState({passwd1: text},() => {
-                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
+                                           if(this.state.regist_account_prompt === '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2)){
                                                this.setState({regist_disabled: false})
                                            }else{
                                                this.setState({regist_disabled: true})
@@ -277,7 +290,7 @@ export default class test_LogReg extends Component {
                                            }else{
                                                this.setState({regist_conpwd_prompt: ''})
                                            }
-                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
+                                           if(this.state.regist_account_prompt === '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2)){
                                                this.setState({regist_disabled: false})
                                            }else{
                                                this.setState({regist_disabled: true})
