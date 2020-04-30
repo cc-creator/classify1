@@ -714,7 +714,7 @@ export default class Detail extends Component{
                             title={ctitle}
                             titleStyle={{fontSize:20}}
                             containerStyle={{width: width*0.9}}
-                            imageStyle={{borderTopWidth: 1,borderBottomWidth:1,borderColor: 'gray'}}
+                            imageStyle={{borderTopWidth: 1,borderBottomWidth:1,borderColor: '#DCDCDC'}}
                             image={{uri: cover}}
                             imageProps={{resizeMode: 'cover'}}>
                             <Text>{remark}</Text>

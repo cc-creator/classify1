@@ -3,10 +3,12 @@ import {View, Image, Text, Dimensions} from 'react-native';
 import {Actions, Router, Scene, Tabs, Modal} from 'react-native-router-flux';
 
 import Classify from './components/classify/Classify';
+import Setup from './components/global/Setup';
+import SetupDetail from './components/global/SetupDetail';
 import Record from './components/record/Record';
 import Detail from './components/record/Detail';
 import CellDetail from "./components/record/CellDetail";
-import LogReg from './components/global/test_Log&Reg';
+import LogReg from './components/global/Log&Reg';
 import MyInfo from './components/mine/MyInfo';
 import EditInfo from "./components/mine/EditInfo";
 import ViewInfo from "./components/mine/ViewInfo";
@@ -59,6 +61,18 @@ const App = () => {
                   key="classify"
                   title='图片分类'
                   component={Classify}
+                  hideNavBar
+              />
+              <Scene
+                  key="setup"
+                  title='设置'
+                  component={Setup}
+                  hideNavBar
+              />
+              <Scene
+                  key="setupDetail"
+                  title='设置详情'
+                  component={SetupDetail}
                   hideNavBar
               />
             </Scene>

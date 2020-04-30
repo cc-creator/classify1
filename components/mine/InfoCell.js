@@ -17,11 +17,6 @@ export default class InfoCell extends Component{
         }
     }
 
-
-    showInfo() {
-
-    }
-
     render() {
         return (
             <View>

@@ -25,7 +25,7 @@ export default class Header extends Component {
                 { this.props.left_flag ? <TouchableOpacity style={styles.touchableOpacity_left}
                                            onPress={() => {
                                                if(typeof(this.props.again) === 'undefined'){
-                                                   Actions.pop();
+                                                   Actions.pop({refresh:{}});
                                                }
                                                switch (this.props.last) {
                                                    case 'classify':
@@ -36,7 +36,6 @@ export default class Header extends Component {
                                                        }
                                                        break;
                                                    case 'record':
-                                                       //Actions.jump('record');
                                                        Actions.record();
                                                        break;
                                                }
@@ -59,6 +58,12 @@ export default class Header extends Component {
                 </TouchableOpacity> : null }
                 { this.props.title === '编辑个人信息' ? <TouchableOpacity onPress={() => {this.props.updateInfo()}} style={styles.touchableOpacity_right}>
                     <Text style={{color: 'white',lineHeight: height*0.045}}>完成</Text>
+                </TouchableOpacity> : null }
+                { this.props.title === '线程数' ? <TouchableOpacity onPress={() => {this.props.setNumThreads()}} style={styles.touchableOpacity_right}>
+                    <Text style={{color: 'white',lineHeight: height*0.045}}>完成</Text>
+                </TouchableOpacity> : null }
+                { this.props.title === '图片分类' ? <TouchableOpacity onPress={() => {Actions.setup();}} style={styles.touchableOpacity_right}>
+                    <Image source={require('../../imgs/setup.png')} style={styles.image}/>
                 </TouchableOpacity> : null }
             </View>
         )

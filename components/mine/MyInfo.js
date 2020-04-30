@@ -248,7 +248,7 @@ export default class MyInfo extends Component{
             <View>
                 <Header title='我的' left_flag={false} />
                 <TouchableOpacity onPress={() => {this.updateBackground()}} style={{height: height*0.25}}>
-                    {!global.variables.userToken ? <View style={{width: width,height: height*0.25,backgroundColor: 'gray',alignItems:'center'}}><Text style={{height:height*0.25,fontSize:40,color: 'white',lineHeight:height*0.25}}>背景</Text></View> :
+                    {!global.variables.userToken ? <View style={{width: width,height: height*0.25,backgroundColor: '#DCDCDC',alignItems:'center'}}><Text style={{height:height*0.25,fontSize:40,color: 'white',lineHeight:height*0.25}}>背景</Text></View> :
                         <ImageBackground style={{width: width,height: height*0.25}} source={{uri: global.variables.background}}/> }
                 </TouchableOpacity>
                 {typeof(global.variables.avatar) === 'undefined' || global.variables.avatar === '' ?

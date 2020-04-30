@@ -105,7 +105,7 @@ export default class RecordCell extends Component {
                             title={item.ctitle}
                             titleStyle={styles.titleStyle}
                             containerStyle={{width: width * 0.85}}
-                            imageStyle={{borderTopWidth: 1,borderBottomWidth:1,borderColor: 'gray'}}
+                            imageStyle={{borderTopWidth: 1,borderBottomWidth:1,borderColor: '#DCDCDC'}}
                             image={{uri: item.cover}}
                             imageProps={{resizeMode: 'cover'}}>
                             <Text>{item.remark}</Text>

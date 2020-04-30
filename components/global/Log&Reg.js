@@ -5,13 +5,14 @@ import {
     View,
     ImageBackground,
     Dimensions,
-    TouchableOpacity, ProgressBarAndroid
+    TouchableOpacity, ProgressBarAndroid, Image
 } from 'react-native';
 import {Button, Input, Overlay} from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import ToastExample from "../native/Toast";
 
-export default class LogReg extends Component {
+const phone = /^[1][3-5,7-8]\d{9}$/
+export default class logReg extends Component {
 
     constructor(props){
         super(props);
@@ -70,7 +71,10 @@ export default class LogReg extends Component {
                     this.setState({passwd: ''})
                 }
             })
-            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
+            .catch(err => {
+                this.setState({isVisible: false});
+                ToastExample.show("网络出错",ToastExample.SHORT)
+            })
     }
 
     goto_regist() {
@@ -95,7 +99,10 @@ export default class LogReg extends Component {
                     isVisible: false
                 });
             })
-            .catch(err => ToastExample.show("网络出错",ToastExample.SHORT))
+            .catch(err => {
+                this.setState({isVisible: false});
+                ToastExample.show("网络出错",ToastExample.SHORT)
+            })
     }
 
     checkUserRegistOrNo(account) {
@@ -133,49 +140,63 @@ export default class LogReg extends Component {
     render() {
         return (
             <View>
-                <ImageBackground style={{width: width,height: height}} source={require('../../imgs/bg2.jpg')}>
-                    <View style={this.state.below_flag ? styles.textView_login : styles.textView_regist}>
-                        <TouchableOpacity onPress={() => this.setState({below_flag: true})}>
+                <TouchableOpacity style={{width:30,height:30,top:10,left:20}} onPress={() => {
+                    if(this.props.last === 'myInfo'){
+                        Actions.pop({refresh:({selectedIndex: 1})})
+                    }else{
+                        Actions.pop();
+                    }
+                }}>
+                    <Image source={require('../../imgs/close.png')} style={{width: 25,height: 25}}/>
+                </TouchableOpacity>
+                <View style={{alignItems: 'center',top: height*0.15}}>
+                    <View style={styles.textView}>
+                        <TouchableOpacity style={{height: 35}} onPress={() => this.setState({below_flag: true})}>
                             <Text style={this.state.below_flag ? styles.textStyle1 : styles.textStyle2}>登录</Text>
-                            {this.state.below_flag ? <View style={styles.textBelow}></View> : null}
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.setState({below_flag: false})}>
+                        <TouchableOpacity style={{height: 35}} onPress={() => this.setState({below_flag: false})}>
                             <Text style={this.state.below_flag ? styles.textStyle2 : styles.textStyle1}>注册</Text>
-                            {this.state.below_flag ? null : <View style={styles.textBelow}></View>}
                         </TouchableOpacity>
                     </View>
                     {this.state.below_flag ?
                         <View style={styles.container_login}>
                             <View style={styles.inputView}>
                                 <Input value={this.state.login_account}
-                                       containerStyle={{width: width*0.6,height: width*0.1}}
+                                       containerStyle={{width: width*0.84,height: width*0.1}}
+                                       rightIcon={<TouchableOpacity onPress={() => this.setState({login_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
                                        onChangeText={(text) => {
                                            this.setState({login_account: text},() => {
-                                               if(this.state.login_account !== '' && this.state.passwd !== ''){
-                                                   this.setState({login_disabled: false})
+                                               if(!phone.test(this.state.login_account)){
+                                                   this.setState({login_account_prompt: '手机号不合法',login_disabled: true})
                                                }else{
-                                                   this.setState({login_disabled: true})
+                                                   this.setState({login_account_prompt: ''},() => {
+                                                       if(this.state.passwd !== ''){
+                                                           this.setState({login_disabled: false})
+                                                       }else{
+                                                           this.setState({login_disabled: true})
+                                                       }
+                                                   })
                                                }
                                            })
                                        }}
                                        onEndEditing={() => {
                                            if(this.state.login_account === ''){
-                                               this.setState({login_account_prompt: '账号不能为空'})
+                                               this.setState({login_account_prompt: '手机号不能为空'})
                                            }else{
                                                this.setState({login_account_prompt: ''})
                                            }
                                        }}
-                                       label={'账号'}
-                                       placeholder='请输入账号'
+                                       label={'手机号'}
+                                       placeholder='请输入手机号'
                                 />
                                 <Text style={styles.prompt}>{this.state.login_account_prompt}</Text>
                             </View>
                             <View style={styles.inputView}>
                                 <Input value={this.state.passwd}
-                                       containerStyle={{width: width*0.6,height: width*0.1}}
+                                       containerStyle={{width: width*0.84,height: width*0.1}}
                                        onChangeText={(text) => {
                                            this.setState({passwd: text},() => {
-                                               if(this.state.login_account !== '' && this.state.passwd !== ''){
+                                               if(this.state.passwd !== '' && this.state.login_account_prompt === ''){
                                                    this.setState({login_disabled: false})
                                                }else{
                                                    this.setState({login_disabled: true})
@@ -206,34 +227,41 @@ export default class LogReg extends Component {
                     <View style={styles.container_regist}>
                         <View style={styles.inputView}>
                             <Input value={this.state.regist_account}
-                                   containerStyle={{width: width*0.6,height: width*0.1}}
+                                   containerStyle={{width: width*0.84,height: width*0.1}}
+                                   rightIcon={<TouchableOpacity onPress={() => this.setState({regist_account: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
                                    onChangeText={(text) => {
                                        this.setState({regist_account: text},() => {
-                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
-                                               this.setState({regist_disabled: false})
+                                           if(!phone.test(this.state.regist_account)){
+                                               this.setState({regist_account_prompt: '手机号不合法',regist_disabled: true})
                                            }else{
-                                               this.setState({regist_disabled: true})
+                                               this.setState({regist_account_prompt: ''},() => {
+                                                   if(this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2)){
+                                                       this.setState({regist_disabled: false})
+                                                   }else{
+                                                       this.setState({regist_disabled: true})
+                                                   }
+                                               })
                                            }
                                        })
                                    }}
                                    onEndEditing={() => {
                                        this.checkUserRegistOrNo(this.state.regist_account)
                                        if(this.state.regist_account === ''){
-                                           this.setState({regist_account_prompt: '账号不能为空'})
+                                           this.setState({regist_account_prompt: '手机号不能为空'})
                                        }else{
                                            this.setState({regist_account_prompt: ''})
                                        }
                                    }}
-                                   label={'账号'}
-                                   placeholder='请输入账号'/>
+                                   label={'手机号'}
+                                   placeholder='请输入手机号'/>
                             <Text style={styles.prompt}>{this.state.regist_account_prompt}</Text>
                         </View>
                         <View style={styles.inputView}>
                             <Input value={this.state.passwd1}
-                                   containerStyle={{width: width*0.6,height: width*0.1}}
+                                   containerStyle={{width: width*0.84,height: width*0.1}}
                                    onChangeText={(text) => {
                                        this.setState({passwd1: text},() => {
-                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
+                                           if(this.state.regist_account_prompt === '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2)){
                                                this.setState({regist_disabled: false})
                                            }else{
                                                this.setState({regist_disabled: true})
@@ -254,7 +282,7 @@ export default class LogReg extends Component {
                         </View>
                         <View style={styles.inputView}>
                             <Input value={this.state.passwd2}
-                                   containerStyle={{width: width*0.6,height: width*0.1}}
+                                   containerStyle={{width: width*0.84,height: width*0.1}}
                                    onChangeText={(text) => {
                                        this.setState({passwd2: text},() => {
                                            if(this.state.passwd1 !== this.state.passwd2){
@@ -262,7 +290,7 @@ export default class LogReg extends Component {
                                            }else{
                                                this.setState({regist_conpwd_prompt: ''})
                                            }
-                                           if(this.state.regist_account !== '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2) && this.state.regist_account_prompt === ''){
+                                           if(this.state.regist_account_prompt === '' && this.state.passwd1 !== '' && (this.state.passwd1 === this.state.passwd2)){
                                                this.setState({regist_disabled: false})
                                            }else{
                                                this.setState({regist_disabled: true})
@@ -289,7 +317,7 @@ export default class LogReg extends Component {
                             title='注册'
                         />
                     </View>}
-                </ImageBackground>
+                </View>
                 <Overlay
                     isVisible={this.state.isVisible}
                     height={width*0.25}
@@ -308,26 +336,19 @@ let height = dimension.height
 let width = dimension.width
 const styles = StyleSheet.create({
     container_login:{
-        width: width*0.65,
-        height: height*0.32,
-        backgroundColor: 'white',
-        top: height/4.2,
-        left: width/5.5,
-        paddingLeft: 10,
-        paddingRight: 10,
+        width: width*0.85,
+        height: height*0.295,
         paddingTop: 10,
-        borderRadius: 5
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 40
     },
     container_regist: {
-        width: width*0.65,
-        height: height*0.4,
-        backgroundColor: 'white',
-        top: height/5.2,
-        left: width/5.5,
-        paddingLeft: 10,
-        paddingRight: 10,
-        paddingTop: 10,
-        borderRadius: 5
+        width: width*0.85,
+        height: height*0.45,
+        paddingTop: 50,
+        borderRadius: 5,
+        alignItems: 'center'
     },
     text: {
         fontSize: 20,
@@ -335,47 +356,30 @@ const styles = StyleSheet.create({
     },
     buttonStyle: {
         height:width*0.125,
-        width:width*0.25,
+        width:width*0.8,
         borderRadius: 5,
         top: -height*0.02,
-        left: width*0.18,
         marginTop: height*0.02
     },
     titleStyle: {
         fontSize:15
     },
-    textView_login: {
-        width: width/1.5,
+    textView: {
+        width: width*0.8,
         height: 50,
-        top: height/4.3,
-        left: width/5.5,
+        flex: 1,
         flexDirection: 'row',
-        justifyContent: 'space-around'
-    },
-    textView_regist: {
-        width: width/1.5,
-        height: 50,
-        top: height/5.4,
-        left: width/5.5,
-        flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'space-between',
     },
     textStyle1: {
-        fontSize: 30,
-        color: 'white',
+        fontSize: 25,
+        color: '#2089DC',
         fontWeight: 'bold'
     },
     textStyle2: {
-        fontSize: 30,
-        color: 'white',
+        fontSize: 25,
+        color: 'gray',
         fontWeight: 'bold',
-        opacity: 0.7
-    },
-    textBelow: {
-        backgroundColor:'white',
-        width:50,
-        height:50,
-        borderRadius:25,
     },
     imageStyle: {
         width: 38,
@@ -387,7 +391,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     prompt: {
-        left: -width*0.25,
+        position: 'absolute',
+        height: 20,
+        right: 10,
         color: 'red'
     }
 });

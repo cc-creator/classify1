@@ -152,11 +152,9 @@ export default class Classify extends Component {
             this.setState({isDisabled: true})
             dateBegin = new Date();
             for(let i=0;i<images.length;i++){
-                console.log('+++++++')
                 this.setState({num: i+1})
                 await global.variables.ccTflite.ccrunModelOnImage(images[i].url,127.5,127.5,3,0.5)
                     .then(res => {
-                        console.log('---------')
                         if(res.length > 0){
                             let temp_lables = res[0].label.split('-');
                             images[i].label1 = temp_lables[0];
