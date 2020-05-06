@@ -248,7 +248,7 @@ export default class MyInfo extends Component{
             <View>
                 <Header title='我的' left_flag={false} />
                 <TouchableOpacity onPress={() => {this.updateBackground()}} style={{height: height*0.25}}>
-                    {!global.variables.userToken ? <View style={{width: width,height: height*0.25,backgroundColor: '#DCDCDC',alignItems:'center'}}><Text style={{height:height*0.25,fontSize:40,color: 'white',lineHeight:height*0.25}}>背景</Text></View> :
+                    {!global.variables.userToken ? <View style={{width: width,height: height*0.25,borderBottomColor: '#DCDCDC',borderBottomWidth:1}}></View> :
                         <ImageBackground style={{width: width,height: height*0.25}} source={{uri: global.variables.background}}/> }
                 </TouchableOpacity>
                 {typeof(global.variables.avatar) === 'undefined' || global.variables.avatar === '' ?
@@ -306,8 +306,8 @@ export default class MyInfo extends Component{
                     height={width*0.25}
                     width={width*0.25}
                     overlayStyle={{padding: 0,paddingTop: width*0.024}}
+                    children={<ProgressBarAndroid styleAttr='Large' color='#2089DC'/>}
                 >
-                    <ProgressBarAndroid styleAttr='Large' color='#2089DC'/>
                 </Overlay>
             </View>
         );

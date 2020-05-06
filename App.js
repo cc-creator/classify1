@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Image, Text, Dimensions} from 'react-native';
+import React, { Component } from 'react';
+import {View, Image, Text, Dimensions, PermissionsAndroid} from 'react-native';
 import {Actions, Router, Scene, Tabs, Modal} from 'react-native-router-flux';
 
 import Classify from './components/classify/Classify';
@@ -27,83 +27,99 @@ const TabIcon = ({ focused, title }) => {
       </View>
   );
 }
-const App = () => {
-  return (
-      <Router>
-        <Scene key="root">
-          <Tabs
-              hideNavBar
-              showLabel={false}
-              tabBarStyle={{height: height*0.08,backgroundColor: '#FaFaFa',borderTopWidth: 0}}
-          >
-            <Scene key="record" title="记录" icon={TabIcon}>
-              <Scene
-                  key="record"
-                  title='分类记录'
-                  component={Record}
-                  hideNavBar
-              />
-              <Scene
-                  key="detail"
-                  title='分类总览'
-                  component={Detail}
-                  hideNavBar
-              />
-              <Scene
-                  key="cellDetail"
-                  title='分类详情'
-                  component={CellDetail}
-                  hideNavBar
-              />
-            </Scene>
-            <Scene key="classify" title="分类" icon={TabIcon} tabBarOnPress={() => {Actions.classify()}}>
-              <Scene
-                  key="classify"
-                  title='图片分类'
-                  component={Classify}
-                  hideNavBar
-              />
-              <Scene
-                  key="setup"
-                  title='设置'
-                  component={Setup}
-                  hideNavBar
-              />
-              <Scene
-                  key="setupDetail"
-                  title='设置详情'
-                  component={SetupDetail}
-                  hideNavBar
-              />
-            </Scene>
-            <Scene key="my" title="我的" icon={TabIcon} tabBarOnPress={() => {Actions.myInfo()}}>
-              <Scene
-                  key="myInfo"
-                  title='我的'
-                  component={MyInfo}
-                  hideNavBar
-              />
-              <Scene
-                  key="editInfo"
-                  component={EditInfo}
-                  hideNavBar
-              />
-              <Scene
-                  key="viewInfo"
-                  component={ViewInfo}
-                  hideNavBar
-              />
-            </Scene>
-          </Tabs>
-          <Modal
-              key="logreg"
-              component={LogReg}
-              title='登录'
-              hideNavBar
-          />
-        </Scene>
-      </Router>
-  );
+export default class App extends Component {
+
+    componentDidMount(): void {
+        this.requestPermission()
+    }
+
+    async requestPermission() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.CAMERA
+            )
+        } catch (err) {
+            console.warn(err, '错误警告')
+        }
+    }
+
+    render() {
+        return (
+            <Router>
+                <Scene key="root">
+                    <Tabs
+                        hideNavBar
+                        showLabel={false}
+                        tabBarStyle={{height: height*0.08,backgroundColor: '#FaFaFa',borderTopWidth: 0}}
+                    >
+                        <Scene key="record" title="记录" icon={TabIcon}>
+                            <Scene
+                                key="record"
+                                title='分类记录'
+                                component={Record}
+                                hideNavBar
+                            />
+                            <Scene
+                                key="detail"
+                                title='分类总览'
+                                component={Detail}
+                                hideNavBar
+                            />
+                            <Scene
+                                key="cellDetail"
+                                title='分类详情'
+                                component={CellDetail}
+                                hideNavBar
+                            />
+                        </Scene>
+                        <Scene key="classify" title="分类" icon={TabIcon} tabBarOnPress={() => {Actions.classify()}}>
+                            <Scene
+                                key="classify"
+                                title='图片分类'
+                                component={Classify}
+                                hideNavBar
+                            />
+                            <Scene
+                                key="setup"
+                                title='设置'
+                                component={Setup}
+                                hideNavBar
+                            />
+                            <Scene
+                                key="setupDetail"
+                                title='设置详情'
+                                component={SetupDetail}
+                                hideNavBar
+                            />
+                        </Scene>
+                        <Scene key="my" title="我的" icon={TabIcon} tabBarOnPress={() => {Actions.myInfo()}}>
+                            <Scene
+                                key="myInfo"
+                                title='我的'
+                                component={MyInfo}
+                                hideNavBar
+                            />
+                            <Scene
+                                key="editInfo"
+                                component={EditInfo}
+                                hideNavBar
+                            />
+                            <Scene
+                                key="viewInfo"
+                                component={ViewInfo}
+                                hideNavBar
+                            />
+                        </Scene>
+                    </Tabs>
+                    <Modal
+                        key="logreg"
+                        component={LogReg}
+                        title='登录'
+                        hideNavBar
+                    />
+                </Scene>
+            </Router>
+        );
+    }
 }
 
-export default App;

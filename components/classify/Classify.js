@@ -270,33 +270,35 @@ export default class Classify extends Component {
                      overlayStyle={{padding: 0,borderRadius:10,backgroundColor: '#F8F7F2',alignItems: 'center'}}
                      onRequestClose={() => {this.setState({isVisible: false,isDisabled: false})}}
                      height={width*0.45}
-                     width={width*0.9}>
-                {this.state.num==this.state.imagePaths.length-1 ?
-                    <TouchableOpacity style={{position:'absolute',top: 5,right: 5}} onPress={()=>{
-                        Actions.detail({
-                            last: 'classify',
-                            images: images,
-                            source: source,
-                            newTime: newTime,
-                            time: time,
-                            dateTime: this.getDateTime(dateBegin),
-                            again: this.props.again,
-                            ctitle: this.props.ctitle,
-                            remark: this.props.remark,
-                            pdfUri: this.props.pdfUri,
-                            path: this.props.path,
-                            categoryId: this.props.categoryId,
-                            cover: this.props.cover});
-                        this.setState({isDisabled: false,isVisible: false,imagePaths: []})
-                        imageUrls = [];images = [];
-                    }}><Image style={{width: width*0.05,height: width*0.05}} source={require('../../imgs/close.png')}/>
-                    </TouchableOpacity> : null }
-                <Text style={{fontSize:25,marginTop:25,marginBottom:15}}>{this.state.num!=this.state.imagePaths.length-1 ? '正在分类' : '分类完成'}</Text>
-                {this.state.imagePaths != null ?
-                    <View>
-                        <Progress.Bar progress={this.state.num/(this.state.imagePaths.length-1)} width={width*0.8} height={20} style={{borderRadius:10}} />
-                        <Text style={{fontSize:20,textAlign:'center',marginTop:20}}>{this.state.num}/{this.state.imagePaths.length-1}</Text>
-                    </View> : null}
+                     width={width*0.9}
+                     children={<View>
+                         {this.state.num==this.state.imagePaths.length-1 ?
+                            <TouchableOpacity style={{position:'absolute',top: 10,right: -5}} onPress={()=>{
+                                Actions.detail({
+                                    last: 'classify',
+                                    images: images,
+                                    source: source,
+                                    newTime: newTime,
+                                    time: time,
+                                    dateTime: this.getDateTime(dateBegin),
+                                    again: this.props.again,
+                                    ctitle: this.props.ctitle,
+                                    remark: this.props.remark,
+                                    pdfUri: this.props.pdfUri,
+                                    path: this.props.path,
+                                    categoryId: this.props.categoryId,
+                                    cover: this.props.cover});
+                                this.setState({isDisabled: false,isVisible: false,imagePaths: []})
+                                imageUrls = [];images = [];
+                            }}><Image style={{width: width*0.05,height: width*0.05}} source={require('../../imgs/close.png')}/>
+                            </TouchableOpacity> : null }
+                            <Text style={{fontSize:25,marginTop:25,marginBottom:15,textAlign:'center'}}>{this.state.num!=this.state.imagePaths.length-1 ? '正在分类' : '分类完成'}</Text>
+                            {this.state.imagePaths != null ?
+                                <View>
+                                    <Progress.Bar progress={this.state.num/(this.state.imagePaths.length-1)} width={width*0.8} height={20} style={{borderRadius:10}} />
+                                    <Text style={{fontSize:20,textAlign:'center',marginTop:20}}>{this.state.num}/{this.state.imagePaths.length-1}</Text>
+                                </View> : null}
+                     </View>}>
             </Overlay>
         </View>);
     }

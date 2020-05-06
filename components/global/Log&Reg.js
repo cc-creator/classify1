@@ -3,9 +3,8 @@ import {
     StyleSheet,
     Text,
     View,
-    ImageBackground,
     Dimensions,
-    TouchableOpacity, ProgressBarAndroid, Image
+    TouchableOpacity, ProgressBarAndroid, Image, PermissionsAndroid
 } from 'react-native';
 import {Button, Input, Overlay} from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -31,6 +30,16 @@ export default class logReg extends Component {
             regist_conpwd_prompt: '',
             login_disabled: true,
             regist_disabled: true,
+        }
+    }
+
+    async requestPermission() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE
+            )
+        } catch (err) {
+            console.warn(err, '错误警告')
         }
     }
 
@@ -323,8 +332,8 @@ export default class logReg extends Component {
                     height={width*0.25}
                     width={width*0.25}
                     overlayStyle={{padding: 0,paddingTop: width*0.024}}
+                    children={<ProgressBarAndroid styleAttr='Large' color='#2089DC'/>}
                 >
-                    <ProgressBarAndroid styleAttr='Large' color='#2089DC'/>
                 </Overlay>
             </View>
         );

@@ -799,55 +799,56 @@ export default class Detail extends Component{
                 <Overlay isVisible={this.state.isVisible}
                          overlayStyle={{padding: 0,borderRadius:10,backgroundColor: '#F8F7F2'}}
                          height={width*0.55}
-                         width={width*0.9}>
-                    { !this.state.isLoad ? <View style={{padding: 5,paddingLeft: 10}}>
-                        <Text style={{fontSize:20,marginBottom:10,color: '#2089DC'}}>保存记录</Text>
-                        <Input placeholder='请输入记录标题' value={this.state.title}
-                               maxLength={10}
-                               multiline={false}
-                               style={{marginTop: 5}}
-                               rightIcon={<TouchableOpacity onPress={() => this.setState({title: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
-                               inputContainerStyle={{height:width*0.1}}
-                               onChangeText={(text) => {this.setState({title: text})}}/>
-                        <Text style={{width: 45,textAlign: 'center',left: width*0.73}}>{this.state.title.length}/10</Text>
-                        <Input placeholder='请输入记录备注' value={this.state.remark}
-                               maxLength={30}
-                               multiline={true}
-                               rightIcon={<TouchableOpacity onPress={() => this.setState({remark: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
-                               inputContainerStyle={{height:width*0.1}}
-                               onChangeText={(text) => {this.setState({remark: text})}}/>
-                        <Text style={{width: 45,textAlign: 'center',left: width*0.73}}>{this.state.remark.length}/30</Text>
-                        <View style={{flex: 1,flexDirection: 'row',justifyContent: 'flex-end',marginTop: width*0.05}}>
-                            <TouchableOpacity style={{height:20,marginRight: 30}} onPress={() => this.setState({ isVisible: false })}>
-                                <Text style={{color: '#2089DC'}}>取消</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{height:20,marginRight: 15}} onPress={() => {
-                                if(flag){
-                                    this.local_store();
-                                    this.setState({isVisible: false})
-                                }else {
-                                    this.setState({isLoad: true})
-                                    this.uploadCategory();
-                                }}}>
-                                <Text style={{color: '#2089DC'}}>保存</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View> : <View style={styles.p_container}>
-                                    <View style={styles.p_view1}>
-                                        {this.state.isCompleted ? <View>
-                                            <Text style={styles.p_text}>上传成功</Text>
-                                            <TouchableOpacity style={{top: -width*0.17,left: width*0.5}} onPress={()=>{
-                                                this.setState({isLoad: false,isCompleted:false,isVisible: false})
-                                                Actions.record();
-                                            }}><Image style={{width: width*0.05,height: width*0.05}} source={require('../../imgs/close.png')}/></TouchableOpacity>
-                                        </View> : <Text style={styles.p_text}>正在上传</Text>}
-                                    </View>
-                                    {this.state.isCompleted ?
-                                        <Image style={{width: 70,height: 70,left: width*0.36}} source={require('../../imgs/complete.png')}/> :
-                                        <View><ProgressBarAndroid styleAttr='Large' color='#2089DC'/></View>
-                                    }
-                                </View>
-                    }
+                         width={width*0.9}
+                         children={<View>
+                             { !this.state.isLoad ? <View style={{padding: 5,paddingLeft: 10}}>
+                                 <Text style={{fontSize:20,marginBottom:10,color: '#2089DC'}}>保存记录</Text>
+                                 <Input placeholder='请输入记录标题' value={this.state.title}
+                                        maxLength={10}
+                                        multiline={false}
+                                        style={{marginTop: 5}}
+                                        rightIcon={<TouchableOpacity onPress={() => this.setState({title: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
+                                        inputContainerStyle={{height:width*0.1}}
+                                        onChangeText={(text) => {this.setState({title: text})}}/>
+                                 <Text style={{width: 45,textAlign: 'center',left: width*0.73}}>{this.state.title.length}/10</Text>
+                                 <Input placeholder='请输入记录备注' value={this.state.remark}
+                                        maxLength={30}
+                                        multiline={true}
+                                        rightIcon={<TouchableOpacity onPress={() => this.setState({remark: ''})}><Image style={{width: width*0.05,height: width*0.05}} source={require("../../imgs/delete.png")}/></TouchableOpacity>}
+                                        inputContainerStyle={{height:width*0.1}}
+                                        onChangeText={(text) => {this.setState({remark: text})}}/>
+                                 <Text style={{width: 45,textAlign: 'center',left: width*0.73}}>{this.state.remark.length}/30</Text>
+                                 <View style={{flex: 1,flexDirection: 'row',justifyContent: 'space-around',marginTop: 10}}>
+                                     <TouchableOpacity style={{height:20,width: width*0.4}} onPress={() => this.setState({ isVisible: false })}>
+                                         <Text style={{fontSize:20,color: '#2089DC',textAlign:'center'}}>取消</Text>
+                                     </TouchableOpacity>
+                                     <TouchableOpacity style={{height:20,width: width*0.4}} onPress={() => {
+                                         if(flag){
+                                             this.local_store();
+                                             this.setState({isVisible: false})
+                                         }else {
+                                             this.setState({isLoad: true})
+                                             this.uploadCategory();
+                                         }}}>
+                                         <Text style={{fontSize:20,color: '#2089DC',textAlign:'center'}}>保存</Text>
+                                     </TouchableOpacity>
+                                 </View>
+                             </View> : <View style={styles.p_container}>
+                                 <View style={styles.p_view1}>
+                                     {this.state.isCompleted ? <View>
+                                         <Text style={styles.p_text}>上传成功</Text>
+                                         <TouchableOpacity style={{position: 'absolute',top: 10,right: -width*0.28}} onPress={()=>{
+                                             this.setState({isLoad: false,isCompleted:false,isVisible: false})
+                                             Actions.record();
+                                         }}><Image style={{width: width*0.05,height: width*0.05}} source={require('../../imgs/close.png')}/></TouchableOpacity>
+                                     </View> : <Text style={styles.p_text}>正在上传</Text>}
+                                 </View>
+                                 {this.state.isCompleted ?
+                                     <Image style={{width: width*0.2,height: width*0.2,marginTop:15}} source={require('../../imgs/complete.png')}/> :
+                                     <ProgressBarAndroid styleAttr='Large' style={{marginTop:15}} color='#2089DC'/>
+                                 }
+                             </View>}
+                         </View>}>
                 </Overlay>
                 <Modal visible={this.state.visible} onRequestClose={() => {this.setState({visible: false})}}>
                     { this.state.source == '' ? null :
@@ -909,13 +910,15 @@ const styles = StyleSheet.create({
         height:height,
     },
     p_container: {
-        padding: 0
+        padding: 0,
+        alignItems: 'center'
     },
     p_view1: {
         height: height*0.1,
         alignItems: 'center'
     },
     p_text: {
+        marginTop:20,
         lineHeight: height*0.1,
         fontSize: 25,
         color: '#2089DC'

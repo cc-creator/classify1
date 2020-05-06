@@ -11,6 +11,7 @@ import {Avatar, Input, Overlay} from "react-native-elements";
 import ImagePicker from 'react-native-image-crop-picker';
 import {Actions} from "react-native-router-flux";
 import ToastExample from "../native/Toast";
+import { PermissionsAndroid } from 'react-native'
 
 export default class EditInfo extends Component{
 
@@ -126,25 +127,26 @@ export default class EditInfo extends Component{
                 <Overlay
                     isVisible={this.state.visible}
                     onBackdropPress={() => {this.setState({visible: false})}}
-                    overlayStyle={{width:width,padding: 0,height:height*0.2,top:height*0.383,borderRadius:10}}>
-                    <View>
-                        <View style={{width:width,height: height*0.12,borderBottomWidth:1,borderBottomColor:'gray'}}>
-                            <TouchableOpacity style={{alignItems: 'center',height:height*0.06}} onPress={this.pickImageFromCamera.bind(this)}><Text style={{lineHeight:height*0.06,fontSize:20}}>拍照</Text></TouchableOpacity>
-                            <TouchableOpacity style={{alignItems: 'center',height:height*0.06}} onPress={this.pickImageFromGallery.bind(this)}><Text style={{lineHeight:height*0.06,fontSize:20}}>从相册选取图片</Text></TouchableOpacity>
-                        </View>
-                        <TouchableOpacity style={{marginTop: 5,width:width,height: height*0.06,alignItems: 'center'}}
-                            onPress={() => {this.setState({visible: false})}}>
-                            <Text style={{lineHeight: height*0.06,fontSize:20}}>取消</Text>
-                        </TouchableOpacity>
-                    </View>
+                    overlayStyle={{width:width,padding: 0,height:height*0.2,top:height*0.383,borderRadius:10}}
+                    children={
+                        <View>
+                            <View style={{width:width,height: height*0.12,borderBottomWidth:1,borderBottomColor:'gray'}}>
+                                <TouchableOpacity style={{alignItems: 'center',height:height*0.06}} onPress={this.pickImageFromCamera.bind(this)}><Text style={{lineHeight:height*0.06,fontSize:20}}>拍照</Text></TouchableOpacity>
+                                <TouchableOpacity style={{alignItems: 'center',height:height*0.06}} onPress={this.pickImageFromGallery.bind(this)}><Text style={{lineHeight:height*0.06,fontSize:20}}>从相册选取图片</Text></TouchableOpacity>
+                            </View>
+                            <TouchableOpacity style={{marginTop: 5,width:width,height: height*0.06,alignItems: 'center'}}
+                                              onPress={() => {this.setState({visible: false})}}>
+                                <Text style={{lineHeight: height*0.06,fontSize:20}}>取消</Text>
+                            </TouchableOpacity>
+                        </View>}>
                 </Overlay>
                 <Overlay
                     isVisible={this.state.isVisible}
                     height={width*0.25}
                     width={width*0.25}
                     overlayStyle={{padding: 0,paddingTop: width*0.024}}
+                    children={<ProgressBarAndroid styleAttr='Large' color='#2089DC'/>}
                 >
-                    <ProgressBarAndroid styleAttr='Large' color='#2089DC'/>
                 </Overlay>
             </View>
         );
